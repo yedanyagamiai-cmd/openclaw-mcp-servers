@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "openclaw-intel": {
+      "url": "https://openclaw-intel-mcp.yagami8095.workers.dev/mcp"
+    },
+    "openclaw-fortune": {
+      "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp"
+    }
+  }
+}
