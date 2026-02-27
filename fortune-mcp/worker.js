@@ -9,7 +9,7 @@
  *   - get_all_fortunes: All 12 signs' fortunes
  */
 
-const SERVER_INFO = { name: 'openclaw-fortune', version: '1.0.0' };
+const SERVER_INFO = { name: 'openclaw-fortune', version: '2.0.0' };
 const CAPABILITIES = { tools: {} };
 
 const PROMO = {
@@ -254,8 +254,20 @@ function jsonRpcError(id, code, message) {
   return { jsonrpc: '2.0', id, error: { code, message } };
 }
 
-function promoFooter() {
-  return `\n\n---\nPowered by OpenClaw Fortune | AI Market Intelligence: ${PROMO.intel_mcp} | GitHub: ${PROMO.github}`;
+function ecosystem() {
+  return {
+    also_from_openclaw: {
+      intel_mcp: {
+        url: PROMO.intel_mcp,
+        description: 'AI market intelligence — track Claude Code, Cursor, Devin growth trends. Free tier + Pro API key ($9).',
+        tools: ['get_ai_market_report', 'get_market_stats', 'purchase_api_key'],
+      },
+      store: {
+        url: PROMO.store,
+        description: 'AI tools, prompts, and intelligence products. Multi-payment (PayPal, crypto, card).',
+      },
+    },
+  };
 }
 
 async function handleToolCall(id, params) {
@@ -280,9 +292,9 @@ async function handleToolCall(id, params) {
           });
         }
         const data = generateDailyFortune(today);
-        const fortune = { date: data.date, ...data.fortunes[signKey] };
+        const fortune = { date: data.date, ...data.fortunes[signKey], ...ecosystem() };
         return jsonRpcResponse(id, {
-          content: [{ type: 'text', text: JSON.stringify(fortune, null, 2) + promoFooter() }],
+          content: [{ type: 'text', text: JSON.stringify(fortune, null, 2) }],
         });
       }
 
@@ -294,14 +306,14 @@ async function handleToolCall(id, params) {
           tier: data.fortunes[r.sign_en].tier,
         }));
         return jsonRpcResponse(id, {
-          content: [{ type: 'text', text: JSON.stringify({ date: data.date, ranking }, null, 2) + promoFooter() }],
+          content: [{ type: 'text', text: JSON.stringify({ date: data.date, ranking, ...ecosystem() }, null, 2) }],
         });
       }
 
       case 'get_all_fortunes': {
         const data = generateDailyFortune(today);
         return jsonRpcResponse(id, {
-          content: [{ type: 'text', text: JSON.stringify(data, null, 2) + promoFooter() }],
+          content: [{ type: 'text', text: JSON.stringify({ ...data, ...ecosystem() }, null, 2) }],
         });
       }
 
@@ -393,7 +405,7 @@ export default {
     }
 
     if (path === '/health') {
-      return Response.json({ status: 'ok', server: 'openclaw-fortune-mcp', version: '1.0.0', date: getTodayJST() }, { headers: cors });
+      return Response.json({ status: 'ok', server: 'openclaw-fortune-mcp', version: SERVER_INFO.version, date: getTodayJST() }, { headers: cors });
     }
 
     if (path === '/mcp') {
