@@ -9,7 +9,7 @@
 
 ## MEDIUM Confidence
 6. Cron /tmp writes fail on WSL2 — use ~/.openclaw/workspace/tmp/ instead
-7. MoltBook DNS dead since ~2026-02 — mark as DEAD, disable crons
+7. MoltBook is ALIVE (HTTP 200, CloudFront) — funnel for MCP servers, crons re-enabled
 8.  order in gumroad-sales is TEST data — no real revenue yet
 9. agent config.json model mismatch causes silent failures
 10. Golem Memory needs manual knowledge seeding — empty by default
