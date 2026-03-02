@@ -505,7 +505,7 @@ export default {
       const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
       const rl = await checkRateLimit(env.KV, clientIp);
       if (!rl.allowed) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded', limit: FORTUNE_API_RATE_LIMIT, upgrade: 'https://product-store.yagami8095.workers.dev' }), {
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded', limit: FORTUNE_API_RATE_LIMIT, trial: 'https://product-store.yagami8095.workers.dev/auth/login', upgrade: 'https://product-store.yagami8095.workers.dev' }), {
           status: 429, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
         });
       }

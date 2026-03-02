@@ -1092,7 +1092,7 @@ async function handleMcpRequest(req, kv, clientIp) {
       const rl = jsonRpcError(
         requests.find(r => r.method === 'tools/call')?.id ?? null,
         -32029,
-        `Rate limit exceeded (${RATE_LIMIT_MAX}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`
+        `Rate limit exceeded (${RATE_LIMIT_MAX}/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`
       );
       return isBatch ? [rl] : rl;
     }

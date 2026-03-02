@@ -1264,7 +1264,7 @@ export default {
             id: null,
             error: {
               code: -32000,
-              message: `Rate limit exceeded (${RATE_LIMIT}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+              message: `Rate limit exceeded (${RATE_LIMIT}/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
               data: { limit: RATE_LIMIT, remaining: 0, reset: rl.reset },
             },
           },

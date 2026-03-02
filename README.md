@@ -4,6 +4,14 @@
 
 Free: 3 calls/tool/day | x402: $0.05/call USDC on Base | Pro: $9 one-time
 
+### 🆓 Free 7-Day Pro Trial
+
+Sign up with GitHub for instant access to all 49 tools at 100 calls/day:
+
+**[Start Free Trial →](https://product-store.yagami8095.workers.dev/auth/login?ref=github)**
+
+No credit card required. After trial: $9 one-time for 1000 calls/day.
+
 ## Quick Connect
 
 Copy this JSON into your MCP client config:

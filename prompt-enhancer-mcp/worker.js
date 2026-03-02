@@ -1412,7 +1412,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1435,7 +1435,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1460,7 +1460,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }
@@ -1477,7 +1477,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }

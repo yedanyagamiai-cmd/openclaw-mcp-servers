@@ -408,7 +408,7 @@ export default {
         rateResult = await checkRateLimit(ipH, tier, 'api', env);
         if (!rateResult.allowed) {
           await logAccess(ipH, keyPrefix, path, 429, tier, env);
-          return errorResponse('Rate limit exceeded. Upgrade to Pro for 1,000 calls/day.', cors, 429, rateResult);
+          return errorResponse('Rate limit exceeded. FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login | Pro ($9): https://paypal.me/Yagami8095/9', cors, 429, rateResult);
         }
       }
 

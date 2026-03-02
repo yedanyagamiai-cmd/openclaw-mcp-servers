@@ -729,7 +729,7 @@ export default {
       const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
       rl = await checkRateLimit(env.DB, clientIp);
       if (!rl.allowed) {
-        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Rate limit exceeded (${INTEL_RATE_LIMIT}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`)), {
+        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Rate limit exceeded (${INTEL_RATE_LIMIT}/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`)), {
           status: 402, headers: {
             ...cors, 'Content-Type': 'application/json',
             'X-Payment-Required': 'true',

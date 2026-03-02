@@ -325,10 +325,15 @@ function catalogPage(env) {
     </div>
     <div class="container">
       <div class="stats">
-        <div class="stat"><div class="stat-num">2</div><div class="stat-label">MCP Servers</div></div>
-        <div class="stat"><div class="stat-num">50+</div><div class="stat-label">AI Prompts</div></div>
-        <div class="stat"><div class="stat-num">8</div><div class="stat-label">Tools</div></div>
+        <div class="stat"><div class="stat-num">9</div><div class="stat-label">MCP Servers</div></div>
+        <div class="stat"><div class="stat-num">49</div><div class="stat-label">AI Tools</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">Products</div></div>
         <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always On</div></div>
+      </div>
+      <div style="background:linear-gradient(135deg,#ff6b35,#ff4500);border-radius:12px;padding:24px;margin:24px 0;text-align:center;">
+        <h2 style="color:#fff;margin-bottom:12px;">Try All 49 Tools Free for 7 Days</h2>
+        <p style="color:rgba(255,255,255,0.9);margin-bottom:16px;">Sign in with GitHub. 100 calls/day across all 9 servers. No credit card required.</p>
+        <a href="/auth/login" class="btn" style="background:#fff;color:#ff4500;font-size:1.1rem;padding:16px 40px;text-decoration:none;display:inline-block;border-radius:8px;font-weight:bold;">Start Free Trial &rarr;</a>
       </div>
 
       <div style="background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:24px; margin:24px 0;">
@@ -977,6 +982,7 @@ function handleOAuthLogin(env, url) {
   if (!env.GITHUB_CLIENT_ID) {
     return jsonResponse({ error: 'OAuth not configured' }, 500);
   }
+  const ref = url.searchParams.get('ref') || 'direct';
   const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id: env.GITHUB_CLIENT_ID,
@@ -984,17 +990,21 @@ function handleOAuthLogin(env, url) {
     scope: OAUTH_SCOPES,
     state,
   });
+  // Track trial attribution
+  const refCookie = `oauth_ref=${ref}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`;
+  const stateCookie = `oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`;
   return new Response(null, {
     status: 302,
-    headers: {
-      Location: `${GITHUB_AUTH_URL}?${params}`,
-      'Set-Cookie': `oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
-    },
+    headers: [
+      ['Location', `${GITHUB_AUTH_URL}?${params}`],
+      ['Set-Cookie', stateCookie],
+      ['Set-Cookie', refCookie],
+    ],
   });
 }
 
 // GET /auth/callback → exchange code → generate Pro key → show result
-async function handleOAuthCallback(env, url) {
+async function handleOAuthCallback(request, env, url) {
   const code = url.searchParams.get('code');
   if (!code) {
     return jsonResponse({ error: 'Missing authorization code' }, 400);
@@ -1048,6 +1058,16 @@ async function handleOAuthCallback(env, url) {
   if (env.KV) {
     await env.KV.put(`prokey:${proKey}`, JSON.stringify(keyData), { expirationTtl: 7 * 86400 });
     await env.KV.put(`github:${user.id}`, proKey, { expirationTtl: 7 * 86400 });
+    // Track trial attribution from ref cookie
+    try {
+      const cookieHeader = request.headers.get('cookie') || '';
+      const cookies = cookieHeader.split(';').map(c => c.trim());
+      const refCookie = cookies.find(c => c.startsWith('oauth_ref='));
+      const ref = refCookie ? refCookie.split('=')[1] : 'direct';
+      const today = new Date().toISOString().split('T')[0];
+      const countKey = `ref:trial:${ref}:${today}`;
+      await env.KV.put(countKey, String(parseInt(await env.KV.get(countKey) || '0') + 1), { expirationTtl: 30 * 86400 });
+    } catch (_) { /* attribution tracking is best-effort */ }
   }
 
   // Return success page
@@ -1161,7 +1181,7 @@ export default {
         return handleOAuthLogin(env, url);
       }
       if (path === '/auth/callback' && method === 'GET') {
-        return handleOAuthCallback(env, url);
+        return handleOAuthCallback(request, env, url);
       }
       if (path === '/auth/status' && method === 'GET') {
         return handleOAuthStatus(request, env);
