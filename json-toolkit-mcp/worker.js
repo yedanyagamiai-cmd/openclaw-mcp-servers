@@ -1009,6 +1009,26 @@ async function handleToolCall(id, params) {
   }
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 // ============================================================
 // MCP Protocol dispatcher
 // ============================================================
@@ -1027,7 +1047,7 @@ async function handleMcpRequest(req, kv, clientIp) {
       const rl = jsonRpcError(
         requests.find(r => r.method === 'tools/call')?.id ?? null,
         -32029,
-        `Rate limit exceeded. Free tier: ${RATE_LIMIT_MAX} tool calls/day. Resets at midnight UTC.`
+        `Rate limit exceeded (${RATE_LIMIT_MAX}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`
       );
       return isBatch ? [rl] : rl;
     }
@@ -1061,9 +1081,12 @@ async function handleMcpRequest(req, kv, clientIp) {
         responses.push(jsonRpcResponse(r.id, { tools: TOOLS }));
         break;
 
-      case 'tools/call':
-        responses.push(await handleToolCall(r.id, r.params || {}));
+      case 'tools/call': {
+        const toolResp = await handleToolCall(r.id, r.params || {});
+        addUpgradePrompt(toolResp, rateLimitInfo);
+        responses.push(toolResp);
         break;
+      }
 
       default:
         responses.push(jsonRpcError(r.id, -32601, `Method not found: ${r.method}`));

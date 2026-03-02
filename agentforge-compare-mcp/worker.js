@@ -821,6 +821,26 @@ export default {
   },
 };
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 async function handleMCPRequest(body, env, request) {
   const { jsonrpc, id, method, params } = body;
 
@@ -842,11 +862,12 @@ async function handleMCPRequest(body, env, request) {
     const isPro = await validateApiKey(env, apiKey);
 
     // Rate limit (except purchase_pro_key)
+    let rateCheck = null;
     if (name !== 'purchase_pro_key') {
-      const rateCheck = await checkRateLimit(env, clientId, isPro);
+      rateCheck = await checkRateLimit(env, clientId, isPro);
       if (!rateCheck.allowed) {
         return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: JSON.stringify({
-          error: 'Rate limit exceeded',
+          error: 'Rate limit exceeded. Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base',
           limit: rateCheck.limit,
           reset: 'Daily at 00:00 UTC',
           upgradeSignal: isPro ? null : {
@@ -869,7 +890,11 @@ async function handleMCPRequest(body, env, request) {
       default: return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown tool: ${name}` } };
     }
 
-    return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: JSON.stringify(result) }] } };
+    const response = { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: JSON.stringify(result) }] } };
+    if (rateCheck) {
+      addUpgradePrompt(response, { used: rateCheck.limit - rateCheck.remaining, remaining: rateCheck.remaining });
+    }
+    return response;
   }
 
   return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown method: ${method}` } };

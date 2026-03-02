@@ -1385,7 +1385,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Daily free limit reached (10/day). Upgrade to Pro for 100 requests/day.`,
+        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1408,7 +1408,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: 'Daily free limit reached (10/day). Upgrade to Pro for 100 requests/day.',
+        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1433,7 +1433,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: 'Daily free limit reached (10/day). Upgrade to Pro for 100 requests/day.',
+        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }
@@ -1450,7 +1450,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: 'Daily free limit reached (10/day). Upgrade to Pro for 100 requests/day.',
+        message: `Rate limit exceeded (10/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }
@@ -1499,7 +1499,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: 'Pro daily limit reached (100/day). Resets at midnight UTC.',
+        message: 'Rate limit exceeded (100/day Pro). Resets at midnight UTC. x402: $0.05/call USDC on Base for unlimited.',
         data: { upgradeSignal: true, daily_limit: 100, tier: 'pro' },
       };
     }
@@ -1554,6 +1554,26 @@ async function dispatchTool(toolName, params, env, request) {
   throw { code: METHOD_NOT_FOUND, message: `Unknown tool: ${toolName}` };
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 // ---------------------------------------------------------------------------
 // MCP method dispatcher
 // ---------------------------------------------------------------------------
@@ -1584,10 +1604,15 @@ async function handleMCPMethod(method, params, id, env, request) {
 
     try {
       const result = await dispatchTool(toolName, toolArgs, env, request);
-      return rpcSuccess(id, {
+      const rateLimitInfo = result?._meta
+        ? { remaining: result._meta.remaining_today, used: (result._meta.tier === 'pro' ? 100 : 10) - (result._meta.remaining_today ?? 0) }
+        : null;
+      const response = rpcSuccess(id, {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         isError: false,
       });
+      addUpgradePrompt(response, rateLimitInfo);
+      return response;
     } catch (err) {
       if (err.code) {
         return rpcError(id, err.code, err.message, err.data);

@@ -24,7 +24,7 @@ async function checkRateLimit(kv, ip) {
       return { allowed: false, remaining: 0, used: count };
     }
     await kv.put(key, String(count + 1), { expirationTtl: 86400 });
-    return { allowed: true, remaining: FORTUNE_RATE_LIMIT - count - 1 };
+    return { allowed: true, remaining: FORTUNE_RATE_LIMIT - count - 1, used: count + 1 };
   } catch {
     return { allowed: true, remaining: FORTUNE_RATE_LIMIT };
   }
@@ -286,6 +286,26 @@ function ecosystem() {
       },
     },
   };
+}
+
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
 }
 
 async function handleToolCall(id, params) {
@@ -578,11 +598,12 @@ export default {
     }
 
     // Rate limit on MCP and API endpoints (not landing page or health)
+    let rl;
     if (path === '/mcp') {
       const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
-      const rl = await checkRateLimit(env.KV, clientIp);
+      rl = await checkRateLimit(env.KV, clientIp);
       if (!rl.allowed) {
-        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Daily free limit reached (${FORTUNE_RATE_LIMIT}/day). Visit https://product-store.yagami8095.workers.dev for Pro access.`)), {
+        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Rate limit exceeded (${FORTUNE_RATE_LIMIT}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`)), {
           status: 429, headers: { ...cors, 'Content-Type': 'application/json' }
         });
       }
@@ -630,6 +651,7 @@ export default {
               break;
             case 'tools/call':
               result = await handleToolCall(req.id, req.params || {});
+              addUpgradePrompt(result, rl);
               break;
             case 'ping':
               result = jsonRpcResponse(req.id, {});

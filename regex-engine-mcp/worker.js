@@ -746,6 +746,26 @@ function mcpError(id, code, message, data) {
   };
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 function handleMCPRequest(req) {
   const { jsonrpc, method, params, id } = req;
 
@@ -1193,7 +1213,7 @@ export default {
             id: null,
             error: {
               code: -32000,
-              message: `Rate limit exceeded. You have used ${RATE_LIMIT}/${RATE_LIMIT} free requests today. Resets at midnight UTC.`,
+              message: `Rate limit exceeded (${RATE_LIMIT}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
               data: { limit: RATE_LIMIT, remaining: 0, reset: rl.reset },
             },
           },
@@ -1217,11 +1237,14 @@ export default {
         'X-RateLimit-Remaining': String(rl.remaining),
       };
 
+      const rateLimitInfo = { used: RATE_LIMIT - rl.remaining - 1, remaining: rl.remaining };
+
       // Batch support
       if (Array.isArray(body)) {
         const responses = body
           .map((req) => handleMCPRequest(req))
           .filter(Boolean);
+        responses.forEach((r) => addUpgradePrompt(r, rateLimitInfo));
         return jsonResponse(responses, 200, rlHeaders);
       }
 
@@ -1232,6 +1255,7 @@ export default {
         return new Response(null, { status: 204, headers: { ...CORS_HEADERS, ...rlHeaders } });
       }
 
+      addUpgradePrompt(result, rateLimitInfo);
       return jsonResponse(result, 200, rlHeaders);
     }
 

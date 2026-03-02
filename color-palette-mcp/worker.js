@@ -1077,6 +1077,26 @@ function toolIcon(name) {
   return icons[name] || '&#x1F527;';
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 // ============================================================
 // MCP REQUEST HANDLER
 // ============================================================
@@ -1124,7 +1144,7 @@ async function handleMCPRequest(body, env, request) {
               error: 'Rate limit exceeded',
               limit: rateCheck.limit,
               reset: 'Daily at 00:00 UTC',
-              message: 'You have used all 25 free requests for today. Limit resets at midnight UTC.',
+              message: `Rate limit exceeded (${rateCheck.limit}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
               ecosystem: ECOSYSTEM,
             }),
           }],
@@ -1143,13 +1163,15 @@ async function handleMCPRequest(body, env, request) {
         return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown tool: ${name}. Available: ${TOOLS.map(t => t.name).join(', ')}` } };
     }
 
-    return {
+    const toolResp = {
       jsonrpc: '2.0', id,
       result: {
         content: [{ type: 'text', text: JSON.stringify(result) }],
         _rate_limit: { remaining: rateCheck.remaining, limit: rateCheck.limit, reset: 'Daily at 00:00 UTC' },
       },
     };
+    addUpgradePrompt(toolResp, { used: rateCheck.limit - rateCheck.remaining - 1, remaining: rateCheck.remaining });
+    return toolResp;
   }
 
   return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown method: ${method}` } };

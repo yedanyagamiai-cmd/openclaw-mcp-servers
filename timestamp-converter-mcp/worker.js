@@ -1103,6 +1103,26 @@ async function checkRateLimit(env, clientId) {
   return { allowed: true, remaining: limit - current - 1, limit };
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 // ============================================================
 // MCP PROTOCOL HANDLER
 // ============================================================
@@ -1140,7 +1160,7 @@ async function handleMCPRequest(req, env, request) {
       const rateLimitMsg = {
         error: 'Rate limit exceeded',
         limit: rateCheck.limit,
-        message: `Free tier: ${rateCheck.limit} requests/day. Resets daily at 00:00 UTC.`,
+        message: `Rate limit exceeded (${rateCheck.limit}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         ecosystem: ECOSYSTEM,
       };
       return jsonRpcOk(id, {
@@ -1164,7 +1184,9 @@ async function handleMCPRequest(req, env, request) {
       result = toolError(`Internal error: ${e.message}`);
     }
 
-    return jsonRpcOk(id, result);
+    const response = jsonRpcOk(id, result);
+    addUpgradePrompt(response, rateCheck);
+    return response;
   }
 
   return jsonRpcError(id, -32601, `Method not found: "${method}"`);

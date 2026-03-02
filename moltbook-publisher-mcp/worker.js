@@ -503,14 +503,15 @@ async function executeTool(name, args, env, clientIp) {
   }
 
   // Rate limit free tools
+  let rateCheck = null;
   if (!isProTool) {
-    const rateCheck = await checkRateLimit(name, clientIp, env);
+    rateCheck = await checkRateLimit(name, clientIp, env);
     if (!rateCheck.allowed) {
       return {
         content: [{
           type: 'text',
           text: JSON.stringify({
-            error: 'Daily free limit reached',
+            error: 'Rate limit exceeded. Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base',
             message: `Free tier: ${FREE_DAILY_LIMIT} uses/day. Upgrade to Pro for ${PRO_DAILY_LIMIT} uses/day ($${PRO_PRICE_USD}/month).`,
             remaining: 0,
             upgradeSignal: { reason: 'rate_limit_exceeded', tool: name, limit: FREE_DAILY_LIMIT, upgrade_url: 'https://product-store.yagami8095.workers.dev' },
@@ -690,6 +691,26 @@ function jsonRpcError(id, code, message) {
   return { jsonrpc: '2.0', id, error: { code, message } };
 }
 
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
 async function handleMcpRequest(body, env, clientIp) {
   const isBatch = Array.isArray(body);
   const requests = isBatch ? body : [body];
@@ -721,7 +742,16 @@ async function handleMcpRequest(body, env, clientIp) {
           break;
         }
         const result = await executeTool(name, args || {}, env, clientIp);
-        responses.push(jsonRpcResponse(id, result));
+        const rpcResponse = jsonRpcResponse(id, result);
+        // Read current usage for upgrade prompt (non-incrementing)
+        try {
+          const today = new Date().toISOString().slice(0, 10);
+          const rlKey = `ratelimit:${name}:${clientIp}:${today}`;
+          const used = parseInt(await env.KV.get(rlKey) || '0');
+          const remaining = Math.max(0, FREE_DAILY_LIMIT - used);
+          addUpgradePrompt(rpcResponse, { used, remaining });
+        } catch {}
+        responses.push(rpcResponse);
         break;
       }
 

@@ -162,6 +162,60 @@ async function validateKey(env, apiKey) {
 }
 
 // ============================================================
+// MCP Rate Limiting (D1-based, per IP)
+// ============================================================
+
+const INTEL_RATE_LIMIT = 20; // 20 requests/day free
+
+async function checkRateLimit(db, ip) {
+  if (!db) return { allowed: true, remaining: INTEL_RATE_LIMIT, used: 0 };
+  const today = new Date().toISOString().slice(0, 10);
+  const ipHash = await sha256Short(ip + '-openclaw-intel-rl');
+  const endpoint = 'mcp:' + today;
+  try {
+    const row = await db.prepare(
+      "SELECT requests FROM rate_limits WHERE ip_hash = ? AND endpoint = ?"
+    ).bind(ipHash, endpoint).first();
+    const count = row ? row.requests : 0;
+    if (count >= INTEL_RATE_LIMIT) {
+      return { allowed: false, remaining: 0, used: count };
+    }
+    if (row) {
+      await db.prepare(
+        "UPDATE rate_limits SET requests = requests + 1, last_request = datetime('now') WHERE ip_hash = ? AND endpoint = ?"
+      ).bind(ipHash, endpoint).run();
+    } else {
+      await db.prepare(
+        "INSERT INTO rate_limits (ip_hash, endpoint, requests, last_request) VALUES (?, ?, 1, datetime('now'))"
+      ).bind(ipHash, endpoint).run();
+    }
+    return { allowed: true, remaining: INTEL_RATE_LIMIT - count - 1, used: count + 1 };
+  } catch {
+    return { allowed: true, remaining: INTEL_RATE_LIMIT, used: 0 };
+  }
+}
+
+// Dynamic Upgrade Prompt — progressive messaging based on usage
+function addUpgradePrompt(response, rateLimitInfo) {
+  if (!rateLimitInfo || !response?.result?.content?.[0]) return;
+  if (response.result.isError) return;
+  const c = response.result.content[0];
+  if (c.type !== 'text' || !c.text) return;
+
+  const used = rateLimitInfo.used || 0;
+  const remaining = rateLimitInfo.remaining ?? 0;
+
+  let msg = '';
+  if (remaining <= 2 && remaining > 0) {
+    msg = `\n\n⚡ ${remaining} call${remaining === 1 ? '' : 's'} left today. Pro: $9 → 1000/day → paypal.me/Yagami8095/9`;
+  } else if (used <= 3) {
+    msg = '\n\n— powered by OpenClaw (openclaw.dev)';
+  }
+
+  if (msg) c.text += msg;
+}
+
+// ============================================================
 // Tool Handlers
 // ============================================================
 
@@ -646,6 +700,18 @@ export default {
       return Response.json({ status: 'ok', server: 'openclaw-intel-mcp', version: SERVER_INFO.version }, { headers: cors });
     }
 
+    // Rate limit on MCP endpoint
+    let rl;
+    if (path === '/mcp') {
+      const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
+      rl = await checkRateLimit(env.DB, clientIp);
+      if (!rl.allowed) {
+        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Rate limit exceeded (${INTEL_RATE_LIMIT}/day). Upgrade to Pro: $9 → 1000 calls/day\n\nPayPal: paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`)), {
+          status: 429, headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     // MCP endpoint
     if (path === '/mcp') {
       if (request.method === 'POST') {
@@ -689,6 +755,7 @@ export default {
               break;
             case 'tools/call':
               result = await handleToolCall(req.id, req.params || {}, env);
+              addUpgradePrompt(result, rl);
               break;
             case 'ping':
               result = jsonRpcResponse(req.id, {});
