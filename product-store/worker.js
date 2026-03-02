@@ -570,11 +570,15 @@ async function handleStripeCheckout(request, env) {
   params.append('metadata[order_id]', orderId);
   params.append('metadata[product_id]', productId);
 
+  // Idempotency: prevent duplicate checkout sessions for same order
+  const idempotencyKey = `checkout_${orderId}`;
+
   const resp = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      'Idempotency-Key': idempotencyKey,
     },
     body: params,
   });
@@ -604,6 +608,20 @@ async function handleSuccess(request, env) {
 
   const product = PRODUCTS[productId];
   if (!product) return htmlResponse(notFoundPage(), 404);
+
+  // Idempotency: check if this order was already processed
+  try {
+    const existing = await env.DB.prepare(
+      "SELECT order_id, status, download_token FROM orders WHERE order_id = ? AND status = 'paid'"
+    ).bind(orderId).first();
+    if (existing && existing.download_token) {
+      // Already processed — return existing token instead of creating duplicate
+      if (product.type === 'api_key') {
+        return htmlResponse(apiKeySuccessPage(product, existing.download_token));
+      }
+      return htmlResponse(successPage(product, existing.download_token));
+    }
+  } catch { /* non-fatal, proceed normally */ }
 
   // Verify Stripe payment if applicable
   let verified = false;
