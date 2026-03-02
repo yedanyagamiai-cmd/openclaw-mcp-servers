@@ -9,8 +9,26 @@
  *   - get_all_fortunes: All 12 signs' fortunes
  */
 
-const SERVER_INFO = { name: 'openclaw-fortune', version: '2.0.0' };
+const SERVER_INFO = { name: 'openclaw-fortune', version: '2.0.1' };
 const CAPABILITIES = { tools: {} };
+const FORTUNE_RATE_LIMIT = 50; // 50 requests/day free
+
+async function checkRateLimit(kv, ip) {
+  if (!kv) return { allowed: true, remaining: FORTUNE_RATE_LIMIT };
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `rl:fortune:${ip}:${today}`;
+  try {
+    const raw = await kv.get(key);
+    const count = raw ? parseInt(raw, 10) : 0;
+    if (count >= FORTUNE_RATE_LIMIT) {
+      return { allowed: false, remaining: 0, used: count };
+    }
+    await kv.put(key, String(count + 1), { expirationTtl: 86400 });
+    return { allowed: true, remaining: FORTUNE_RATE_LIMIT - count - 1 };
+  } catch {
+    return { allowed: true, remaining: FORTUNE_RATE_LIMIT };
+  }
+}
 
 const PROMO = {
   intel_mcp: 'https://openclaw-intel-mcp.yagami8095.workers.dev/mcp',
@@ -420,7 +438,7 @@ const LANDING_HTML = `<!DOCTYPE html>
 // ============================================================
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
     const cors = {
@@ -440,6 +458,17 @@ export default {
 
     if (path === '/health') {
       return Response.json({ status: 'ok', server: 'openclaw-fortune-mcp', version: SERVER_INFO.version, date: getTodayJST() }, { headers: cors });
+    }
+
+    // Rate limit on MCP and API endpoints (not landing page or health)
+    if (path === '/mcp') {
+      const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
+      const rl = await checkRateLimit(env.KV, clientIp);
+      if (!rl.allowed) {
+        return new Response(JSON.stringify(jsonRpcError(null, -32029, `Daily free limit reached (${FORTUNE_RATE_LIMIT}/day). Visit https://product-store.yagami8095.workers.dev for Pro access.`)), {
+          status: 429, headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
     }
 
     if (path === '/mcp') {

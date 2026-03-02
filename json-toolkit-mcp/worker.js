@@ -45,7 +45,7 @@ async function checkRateLimit(kv, ip) {
   if (!kv) return { allowed: true, remaining: RATE_LIMIT_MAX, total: RATE_LIMIT_MAX };
 
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const key = `rl:${ip}:${today}`;
+  const key = `rl:json:${ip}:${today}`;
 
   let count = 0;
   try {

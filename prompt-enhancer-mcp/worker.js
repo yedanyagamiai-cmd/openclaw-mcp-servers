@@ -1293,7 +1293,7 @@ async function checkRateLimit(env, identifier, isPro) {
 
   const limit     = isPro ? 100 : 10;
   const today     = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const key       = `rl:${identifier}:${today}`;
+  const key       = `rl:prompt:${identifier}:${today}`;
   const raw       = await env.KV.get(key);
   const count     = raw ? parseInt(raw, 10) : 0;
 

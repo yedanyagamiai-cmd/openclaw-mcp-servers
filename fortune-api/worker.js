@@ -6,6 +6,25 @@
 //   GET /api/fortune/ranking  → Today's ranking
 //   GET /api/health           → Health check
 
+const FORTUNE_API_RATE_LIMIT = 50; // 50 requests/day free
+
+async function checkRateLimit(kv, ip) {
+  if (!kv) return { allowed: true, remaining: FORTUNE_API_RATE_LIMIT };
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `rl:fortune-api:${ip}:${today}`;
+  try {
+    const raw = await kv.get(key);
+    const count = raw ? parseInt(raw, 10) : 0;
+    if (count >= FORTUNE_API_RATE_LIMIT) {
+      return { allowed: false, remaining: 0 };
+    }
+    await kv.put(key, String(count + 1), { expirationTtl: 86400 });
+    return { allowed: true, remaining: FORTUNE_API_RATE_LIMIT - count - 1 };
+  } catch {
+    return { allowed: true, remaining: FORTUNE_API_RATE_LIMIT };
+  }
+}
+
 const ZODIAC_SIGNS = {
   aries:       { jp: '牡羊座', emoji: '♈', element: '火', dates: '3/21-4/19' },
   taurus:      { jp: '牡牛座', emoji: '♉', element: '地', dates: '4/20-5/20' },
@@ -318,7 +337,7 @@ signs.forEach(s => {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -339,7 +358,18 @@ export default {
     }
 
     if (path === '/api/health') {
-      return jsonResponse({ status: 'ok', service: 'fortune-api', date: getTodayJST(), version: '1.0.0' });
+      return jsonResponse({ status: 'ok', service: 'fortune-api', date: getTodayJST(), version: '1.0.1' });
+    }
+
+    // Rate limit on API endpoints (not landing/health)
+    if (path.startsWith('/api/fortune')) {
+      const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() || 'unknown';
+      const rl = await checkRateLimit(env.KV, clientIp);
+      if (!rl.allowed) {
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded', limit: FORTUNE_API_RATE_LIMIT, upgrade: 'https://product-store.yagami8095.workers.dev' }), {
+          status: 429, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        });
+      }
     }
 
     const today = getTodayJST();

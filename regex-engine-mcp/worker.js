@@ -41,7 +41,7 @@ async function checkRateLimit(env, ip) {
   if (!env.KV) return { allowed: true, remaining: RATE_LIMIT, reset: 0 };
 
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const key = `rl:${ip}:${today}`;
+  const key = `rl:regex:${ip}:${today}`;
 
   const raw = await env.KV.get(key);
   const count = raw ? parseInt(raw, 10) : 0;

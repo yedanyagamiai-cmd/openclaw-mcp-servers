@@ -1,0 +1,92 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'json-toolkit-mcp/**'
+      - 'regex-engine-mcp/**'
+      - 'color-palette-mcp/**'
+      - 'timestamp-converter-mcp/**'
+      - 'prompt-enhancer-mcp/**'
+      - 'agentforge-compare-mcp/**'
+      - 'moltbook-publisher-mcp/**'
+      - 'fortune-mcp/**'
+      - 'fortune-api/**'
+      - 'openclaw-intel-mcp/**'
+      - 'openclaw-intel-api/**'
+      - 'product-store/**'
+  workflow_dispatch:
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_changes: ${{ steps.set-matrix.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed workers
+        id: set-matrix
+        run: |
+          WORKERS='[
+            {"dir":"json-toolkit-mcp","name":"json-toolkit-mcp"},
+            {"dir":"regex-engine-mcp","name":"regex-engine-mcp"},
+            {"dir":"color-palette-mcp","name":"color-palette-mcp"},
+            {"dir":"timestamp-converter-mcp","name":"timestamp-converter-mcp"},
+            {"dir":"prompt-enhancer-mcp","name":"prompt-enhancer-mcp"},
+            {"dir":"agentforge-compare-mcp","name":"agentforge-compare-mcp"},
+            {"dir":"moltbook-publisher-mcp","name":"moltbook-publisher-mcp"},
+            {"dir":"fortune-mcp","name":"openclaw-fortune-mcp"},
+            {"dir":"fortune-api","name":"fortune-api"},
+            {"dir":"openclaw-intel-mcp","name":"openclaw-intel-mcp"},
+            {"dir":"openclaw-intel-api","name":"openclaw-intel-api"},
+            {"dir":"product-store","name":"product-store"}
+          ]'
+
+          # For workflow_dispatch, deploy all
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "matrix={\"include\":$(echo $WORKERS | jq -c .)}" >> $GITHUB_OUTPUT
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # For push, only deploy changed workers
+          CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
+          MATRIX_ITEMS="[]"
+
+          for row in $(echo $WORKERS | jq -c '.[]'); do
+            dir=$(echo $row | jq -r '.dir')
+            if echo "$CHANGED" | grep -q "^${dir}/"; then
+              MATRIX_ITEMS=$(echo $MATRIX_ITEMS | jq -c ". + [$row]")
+            fi
+          done
+
+          if [ "$MATRIX_ITEMS" = "[]" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":$(echo $MATRIX_ITEMS | jq -c .)}" >> $GITHUB_OUTPUT
+          fi
+
+  deploy:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy ${{ matrix.name }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: ${{ matrix.dir }}
+          command: deploy
