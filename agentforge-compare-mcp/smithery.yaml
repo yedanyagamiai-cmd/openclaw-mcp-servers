@@ -1,0 +1,7 @@
+startCommand:
+  type: http
+  url: https://agentforge-compare-mcp.yagami8095.workers.dev/mcp
+configSchema:
+  type: object
+  properties: {}
+  required: []

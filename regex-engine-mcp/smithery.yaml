@@ -1,0 +1,7 @@
+startCommand:
+  type: http
+  url: https://regex-engine-mcp.yagami8095.workers.dev/mcp
+configSchema:
+  type: object
+  properties: {}
+  required: []
