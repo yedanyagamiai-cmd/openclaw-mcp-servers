@@ -284,6 +284,22 @@ const LANDING_HTML = `<!DOCTYPE html>
 
 const HONEYPOT_PATHS_DEFENSE = ['/admin', '/wp-login.php', '/.env', '/config.json', '/.git/config', '/wp-admin', '/phpinfo.php'];
 
+// Attribution Tracking — ?ref= parameter
+async function trackRef(request, env, serverName) {
+  const kv = env.KV;
+  if (!kv) return;
+  const ref = new URL(request.url).searchParams.get('ref');
+  if (!ref) return;
+  const source = ref.slice(0, 30).replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!source) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `ref:${source}:${serverName}:${today}`;
+  try {
+    const count = parseInt(await kv.get(key) || '0', 10);
+    await kv.put(key, String(count + 1), { expirationTtl: 2592000 }); // 30 days
+  } catch {}
+}
+
 // ============================================================
 // MAIN WORKER
 // ============================================================
@@ -310,6 +326,9 @@ export default {
       } catch {}
       return new Response('Not Found', { status: 404 });
     }
+
+    // Attribution Tracking
+    await trackRef(request, env, 'intel-api');
 
     // --- Landing page (no auth, no rate limit) ---
     if (path === '/' || path === '/index.html') {

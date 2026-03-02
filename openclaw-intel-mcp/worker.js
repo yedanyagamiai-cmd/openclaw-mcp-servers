@@ -593,6 +593,22 @@ async function finopsTrack(env, serverName) {
   }
 }
 
+// Attribution Tracking — ?ref= parameter
+async function trackRef(request, env, serverName) {
+  const kv = env.KV;
+  if (!kv) return;
+  const ref = new URL(request.url).searchParams.get('ref');
+  if (!ref) return;
+  const source = ref.slice(0, 30).replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!source) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `ref:${source}:${serverName}:${today}`;
+  try {
+    const count = parseInt(await kv.get(key) || '0', 10);
+    await kv.put(key, String(count + 1), { expirationTtl: 2592000 }); // 30 days
+  } catch {}
+}
+
 // ============================================================
 // Main Worker
 // ============================================================
@@ -616,6 +632,9 @@ export default {
     if (await edgeDefenseHoneypot(request, env)) return new Response('Not Found', { status: 404 });
     const cl = parseInt(request.headers.get('Content-Length') || '0', 10);
     if (cl > PAYLOAD_MAX_BYTES) return new Response(JSON.stringify({ error: 'Payload too large' }), { status: 413, headers: { ...cors, 'Content-Type': 'application/json' } });
+
+    // Attribution Tracking
+    await trackRef(request, env, 'intel-mcp');
 
     // Landing page
     if ((path === '/' || path === '/index.html') && request.method === 'GET') {

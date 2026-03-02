@@ -1103,6 +1103,22 @@ async function finopsTrack(env, serverName) {
   }
 }
 
+// Attribution Tracking — ?ref= parameter
+async function trackRef(request, env, serverName) {
+  const kv = env.KV;
+  if (!kv) return;
+  const ref = new URL(request.url).searchParams.get('ref');
+  if (!ref) return;
+  const source = ref.slice(0, 30).replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!source) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `ref:${source}:${serverName}:${today}`;
+  try {
+    const count = parseInt(await kv.get(key) || '0', 10);
+    await kv.put(key, String(count + 1), { expirationTtl: 2592000 }); // 30 days
+  } catch {}
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -1124,6 +1140,7 @@ export default {
     const finops = await finopsTrack(env, 'regex-engine');
     if (!finops.ok) return new Response(JSON.stringify({ error: finops.reason }), { status: 503, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
     if (finops.delay) await new Promise(r => setTimeout(r, finops.delay));
+    await trackRef(request, env, 'regex-engine');
 
     // Landing page
     if (method === 'GET' && (path === '/' || path === '')) {

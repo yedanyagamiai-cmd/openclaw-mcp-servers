@@ -12,31 +12,31 @@ Copy this JSON into your MCP client config:
 {
   "mcpServers": {
     "openclaw-json": {
-      "url": "https://json-toolkit-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://json-toolkit-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-regex": {
-      "url": "https://regex-engine-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://regex-engine-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-colors": {
-      "url": "https://color-palette-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://color-palette-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-timestamp": {
-      "url": "https://timestamp-converter-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://timestamp-converter-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-prompt": {
-      "url": "https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-intel": {
-      "url": "https://openclaw-intel-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://openclaw-intel-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-fortune": {
-      "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-moltbook": {
-      "url": "https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp?ref=github"
     },
     "openclaw-agentforge": {
-      "url": "https://agentforge-compare-mcp.yagami8095.workers.dev/mcp"
+      "url": "https://agentforge-compare-mcp.yagami8095.workers.dev/mcp?ref=github"
     }
   }
 }
@@ -62,7 +62,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-json — JSON Toolkit (6 tools)
 
-`https://json-toolkit-mcp.yagami8095.workers.dev/mcp`
+`https://json-toolkit-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -75,7 +75,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-regex — Regex Engine (5 tools)
 
-`https://regex-engine-mcp.yagami8095.workers.dev/mcp`
+`https://regex-engine-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -87,7 +87,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-colors — Color Palette (5 tools)
 
-`https://color-palette-mcp.yagami8095.workers.dev/mcp`
+`https://color-palette-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -99,7 +99,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-timestamp — Timestamp Converter (5 tools)
 
-`https://timestamp-converter-mcp.yagami8095.workers.dev/mcp`
+`https://timestamp-converter-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -111,7 +111,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-prompt — Prompt Enhancer (6 tools)
 
-`https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp`
+`https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -124,7 +124,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-intel — AI Market Intelligence (6 tools)
 
-`https://openclaw-intel-mcp.yagami8095.workers.dev/mcp`
+`https://openclaw-intel-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -137,7 +137,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-fortune — Fortune & Tarot (3 tools)
 
-`https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp`
+`https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -147,7 +147,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-moltbook — Content Publisher (8 tools)
 
-`https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp`
+`https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
@@ -162,7 +162,7 @@ npx openclaw-mcp-servers --config
 
 ### openclaw-agentforge — AI Tool Comparison (5 tools)
 
-`https://agentforge-compare-mcp.yagami8095.workers.dev/mcp`
+`https://agentforge-compare-mcp.yagami8095.workers.dev/mcp?ref=github`
 
 | Tool | Description |
 |------|-------------|
