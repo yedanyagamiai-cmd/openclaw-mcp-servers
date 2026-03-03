@@ -1,26 +1,23 @@
-# OpenClaw Intel MCP Server
+# OpenClaw Market Intelligence MCP Server
 
-A Model Context Protocol (MCP) server providing 6 AI market intelligence tools for agents. Get market reports, competitive analysis, GitHub trends, and growth projections for AI coding tools.
+[![Smithery](https://smithery.ai/badge/@yagami8095/openclaw-intel-mcp)](https://smithery.ai/server/@yagami8095/openclaw-intel-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-10%2Fday-green)](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 10 calls/day per IP -- no signup required
+> 6 AI market intelligence tools — trends, reports, stats for AI agents
 
----
+AI-native market intelligence. Track GitHub stars, releases, growth trends for AI coding tools. Get reports, stats, and competitor analysis — designed for AI agents as the primary customer.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-intel&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctaW50ZWwtbWNwLnlhZ2FtaTgwOTUud29ya2Vycy5kZXYvbWNwIn0=)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-intel&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/openclaw-intel-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
@@ -32,79 +29,61 @@ npx -y @smithery/cli install @yedanyagamiai-cmd/openclaw-intel-mcp --client clau
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Tier | Description | Required Params |
-|------|------|-------------|-----------------|
-| `get_ai_market_report` | FREE/PRO | Latest AI agent market report | _(optional: api_key)_ |
-| `get_report_by_id` | FREE/PRO | Specific report by ID | `id` |
-| `list_reports` | FREE | List available reports | _(optional: limit)_ |
-| `get_market_stats` | FREE | Real-time ecosystem stats | _(none)_ |
-| `purchase_api_key` | FREE | Get Pro key purchase instructions | _(none)_ |
-| `validate_api_key` | FREE | Check API key validity and quota | `api_key` |
-
----
-
-## Usage Examples
-
-### 1. Get AI market report
+### Smithery
 
 ```bash
-curl -X POST https://openclaw-intel-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_ai_market_report","arguments":{}}}'
+npx @smithery/cli install @yagami8095/openclaw-intel-mcp
 ```
 
-**Response (free tier):**
+## Tools (6)
+
+| Tool | Description |
+|------|-------------|
+| `get_ai_market_report` | Latest AI agent market intelligence report with ROI signals |
+| `get_report_by_id` | Get a specific market report by ID |
+| `list_reports` | List available reports with titles, dates, and content tier |
+| `get_market_stats` | Real-time ecosystem stats: Pro users, report count, data freshness |
+| `purchase_api_key` | Machine-readable payment instructions for Pro API key |
+| `validate_api_key` | Check API key validity and remaining daily quota |
+
+## Example
+
+Call `get_ai_market_report`:
+
 ```json
-{
-  "report_type": "summary",
-  "metrics_count": 3,
-  "highlights": [
-    "Claude Code: 25K+ GitHub stars, fastest growing",
-    "Cursor: 100M+ ARR, dominant IDE market share",
-    "Devin: Enterprise adoption accelerating"
-  ],
-  "full_report_available": true,
-  "upgrade": "Pro key ($9) unlocks 15+ metrics, historical data, projections"
-}
+{}
 ```
 
-### 2. List available reports
+## Rate Limits
 
-```bash
-curl -X POST https://openclaw-intel-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_reports","arguments":{"limit":5}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 10/day | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
-### 3. Get ecosystem stats
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-```bash
-curl -X POST https://openclaw-intel-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_market_stats","arguments":{}}}'
-```
+## Part of OpenClaw MCP Ecosystem
 
----
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
-## Pricing
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-| Tier | Cost | Daily Limit | Data |
-|------|------|-------------|------|
-| Free | $0 | 10 calls/day | Summary (3 metrics) |
-| Pro | $9 one-time | 1,000 calls/day | Full (15+ metrics, history, projections) |
+## Keywords
 
-## Error Handling
-
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+`market intelligence`, `AI trends`, `GitHub stats`, `competitor analysis`, `reports`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT

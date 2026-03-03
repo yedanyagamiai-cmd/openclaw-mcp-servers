@@ -1,26 +1,23 @@
 # Timestamp Converter MCP Server
 
-A Model Context Protocol (MCP) server providing 5 time/date tools for AI agents. Convert timestamps, switch timezones, parse cron expressions, calculate time differences, and format durations.
+[![Smithery](https://smithery.ai/badge/@yagami8095/timestamp-converter-mcp)](https://smithery.ai/server/@yagami8095/timestamp-converter-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-30%2Fday-green)](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 30 calls/day per IP -- no signup required
+> 5 time/date tools — timezone conversion, cron parsing, duration formatting
 
----
+Convert timestamps between formats, handle timezone math, parse cron expressions, calculate time differences, and format durations. Supports IANA timezones.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=timestamp-converter&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vdGltZXN0YW1wLWNvbnZlcnRlci1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=timestamp-converter&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/timestamp-converter-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
@@ -32,84 +29,60 @@ npx -y @smithery/cli install @yedanyagamiai-cmd/timestamp-converter-mcp --client
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Description | Required Params |
-|------|-------------|-----------------|
-| `convert_timestamp` | Convert unix/ISO/human/relative timestamps | `input` |
-| `timezone_convert` | Convert datetime between timezones | `datetime`, `from_tz` |
-| `parse_cron` | Parse 5-field cron, next 5 run times | `expression` |
-| `time_diff` | Calculate difference between two datetimes | `start` |
-| `format_duration` | Convert seconds/human/ISO 8601 durations | `input` |
-
----
-
-## Usage Examples
-
-### 1. Convert a timestamp
+### Smithery
 
 ```bash
-curl -X POST https://timestamp-converter-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"convert_timestamp","arguments":{"input":1714000000}}}'
+npx @smithery/cli install @yagami8095/timestamp-converter-mcp
 ```
 
-**Response:**
+## Tools (5)
+
+| Tool | Description |
+|------|-------------|
+| `convert_timestamp` | Convert between unix epoch, ISO 8601, human-readable, and relative time |
+| `timezone_convert` | Convert datetime between timezones with show_all option for 7 common zones |
+| `parse_cron` | Parse cron expressions — human-readable description + next 5 run times |
+| `time_diff` | Calculate difference between two datetimes in multiple units |
+| `format_duration` | Format seconds into human-readable duration strings |
+
+## Example
+
+Call `convert_timestamp`:
+
 ```json
-{
-  "unix": 1714000000,
-  "unix_ms": 1714000000000,
-  "iso8601": "2024-04-25T02:26:40.000Z",
-  "human": "April 25, 2024, 2:26:40 AM UTC",
-  "relative": "11 months ago"
-}
+{"timestamp": "1714000000", "output_format": "iso"}
 ```
 
-### 2. Parse a cron expression
+## Rate Limits
 
-```bash
-curl -X POST https://timestamp-converter-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"parse_cron","arguments":{"expression":"*/5 9-17 * * 1-5"}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 30/day | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
-**Response:**
-```json
-{
-  "expression": "*/5 9-17 * * 1-5",
-  "description": "Every 5 minutes, from 9:00 AM to 5:59 PM, Monday through Friday",
-  "valid": true,
-  "next_runs": ["2026-03-03T09:00:00Z", "2026-03-03T09:05:00Z", "..."]
-}
-```
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-### 3. Convert timezone
+## Part of OpenClaw MCP Ecosystem
 
-```bash
-curl -X POST https://timestamp-converter-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"timezone_convert","arguments":{"datetime":"2024-04-25T10:00:00","from_tz":"America/New_York","show_all":true}}}'
-```
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
----
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-## Pricing
+## Keywords
 
-| Tier | Cost | Daily Limit |
-|------|------|-------------|
-| Free | $0 | 30 calls/day per IP |
-| Pro | $9 one-time | 1,000 calls/day |
-
-## Error Handling
-
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+`timestamp`, `timezone`, `cron`, `date`, `time`, `convert`, `UTC`, `epoch`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT

@@ -1,26 +1,23 @@
-# AgentForge Compare MCP Server
+# AgentForge AI Tool Compare MCP Server
 
-A Model Context Protocol (MCP) server providing 5 AI tool comparison tools for agents. Compare Claude Code, Cursor, Windsurf, Devin, and more side-by-side with pricing, features, and recommendations.
+[![Smithery](https://smithery.ai/badge/@yagami8095/agentforge-compare-mcp)](https://smithery.ai/server/@yagami8095/agentforge-compare-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-10%2Fday-green)](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 10 calls/day per IP -- no signup required
+> 5 AI coding tool comparison tools — Claude Code, Cursor, Devin, Copilot, and more
 
----
+Compare AI coding tools side-by-side. Get detailed profiles, feature comparisons, pricing analysis, and AI-powered recommendations. Covers Claude Code, Cursor, Windsurf, Devin, SWE-agent, Copilot, Aider, and Cline.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=agentforge-compare&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vYWdlbnRmb3JnZS1jb21wYXJlLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=agentforge-compare&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/agentforge-compare-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
@@ -32,69 +29,60 @@ npx -y @smithery/cli install @yedanyagamiai-cmd/agentforge-compare-mcp --client 
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Tier | Description | Required Params |
-|------|------|-------------|-----------------|
-| `compare_ai_tools` | FREE/PRO | Compare 2+ AI coding tools side-by-side | `tools` |
-| `get_tool_profile` | FREE | Detailed profile for a single AI tool | `tool_id` |
-| `recommend_tool` | PRO | AI-powered recommendation for your use case | `use_case` |
-| `get_pricing_comparison` | FREE | Complete pricing table for all tools | _(none)_ |
-| `purchase_pro_key` | FREE | Get Pro key purchase instructions | _(none)_ |
-
----
-
-## Available Tools to Compare
-
-`claude-code`, `cursor`, `windsurf`, `devin`, `openhands`, `github-copilot`, `aider`, `cline`
-
----
-
-## Usage Examples
-
-### 1. Compare AI coding tools
+### Smithery
 
 ```bash
-curl -X POST https://agentforge-compare-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"compare_ai_tools","arguments":{"tools":["claude-code","cursor","windsurf"],"aspects":["pricing","features"]}}}'
+npx @smithery/cli install @yagami8095/agentforge-compare-mcp
 ```
 
-### 2. Get tool profile
+## Tools (5)
 
-```bash
-curl -X POST https://agentforge-compare-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_tool_profile","arguments":{"tool_id":"claude-code"}}}'
+| Tool | Description |
+|------|-------------|
+| `compare_ai_tools` | Compare 2-8 AI coding tools side-by-side with feature matrix |
+| `get_tool_profile` | Detailed profile: features, pricing, strengths/weaknesses, use cases |
+| `recommend_tool` | AI-powered recommendation based on your requirements and use case |
+| `get_pricing_comparison` | Side-by-side pricing breakdown for all AI coding tools |
+| `purchase_pro_key` | Get Pro API key for full comparisons with recommendations |
+
+## Example
+
+Call `compare_ai_tools`:
+
+```json
+{"tools": ["claude-code", "cursor"], "aspects": ["features", "pricing"]}
 ```
 
-### 3. Get pricing comparison
+## Rate Limits
 
-```bash
-curl -X POST https://agentforge-compare-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_pricing_comparison","arguments":{"sort_by":"price_asc"}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 10/day | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
----
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-## Pricing
+## Part of OpenClaw MCP Ecosystem
 
-| Tier | Cost | Daily Limit | Features |
-|------|------|-------------|----------|
-| Free | $0 | 10 calls/day per IP | Summary comparisons, profiles, pricing |
-| Pro | $9 one-time | 1,000 calls/day | Full analysis, AI recommendations |
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
-## Error Handling
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+## Keywords
+
+`AI tools`, `comparison`, `Claude Code`, `Cursor`, `Copilot`, `Devin`, `coding`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT

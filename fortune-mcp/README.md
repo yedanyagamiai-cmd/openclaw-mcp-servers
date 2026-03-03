@@ -1,113 +1,86 @@
-# Fortune & Tarot MCP Server
+# OpenClaw Fortune & Tarot MCP Server
 
-A Model Context Protocol (MCP) server providing 3 fortune-telling tools for AI agents. Get daily horoscopes with tarot readings, zodiac rankings, and complete fortune data for all 12 signs.
+[![Smithery](https://smithery.ai/badge/@yagami8095/fortune-mcp)](https://smithery.ai/server/@yagami8095/fortune-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-50%2Fday-green)](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 50 calls/day per IP -- no signup required
+> 3 fortune tools — daily zodiac horoscopes + tarot readings for AI agents
 
----
+Daily zodiac fortune and tarot card readings for all 12 signs. Get individual horoscopes, daily overview summaries, and all-signs rankings. Perfect for AI chatbots and content generation.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-fortune&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctZm9ydHVuZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=fortune&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/openclaw-fortune-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
   "mcpServers": {
-    "openclaw-fortune": {
+    "fortune": {
       "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp"
     }
   }
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Description | Required Params |
-|------|-------------|-----------------|
-| `get_daily_fortune` | Daily horoscope + tarot for a zodiac sign | `sign` |
-| `get_fortune_ranking` | Today's 1st-12th zodiac ranking | _(none)_ |
-| `get_all_fortunes` | Complete data for all 12 signs | _(none)_ |
-
----
-
-## Usage Examples
-
-### 1. Get daily fortune
+### Smithery
 
 ```bash
-curl -X POST https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_daily_fortune","arguments":{"sign":"leo"}}}'
+npx @smithery/cli install @yagami8095/fortune-mcp
 ```
 
-**Response:**
+## Tools (3)
+
+| Tool | Description |
+|------|-------------|
+| `daily_fortune` | Get daily horoscope + tarot card reading for a zodiac sign (love, work, health, money) |
+| `daily_overview` | Get today's fortune overview summary across all signs |
+| `all_signs_ranking` | Complete fortune data for all 12 signs with rankings and tarot cards |
+
+## Example
+
+Call `daily_fortune`:
+
 ```json
-{
-  "sign": "leo",
-  "date": "2026-03-03",
-  "overall_score": 85,
-  "tarot_card": "The Sun",
-  "scores": { "love": 90, "work": 80, "money": 75, "health": 95 },
-  "lucky": { "item": "gold ring", "color": "orange", "number": 3, "direction": "south" },
-  "message": "Your natural charisma shines bright today..."
-}
+{"sign": "aries"}
 ```
 
-### 2. Get zodiac ranking
+## Rate Limits
 
-```bash
-curl -X POST https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_fortune_ranking","arguments":{}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 50/day | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
-### 3. Get all 12 signs
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-```bash
-curl -X POST https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_all_fortunes","arguments":{}}}'
-```
+## Part of OpenClaw MCP Ecosystem
 
----
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
-## Supported Signs
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-`aries`, `taurus`, `gemini`, `cancer`, `leo`, `virgo`, `libra`, `scorpio`, `sagittarius`, `capricorn`, `aquarius`, `pisces`
+## Keywords
 
-Also accepts Japanese sign names.
-
----
-
-## Pricing
-
-| Tier | Cost | Daily Limit |
-|------|------|-------------|
-| Free | $0 | 50 calls/day per IP |
-| Pro | $9 one-time | 1,000 calls/day |
-
-## Error Handling
-
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+`fortune`, `horoscope`, `tarot`, `zodiac`, `astrology`, `daily`, `reading`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT

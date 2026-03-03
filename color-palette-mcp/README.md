@@ -1,26 +1,23 @@
 # Color Palette MCP Server
 
-A Model Context Protocol (MCP) server providing 5 color tools for AI agents. Generate palettes, check WCAG contrast, convert between formats, create CSS gradients, and look up Tailwind CSS colors.
+[![Smithery](https://smithery.ai/badge/@yagami8095/color-palette-mcp)](https://smithery.ai/server/@yagami8095/color-palette-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-25%2Fday-green)](https://color-palette-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 25 calls/day per IP -- no signup required
+> 5 color & design tools for AI agents — palettes, WCAG, CSS gradients
 
----
+Generate harmonious color palettes, check WCAG accessibility contrast, convert between color formats, create CSS gradients, and get Tailwind color mappings.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=color-palette&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vY29sb3ItcGFsZXR0ZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=color-palette&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/color-palette-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
@@ -32,82 +29,60 @@ npx -y @smithery/cli install @yedanyagamiai-cmd/color-palette-mcp --client claud
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Description | Required Params |
-|------|-------------|-----------------|
-| `generate_palette` | Generate harmonious palettes by color theory | _(base_color or mood)_ |
-| `contrast_check` | WCAG 2.1 AA/AAA contrast ratio check | `foreground`, `background` |
-| `color_convert` | Convert between hex, rgb, hsl, CSS names | `color` |
-| `css_gradient` | Generate CSS gradient code (linear, radial, conic) | `colors` |
-| `tailwind_colors` | Look up Tailwind v3 colors or find nearest match | _(color_name or closest_to)_ |
-
----
-
-## Usage Examples
-
-### 1. Generate a color palette
+### Smithery
 
 ```bash
-curl -X POST https://color-palette-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"generate_palette","arguments":{"base_color":"#3b82f6","harmony":"triadic","count":3}}}'
+npx @smithery/cli install @yagami8095/color-palette-mcp
 ```
 
-### 2. Check WCAG contrast
+## Tools (5)
 
-```bash
-curl -X POST https://color-palette-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"contrast_check","arguments":{"foreground":"#ffffff","background":"#3b82f6"}}}'
-```
+| Tool | Description |
+|------|-------------|
+| `generate_palette` | Generate harmonious palettes using color theory (complementary, triadic, analogous, etc.) |
+| `contrast_check` | WCAG 2.1 accessibility contrast ratio checker — AA/AAA pass/fail |
+| `color_convert` | Convert colors between hex, RGB, HSL, and CSS named colors |
+| `css_gradient` | Generate ready-to-use CSS gradient code (linear, radial, conic) |
+| `tailwind_colors` | Map any hex color to the nearest Tailwind CSS color class |
 
-**Response:**
+## Example
+
+Call `generate_palette`:
+
 ```json
-{
-  "ratio": 4.68,
-  "AA_normal": true,
-  "AA_large": true,
-  "AAA_normal": false,
-  "AAA_large": true
-}
+{"base_color": "#3b82f6", "harmony": "complementary", "count": 5}
 ```
 
-### 3. Convert a color
+## Rate Limits
 
-```bash
-curl -X POST https://color-palette-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"color_convert","arguments":{"color":"cornflowerblue","to_format":"all"}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 25/day | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
-### 4. Find nearest Tailwind color
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-```bash
-curl -X POST https://color-palette-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"tailwind_colors","arguments":{"closest_to":"#3b82f6"}}}'
-```
+## Part of OpenClaw MCP Ecosystem
 
----
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
-## Pricing
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-| Tier | Cost | Daily Limit |
-|------|------|-------------|
-| Free | $0 | 25 calls/day per IP |
-| Pro | $9 one-time | 1,000 calls/day |
+## Keywords
 
-## Error Handling
-
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+`color`, `palette`, `design`, `WCAG`, `accessibility`, `CSS`, `gradient`, `tailwind`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT

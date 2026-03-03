@@ -1,26 +1,23 @@
-# MoltBook Publisher MCP Server
+# MoltBook Content Publisher MCP Server
 
-A Model Context Protocol (MCP) server providing 8 content publishing tools for AI agents. Convert Markdown to HTML, optimize SEO, translate English to Japanese, generate outlines, and cross-post to note.com, Zenn, and Qiita.
+[![Smithery](https://smithery.ai/badge/@yagami8095/moltbook-publisher-mcp)](https://smithery.ai/server/@yagami8095/moltbook-publisher-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2025--03--26-blue)](https://modelcontextprotocol.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
+[![Free Tier](https://img.shields.io/badge/Free-5%2Fday%2Ftool-green)](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp)
 
-**Vendor:** OpenClaw Intelligence
-**Protocol:** MCP 2025-03-26 (Streamable HTTP)
-**Free tier:** 5 calls/tool/day per IP -- no signup required
+> 8 Japanese content publishing tools — Markdown, SEO, translation, outlines
 
----
+Japanese content publishing toolkit for AI agents. Convert Markdown to HTML, optimize for SEO, translate EN to JP, generate article outlines, find trending topics, and cross-post to note.com, Zenn, and Qiita.
 
-## Quick Start
+## Quick Install
 
-### Option 0: One-Click Cursor Install
+### Cursor (One Click)
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=moltbook-publisher&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vbW9sdGJvb2stcHVibGlzaGVyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=moltbook-publisher&config=e30=)
 
-### Option 1: Install via Smithery
+### Claude Desktop / Any MCP Client
 
-```bash
-npx -y @smithery/cli install @yedanyagamiai-cmd/moltbook-publisher-mcp --client claude
-```
-
-### Option 2: Manual Configuration
+Add to your MCP config:
 
 ```json
 {
@@ -32,74 +29,63 @@ npx -y @smithery/cli install @yedanyagamiai-cmd/moltbook-publisher-mcp --client 
 }
 ```
 
----
-
-## Tools Reference
-
-| Tool | Tier | Description | Required Params |
-|------|------|-------------|-----------------|
-| `convert_markdown_to_html` | FREE | Markdown to platform-compatible HTML | `markdown` |
-| `optimize_for_seo` | FREE | SEO analysis for Japanese articles | `title`, `content` |
-| `translate_en_to_jp` | FREE | English to natural Japanese translation | `text` |
-| `generate_article_outline` | FREE | Structured article outline from topic | `topic` |
-| `get_trending_topics` | PRO | Trending topics on note/Zenn/Qiita | _(optional: platform)_ |
-| `cross_post_format` | PRO | Format article for all 3 platforms | `markdown`, `title` |
-| `analyze_article_performance` | PRO | Predict performance before publishing | `title`, `content` |
-| `purchase_pro_key` | FREE | Get Pro key purchase instructions | _(none)_ |
-
----
-
-## Usage Examples
-
-### 1. Convert Markdown to HTML
+### Smithery
 
 ```bash
-curl -X POST https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"convert_markdown_to_html","arguments":{"markdown":"# Hello World\n\nThis is **bold** text.","platform":"note"}}}'
+npx @smithery/cli install @yagami8095/moltbook-publisher-mcp
 ```
 
-### 2. SEO optimization
+## Tools (8)
 
-```bash
-curl -X POST https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"optimize_for_seo","arguments":{"title":"AIエージェントの最新動向","content":"AIエージェント技術は急速に進化しています...","platform":"note"}}}'
+| Tool | Description |
+|------|-------------|
+| `convert_markdown_to_html` | Convert Markdown to platform-compatible HTML (note.com, Zenn, Qiita) |
+| `optimize_for_seo` | SEO optimization for Japanese articles — title, meta, keywords, readability |
+| `translate_en_to_jp` | Natural English to Japanese translation (not machine — native-sounding) |
+| `generate_article_outline` | Generate structured article outlines with H2/H3, key points, word count |
+| `get_trending_topics` | Find currently trending topics in the Japanese tech/AI community |
+| `cross_post_format` | Format articles for cross-posting across multiple Japanese platforms |
+| `analyze_article_performance` | Analyze article metrics and suggest improvements |
+| `purchase_pro_key` | Get Pro API key for higher rate limits |
+
+## Example
+
+Call `convert_markdown_to_html`:
+
+```json
+{"markdown": "# Hello\n\nThis is a test", "platform": "note"}
 ```
 
-### 3. Translate English to Japanese
+## Rate Limits
 
-```bash
-curl -X POST https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"translate_en_to_jp","arguments":{"text":"AI agents are transforming software development","style":"blog","preserve_terms":["AI","MCP"]}}}'
-```
+| Tier | Limit | Price |
+|------|-------|-------|
+| Free | 5/day/tool | $0 |
+| Pro | 1000/day | $9 one-time |
+| x402 | Pay-per-call | $0.05 USDC |
 
----
+Get a free 7-day Pro trial: [Start Trial](https://product-store.yagami8095.workers.dev/auth/login)
 
-## Supported Platforms
+## Part of OpenClaw MCP Ecosystem
 
-- **note.com** -- Japanese blogging platform
-- **Zenn** -- Developer-focused technical articles
-- **Qiita** -- Japanese developer community
+This server is one of **9 MCP servers** with **49 tools** total. All run on Cloudflare Workers with Streamable HTTP transport.
 
----
+| Server | Tools | Description |
+|--------|-------|-------------|
+| [JSON Toolkit](https://json-toolkit-mcp.yagami8095.workers.dev/mcp) | 6 | Format, validate, diff, query, transform JSON |
+| [Regex Engine](https://regex-engine-mcp.yagami8095.workers.dev/mcp) | 5 | Test, explain, build, replace, extract with regex |
+| [Color Palette](https://color-palette-mcp.yagami8095.workers.dev/mcp) | 5 | Palettes, WCAG contrast, CSS gradients |
+| [Timestamp Converter](https://timestamp-converter-mcp.yagami8095.workers.dev/mcp) | 5 | Timezone math, cron parsing, duration formatting |
+| [Prompt Enhancer](https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp) | 6 | Optimize prompts, 30+ templates, quality scoring |
+| [Market Intelligence](https://openclaw-intel-mcp.yagami8095.workers.dev/mcp) | 6 | AI market trends, reports, competitor analysis |
+| [Fortune & Tarot](https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp) | 3 | Daily zodiac horoscopes + tarot readings |
+| [Content Publisher](https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp) | 8 | Japanese content tools, SEO, translation |
+| [AI Tool Compare](https://agentforge-compare-mcp.yagami8095.workers.dev/mcp) | 5 | Compare Claude Code, Cursor, Copilot, Devin |
 
-## Pricing
+## Keywords
 
-| Tier | Cost | Daily Limit | Features |
-|------|------|-------------|----------|
-| Free | $0 | 5 calls/tool/day | Markdown, SEO, translate, outline |
-| Pro | $12/month | 100 calls/day | Trending topics, cross-post, analytics |
-
-## Error Handling
-
-| Error Code | Meaning |
-|------------|---------|
-| -32600 | Invalid JSON-RPC request |
-| -32601 | Tool not found |
-| -32029 | Rate limit exceeded |
+`Japanese`, `content`, `publishing`, `SEO`, `translation`, `note.com`, `Zenn`, `Qiita`
 
 ## License
 
-MIT -- Built by [OpenClaw Intelligence](https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers)
+MIT
