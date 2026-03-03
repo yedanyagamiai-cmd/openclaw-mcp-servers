@@ -1,41 +1,63 @@
 # MCP Directory Submissions — Status Tracker
 
-**Last Updated**: 2026-03-03 09:30 JST
+**Last Updated**: 2026-03-03 15:00 JST
 **Payment Pipeline**: VERIFIED (HTTP 402 → Trial/PayPal/x402 URLs)
+**Repo Age**: 4 days (created 2026-02-27)
+**Revenue**: $0 | Stars: 0 | Forks: 0
 
 ## Submission Matrix
 
 | Directory | Status | Method | Details |
 |-----------|--------|--------|---------|
-| **Smithery** | ✅ LIVE (9/9) | Auto | Score 54→optimized READMEs pushed |
-| **mcp.so** | ✅ Submitted | GitHub Issues | #606, #608, #611 |
-| **Cline Marketplace** | ✅ Submitted | GitHub Issues | #711, #712, #715 |
-| **punkpeye/awesome-mcp** | ✅ Submitted | PRs | #2499-#2502, #2509 |
-| **Official MCP Registry** | ✅ Submitted | PRs | #3422, #3423, #3426 |
-| **jaw9c/awesome-remote** | ✅ Submitted | PR #126 | 5 servers (2026-03-03) |
-| **mcpservers.org** | ✅ Submitted (5/5) | Web form | JSON, Regex, Color, Timestamp, Prompt (2026-03-03) |
-| **PulseMCP** | 🔄 Auto-ingest | Official Registry | Ingests weekly from Official MCP Registry |
+| **Smithery** | ✅ LIVE (8/9 indexed) | Auto | regex-engine: 0 tools (needs re-publish, Y-NEW) |
+| **punkpeye/awesome-mcp** | 🟡 PR #2622 OPEN | Consolidated PR | Old PRs #2499-#2502,#2509 self-closed. Awaiting review |
+| **Official MCP Registry** | 🟡 PR #3426 OPEN | GitHub PR | #3422,#3423 closed. Awaiting review |
+| **jaw9c/awesome-remote** | 🟡 PR #126 OPEN | GitHub PR | 5 servers. Awaiting review |
+| **Cline Marketplace** | 🟡 Issue #750 OPEN | Consolidated Issue | Old #711,#712,#715 self-closed. Awaiting review |
+| **mcpservers.org** | ❌ NOT LIVE | Web form | 5 submitted but 0 appear in search. Re-submit needed |
+| **mcp.so** | ❓ Unknown | GitHub Issues | #606,#608,#611 — cannot verify (API returns empty) |
+| **PulseMCP** | 🔄 Auto-ingest | Official Registry | Depends on PR #3426 merge |
 | **LobeHub** | 🔄 Auto-indexed | Auto | No manual submission needed |
-| **Cursor Directory** | ⏳ Ready | Community | cursor.directory/mcp |
+| **Cursor Directory** | ⏳ Not submitted | Community | cursor.directory/mcp — needs submission |
 | **Official Registry CLI** | ⏳ Blocked | npm login | Needs interactive `npm login` (Y4) |
+
+## Smithery Server Status (Verified 2026-03-03)
+
+| Server | Smithery Name | Tools | Status |
+|--------|--------------|-------|--------|
+| json-toolkit | openclaw-ai/json-toolkit | 6 | ✅ |
+| regex-engine | openclaw-ai/regex-engine | **0** | ⚠️ Needs re-publish |
+| color-palette | openclaw-ai/color-palette | 5 | ✅ |
+| timestamp-converter | openclaw-ai/timestamp-converter | 5 | ✅ |
+| prompt-enhancer | openclaw-ai/prompt-enhancer | 6 | ✅ |
+| openclaw-intel | openclaw-ai/openclaw-intel | 6 | ✅ |
+| fortune | openclaw-ai/fortune | 3 | ✅ |
+| moltbook-publisher | openclaw-ai/moltbook-publisher | 8 | ✅ |
+| agentforge-compare | openclaw-ai/agentforge-compare | 5 | ✅ |
 
 ## MoltBook Activity (Social Distribution)
 - **Lifetime Replies**: 193+
 - **Karma**: 98
 - **Active Timer**: Every 2h (moltbook-machine.timer)
 - **Machine Version**: v5.0 (AI Agent Conversion Engine)
-- **Wave 5 Posts**: 5/5 to agent-focused submolts (agenteconomy, x402, micropayments, payments, ai-agents)
-- **Wave 6 Posts**: 4/4 to MCP-focused submolts (mcp, tools, skills, tooling) — includes curl examples + JSON configs
-- **Tier S Campaign**: 3 targeted replies to payment-capable agents
-- **Agent Intel**: 1277 profiled (70 Tier S, 118 Tier A, 2 Tier X)
+- **Wave 6 Posts**: 4/4 to MCP-focused submolts
+- **Tier S Campaign**: 3 targeted replies
+- **Agent Intel**: 1277 profiled (70 Tier S, 118 Tier A)
+- **Reality Check**: 0/1277 agents have MCP client capability
 
 ## GitHub Showcase
 - **Repo**: github.com/yedanyagamiai-cmd/openclaw-mcp-servers
+- **Stars**: 0 | **Forks**: 0 | **Issues**: 1
 - **DEMO.md**: 5 curl examples
 - **CONTRIBUTING.md**: How to add tools
 - **Issue Templates**: bug_report.md, feature_request.md
 - **Discussion #2**: Announcements
 - **Topics**: 10 (mcp, mcp-server, ai-tools, cloudflare-workers, etc.)
+
+## Yedan Todos (Manual Actions Required)
+- **Y-NEW**: Get Smithery API key from smithery.ai/account/api-keys → re-publish regex-engine
+- **Y4**: `npm login` for Official Registry CLI
+- **Y-URGENT**: Revoke exposed Anthropic API key at console.anthropic.com
 
 ## Priority 1: punkpeye/awesome-mcp-servers (feeds Glama.ai)
 
