@@ -2,15 +2,15 @@
 
 **49 tools** across **9 servers** on Cloudflare Workers. Streamable HTTP transport — connect in seconds.
 
-Free: 3 calls/tool/day | x402: $0.05/call USDC on Base | Pro: $9 one-time
+**Pro API: $9/mo** = 1000 calls/day across ALL 9 servers with one key.
 
-### 🆓 Free 7-Day Pro Trial
+### Get Pro API Key
 
-Sign up with GitHub for instant access to all 49 tools at 100 calls/day:
+**[Buy Pro Key — $9/mo →](https://paypal.me/Yagami8095/9)**
 
-**[Start Free Trial →](https://product-store.yagami8095.workers.dev/auth/login?ref=github)**
+After payment, email yagami8095@gmail.com with your PayPal receipt. API key delivered within 24h.
 
-No credit card required. After trial: $9 one-time for 1000 calls/day.
+Or pay per call: USDC $0.05 on Base (x402 auto-pay, no signup).
 
 ## Install in Cursor (One Click)
 
@@ -202,13 +202,14 @@ npx openclaw-mcp-servers --config
 
 | Tier | Cost | Limit |
 |------|------|-------|
-| Free | $0 | 3 calls/tool/day per IP |
 | x402 | $0.05/call | USDC on Base L2 — automatic, no signup |
-| Pro | $9 one-time | 1000 calls/day across all 9 servers |
+| Pro | $9/mo | 1000 calls/day across all 9 servers |
+
+**[Get Pro Key →](https://paypal.me/Yagami8095/9)**
 
 ### x402 Flow
 
-When you exceed the free tier, the server returns:
+When rate limited, the server returns:
 
 ```
 HTTP/1.1 402 Payment Required
