@@ -10,6 +10,10 @@ A Model Context Protocol (MCP) server providing 6 AI market intelligence tools f
 
 ## Quick Start
 
+### Option 0: One-Click Cursor Install
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-intel&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctaW50ZWwtbWNwLnlhZ2FtaTgwOTUud29ya2Vycy5kZXYvbWNwIn0=)
+
 ### Option 1: Install via Smithery
 
 ```bash

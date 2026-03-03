@@ -10,6 +10,10 @@ A Model Context Protocol (MCP) server providing 5 color tools for AI agents. Gen
 
 ## Quick Start
 
+### Option 0: One-Click Cursor Install
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=color-palette&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vY29sb3ItcGFsZXR0ZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==)
+
 ### Option 1: Install via Smithery
 
 ```bash

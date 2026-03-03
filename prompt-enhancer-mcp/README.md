@@ -11,6 +11,10 @@ A Model Context Protocol (MCP) server providing 6 prompt engineering tools for A
 
 ## Quick Start
 
+### Option 0: One-Click Cursor Install
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=prompt-enhancer&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vcHJvbXB0LWVuaGFuY2VyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9)
+
 ### Option 1: Install via Smithery
 
 ```bash

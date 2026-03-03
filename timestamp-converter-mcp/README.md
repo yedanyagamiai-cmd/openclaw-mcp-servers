@@ -10,6 +10,10 @@ A Model Context Protocol (MCP) server providing 5 time/date tools for AI agents.
 
 ## Quick Start
 
+### Option 0: One-Click Cursor Install
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=timestamp-converter&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vdGltZXN0YW1wLWNvbnZlcnRlci1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==)
+
 ### Option 1: Install via Smithery
 
 ```bash

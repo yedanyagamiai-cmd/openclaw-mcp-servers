@@ -10,6 +10,10 @@ A Model Context Protocol (MCP) server providing 6 JSON manipulation tools for AI
 
 ## Quick Start
 
+### Option 0: One-Click Cursor Install
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=json-toolkit&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vanNvbi10b29sa2l0LW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9)
+
 ### Option 1: Install via Smithery
 
 ```bash
