@@ -1,0 +1,10 @@
+name = "my-mcp-server"
+main = "worker.js"
+compatibility_date = "2025-04-01"
+
+# Optional: KV namespace for rate limiting
+# Create one with: npx wrangler kv namespace create MY_KV
+# Then uncomment and fill in the id:
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "your-kv-namespace-id"
