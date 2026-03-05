@@ -1,0 +1,16 @@
+{
+  "name": "openclaw-health-api",
+  "version": "1.0.0",
+  "description": "OpenClaw MCP Server Health Checker & Revenue API - Deployed on Render Free Tier",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
