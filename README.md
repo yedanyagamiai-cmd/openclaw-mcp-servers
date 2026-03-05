@@ -290,6 +290,21 @@ npx openclaw-mcp-servers --servers   # 9 endpoint URLs
 npx openclaw-mcp-servers --x402      # Payment info
 ```
 
+## Support OpenClaw
+
+If these servers save you time, consider supporting the project:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://github.com/sponsors/yedanyagamiai-cmd)
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-blue)](https://paypal.me/Yagami8095)
+[![Pro Key](https://img.shields.io/badge/Pro_Key-%249%2Fmo-green)](https://product-store.yagami8095.workers.dev)
+
+| Support | Link |
+|---------|------|
+| GitHub Sponsors | [Become a Sponsor](https://github.com/sponsors/yedanyagamiai-cmd) |
+| PayPal | [paypal.me/Yagami8095](https://paypal.me/Yagami8095) |
+| Pro API Key ($9/mo) | [Product Store](https://product-store.yagami8095.workers.dev) |
+| x402 Pay-per-call | $0.05 USDC/call — automatic |
+
 ## Architecture
 
 All servers run on Cloudflare Workers with Streamable HTTP transport (MCP spec 2025-03-26). Rate limiting via Cloudflare KV. x402 compliant (HTTP 402 + payment headers).
@@ -300,4 +315,4 @@ MIT
 
 ---
 
-Built by [OpenClaw Intelligence](https://product-store.yagami8095.workers.dev)
+Built by [OpenClaw Intelligence](https://product-store.yagami8095.workers.dev) | [GitHub Sponsors](https://github.com/sponsors/yedanyagamiai-cmd) | [PayPal](https://paypal.me/Yagami8095)
