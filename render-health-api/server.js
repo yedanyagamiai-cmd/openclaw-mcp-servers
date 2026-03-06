@@ -13,7 +13,7 @@ app.use(express.json({ limit: '1mb' }));
 
 const IDENTITY = {
   name: 'YEDAN-Bunshin',
-  version: '4.0.0',
+  version: '4.1.0',
   role: 'Autonomous Continuity Engine — YEDAN\'s Cloud Twin',
   parent: 'YEDAN Alpha Gateway (WSL2)',
   operator: 'Yagami',
@@ -607,7 +607,7 @@ async function executeTask(task) {
 }
 
 // ============================================================
-// AUTONOMOUS THINKING — 定期自主分析
+// AUTONOMOUS THINKING — 定期自主分析 (revenue-first)
 // ============================================================
 async function autonomousThink() {
   if (!DEEPSEEK_API_KEY) return;
@@ -619,30 +619,104 @@ async function autonomousThink() {
   const slowServers = health.servers.filter(s => s.latency > 2000);
   const learnings = await getRelevantLearnings('outage', 3);
 
-  // Only think if something interesting is happening
-  if (downServers.length === 0 && slowServers.length === 0) return;
+  // INCIDENT MODE: servers down or slow
+  if (downServers.length > 0 || slowServers.length > 0) {
+    const prompt = `INCIDENT: ${downServers.length} servers down (${downServers.map(s=>s.name).join(',')||'none'}), ${slowServers.length} slow. Past patterns: ${JSON.stringify(learnings)}. Reply JSON: {"analysis":"...","actions":[{"type":"...","detail":"..."}],"shouldAlert":true,"alertMessage":"..."}`;
+    const result = await think(prompt, { mode: 'incident' });
+    if (result.thought) {
+      try {
+        const parsed = JSON.parse(result.thought);
+        if (parsed.shouldAlert) await sendTelegram(`🧠 <b>BUNSHIN INCIDENT</b>\n${parsed.alertMessage}`);
+        await brainSet('last-analysis', parsed, 'analysis', parsed.analysis);
+      } catch { await brainSet('last-analysis', { raw: result.thought }, 'analysis'); }
+    }
+    return;
+  }
 
-  const prompt = `Current situation:
-- ${downServers.length} servers down: ${downServers.map(s => s.name).join(', ') || 'none'}
-- ${slowServers.length} slow (>2s): ${slowServers.map(s => `${s.name}:${s.latency}ms`).join(', ') || 'none'}
-- Past patterns: ${JSON.stringify(learnings)}
+  // REVENUE MODE: everything healthy — think about money
+  try {
+    const revBrain = await brainGet('revenue-status');
+    const yedanStatus = await brainGet('yedan-status');
+    const revPlan = await brainGet('revenue-plan');
+    const { rows: pendingTasks } = await pool.query("SELECT COUNT(*) as c FROM tasks WHERE status = 'pending'");
+    const { rows: recentLearnings } = await pool.query("SELECT category, pattern FROM learnings ORDER BY confidence DESC LIMIT 5");
 
-What should I do? Reply in JSON: {"analysis": "...", "actions": [{"type": "...", "detail": "..."}], "shouldAlert": bool, "alertMessage": "..."}`;
+    const prompt = `You are YEDAN Bunshin, autonomous 24/7 revenue engine. ALL 13 services are healthy.
 
-  const result = await think(prompt, { downServers: downServers.length, slowServers: slowServers.length });
+Current state:
+- Revenue: ${revBrain?.value?.totalRevenue || '$0'}
+- Target: ${revBrain?.value?.monthlyTarget || '$100'}/mo
+- Pending tasks: ${pendingTasks[0]?.c || 0}
+- YEDAN Gateway: ${yedanStatus?.value?.status || 'unknown'}
+- Top learnings: ${JSON.stringify(recentLearnings.map(l => l.pattern).slice(0, 3))}
+- Revenue plan phase: ${revPlan?.value?.phase1_immediate?.name || 'unknown'}
 
+QUESTION: What is the single most impactful revenue action right now? Create a task if needed.
+Reply JSON: {"analysis":"...","suggestedTask":{"title":"...","description":"...","priority":"high/medium"},"shouldNotify":false}`;
+
+    const result = await think(prompt, { mode: 'revenue' }, 300);
+    if (result.thought) {
+      try {
+        const parsed = JSON.parse(result.thought);
+        await brainSet('last-revenue-analysis', parsed, 'analysis', parsed.analysis);
+        // Auto-create suggested task
+        if (parsed.suggestedTask && parsed.suggestedTask.title) {
+          const prio = parsed.suggestedTask.priority === 'high' ? 8 : parsed.suggestedTask.priority === 'medium' ? 5 : 3;
+          await pool.query(
+            "INSERT INTO tasks (type, status, priority, payload, result) VALUES ('revenue-action', 'pending', $1, $2, $3)",
+            [prio, parsed.suggestedTask.title, parsed.suggestedTask.description || '']
+          );
+        }
+        if (parsed.shouldNotify) await sendTelegram(`💰 <b>REVENUE INSIGHT</b>\n${parsed.analysis}`);
+      } catch { await brainSet('last-revenue-analysis', { raw: result.thought }, 'analysis'); }
+    }
+  } catch (err) { console.error('[REVENUE-THINK]', err.message); }
+}
+
+// UPDATE HEALTH SUMMARY in brain (for YEDAN to poll)
+async function updateHealthSummary() {
+  const health = healthCache.latest;
+  if (!health) return;
+  await brainSet('health-summary', {
+    healthy: health.healthy,
+    total: health.total,
+    latencyAvg: health.latencyAvg,
+    downServers: health.servers.filter(s => !s.ok).map(s => s.name),
+    slowServers: health.servers.filter(s => s.latency > 2000).map(s => s.name),
+    lastCheck: health.timestamp,
+    uptime: process.uptime(),
+  }, 'state', `${health.healthy}/${health.total} healthy, avg ${health.latencyAvg}ms`);
+}
+
+// AUTO-CREATE REVENUE TASKS (every 6 hours)
+async function createRevenueTasks() {
+  if (!DEEPSEEK_API_KEY) return;
+  const revPlan = await brainGet('revenue-plan');
+  if (!revPlan) return;
+
+  const prompt = `You are YEDAN Bunshin. Generate 3 specific revenue tasks for YEDAN Gateway to execute in the next 6 hours.
+
+Revenue plan: ${JSON.stringify(revPlan.value?.phase1_immediate || {})}
+Pro servers: prompt-enhancer, agentforge-compare, moltbook-publisher, openclaw-fortune
+
+Each task should be concrete and actionable (not vague). Reply JSON array:
+[{"title":"...","description":"specific steps","priority":"high/medium/low"}]`;
+
+  const result = await think(prompt, { mode: 'task-creation' }, 400);
   if (result.thought) {
     try {
-      const parsed = JSON.parse(result.thought);
-      if (parsed.shouldAlert && parsed.alertMessage) {
-        await sendTelegram(`🧠 <b>BUNSHIN ANALYSIS</b>\n${parsed.alertMessage}`);
+      const tasks = JSON.parse(result.thought);
+      if (Array.isArray(tasks)) {
+        for (const t of tasks.slice(0, 3)) {
+          const prio = t.priority === 'high' ? 8 : t.priority === 'medium' ? 5 : 3;
+          await pool.query(
+            "INSERT INTO tasks (type, status, priority, payload, result) VALUES ('revenue-action', 'pending', $1, $2, $3)",
+            [prio, t.title || 'revenue task', t.description || '']
+          );
+        }
+        await sendTelegram(`📋 <b>AUTO-TASKS CREATED</b>\n${tasks.map(t => `• ${t.title}`).join('\n')}`);
       }
-      // Store analysis
-      await brainSet('last-analysis', parsed, 'analysis', parsed.analysis);
-    } catch {
-      // Response wasn't JSON, store as-is
-      await brainSet('last-analysis', { raw: result.thought }, 'analysis');
-    }
+    } catch (err) { console.error('[TASK-CREATE]', err.message); }
   }
 }
 
@@ -1017,8 +1091,10 @@ app.post('/api/command', auth, async (req, res) => {
 });
 
 // ============================================================
-// AUTONOMOUS OPERATIONS
+// AUTONOMOUS OPERATIONS — Revenue-First Loop
 // ============================================================
+
+// Health check every 5 min + update brain summary
 setInterval(async () => {
   try {
     const r = await checkAllServers();
@@ -1027,24 +1103,34 @@ setInterval(async () => {
       ? `[!] ${down.length}/${r.total} DOWN: ${down.map(s => s.name).join(',')}`
       : `[OK] ${r.total}/${r.total} | ${r.latencyAvg}ms`
     );
+    await updateHealthSummary(); // Write to brain for YEDAN to poll
   } catch (err) { console.error('[HEALTH]', err.message); }
 }, 5 * 60 * 1000);
 
+// Process pending tasks every 2 min
 setInterval(async () => {
   try { const t = await processNextTask(); if (t) console.log(`[TASK] Auto #${t.id}`); }
   catch {}
 }, 2 * 60 * 1000);
 
+// Revenue-first autonomous thinking every 15 min
 setInterval(async () => {
   try { await autonomousThink(); } catch (err) { console.error('[THINK]', err.message); }
 }, 15 * 60 * 1000);
 
+// Auto-create revenue tasks every 6 hours
+setInterval(async () => {
+  try { await createRevenueTasks(); } catch (err) { console.error('[REV-TASKS]', err.message); }
+}, 6 * 60 * 60 * 1000);
+
+// Daily report to Telegram (every 12 hours for better coverage)
 setInterval(async () => {
   if (TELEGRAM_BOT_TOKEN) {
     try { await sendTelegram(await generateReport()); } catch {}
   }
-}, 24 * 60 * 60 * 1000);
+}, 12 * 60 * 60 * 1000);
 
+// Cleanup old data every 6 hours
 setInterval(async () => {
   try { const r = await runCleanup(); console.log(`[CLEAN] ${JSON.stringify(r)}`); }
   catch {}
@@ -1074,11 +1160,20 @@ async function boot() {
           `🚀 <b>BUNSHIN v${IDENTITY.version} BOOT</b>\n` +
           `MCP: ${r.mcpHealthy}/${r.mcpTotal} | All: ${r.healthy}/${r.total}\n` +
           `🧠 Think: ${DEEPSEEK_API_KEY ? '✅' : '❌'} | 📡 TG: ✅\n` +
-          `Features: brain, think, learn, handoff`
+          `Features: brain, think, learn, handoff, revenue-loop`
         );
       }
+      await updateHealthSummary();
     } catch (err) { console.error('[BOOT]', err.message); }
   }, 3000);
+
+  // Delayed boot tasks: create first revenue tasks + first revenue think
+  setTimeout(async () => {
+    try {
+      await createRevenueTasks();
+      console.log('[BOOT] Revenue tasks created');
+    } catch (err) { console.error('[BOOT-REV]', err.message); }
+  }, 30000); // 30s after boot
 }
 
 app.listen(PORT, () => {
