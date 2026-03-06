@@ -22,7 +22,7 @@ function parseJsonResponse(text) {
 
 const IDENTITY = {
   name: 'YEDAN-Bunshin',
-  version: '4.1.1',
+  version: '4.1.2',
   role: 'Autonomous Continuity Engine — YEDAN\'s Cloud Twin',
   parent: 'YEDAN Alpha Gateway (WSL2)',
   operator: 'Yagami',
@@ -523,7 +523,7 @@ async function processNextTask() {
   try {
     const { rows } = await pool.query(
       `UPDATE tasks SET status='running', updated_at=NOW()
-       WHERE id = (SELECT id FROM tasks WHERE status='pending' AND retry_count < max_retries
+       WHERE id = (SELECT id FROM tasks WHERE status='pending' AND retry_count < 3
        ORDER BY priority DESC, created_at ASC LIMIT 1 FOR UPDATE SKIP LOCKED) RETURNING *`
     );
     if (!rows[0]) return null;
@@ -539,7 +539,7 @@ async function processNextTask() {
       return task;
     } catch (err) {
       const retry = task.retry_count + 1;
-      const status = retry >= task.max_retries ? 'failed' : 'pending';
+      const status = retry >= 3 ? 'failed' : 'pending';
       await pool.query("UPDATE tasks SET status=$1, error=$2, retry_count=$3, updated_at=NOW() WHERE id=$4",
         [status, err.message, retry, task.id]);
       if (status === 'failed') {
@@ -673,7 +673,7 @@ Reply JSON: {"analysis":"...","suggestedTask":{"title":"...","description":"..."
           const prio = parsed.suggestedTask.priority === 'high' ? 8 : parsed.suggestedTask.priority === 'medium' ? 5 : 3;
           await pool.query(
             "INSERT INTO tasks (type, status, priority, payload, result) VALUES ('revenue-action', 'pending', $1, $2, $3)",
-            [prio, parsed.suggestedTask.title, parsed.suggestedTask.description || '']
+            [prio, JSON.stringify(parsed.suggestedTask.title), JSON.stringify(parsed.suggestedTask.description || '')]
           );
         }
         if (parsed.shouldNotify) await sendTelegram(`💰 <b>REVENUE INSIGHT</b>\n${parsed.analysis}`);
@@ -720,7 +720,7 @@ Each task should be concrete and actionable (not vague). Reply JSON array:
           const prio = t.priority === 'high' ? 8 : t.priority === 'medium' ? 5 : 3;
           await pool.query(
             "INSERT INTO tasks (type, status, priority, payload, result) VALUES ('revenue-action', 'pending', $1, $2, $3)",
-            [prio, t.title || 'revenue task', t.description || '']
+            [prio, JSON.stringify(t.title || 'revenue task'), JSON.stringify(t.description || '')]
           );
         }
         await sendTelegram(`📋 <b>AUTO-TASKS CREATED</b>\n${tasks.map(t => `• ${t.title}`).join('\n')}`);
@@ -871,8 +871,8 @@ app.post('/api/tasks', auth, async (req, res) => {
     const { type, payload = {}, priority = 5, maxRetries = 3 } = req.body;
     if (!type) return res.status(400).json({ error: 'type required' });
     const { rows } = await pool.query(
-      'INSERT INTO tasks (type, payload, priority, max_retries) VALUES ($1,$2,$3,$4) RETURNING *',
-      [type, JSON.stringify(payload), priority, maxRetries]
+      'INSERT INTO tasks (type, payload, priority) VALUES ($1,$2,$3) RETURNING *',
+      [type, JSON.stringify(payload), priority]
     );
     res.status(201).json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
