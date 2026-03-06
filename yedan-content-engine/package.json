@@ -1,0 +1,11 @@
+{
+  "name": "yedan-content-engine",
+  "version": "1.0.0",
+  "description": "YEDAN Content Engine - AI-powered content factory using Workers AI",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

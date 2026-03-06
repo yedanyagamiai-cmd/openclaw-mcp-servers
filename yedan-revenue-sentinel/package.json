@@ -1,0 +1,11 @@
+{
+  "name": "yedan-revenue-sentinel",
+  "version": "1.0.0",
+  "description": "YEDAN Revenue Sentinel - 24/7 money monitoring across all platforms",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

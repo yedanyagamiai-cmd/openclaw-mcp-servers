@@ -1,0 +1,11 @@
+{
+  "name": "yedan-health-commander",
+  "version": "1.0.0",
+  "description": "YEDAN Health Commander - Self-healing infrastructure guardian monitoring 20+ endpoints",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

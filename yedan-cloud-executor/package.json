@@ -1,0 +1,11 @@
+{
+  "name": "yedan-cloud-executor",
+  "version": "1.0.0",
+  "description": "Cloud Brain #2 - 24/7 Task Executor for YEDAN ecosystem",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

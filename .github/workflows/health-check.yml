@@ -1,0 +1,46 @@
+name: Health Check — All 9 MCP Servers
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        server:
+          - name: JSON Toolkit
+            url: https://json-toolkit-mcp.yagami8095.workers.dev/mcp
+          - name: Regex Engine
+            url: https://regex-engine-mcp.yagami8095.workers.dev/mcp
+          - name: Color Palette
+            url: https://color-palette-mcp.yagami8095.workers.dev/mcp
+          - name: Timestamp
+            url: https://timestamp-converter-mcp.yagami8095.workers.dev/mcp
+          - name: Prompt Enhancer
+            url: https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp
+          - name: Market Intel
+            url: https://openclaw-intel-mcp.yagami8095.workers.dev/mcp
+          - name: Fortune
+            url: https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp
+          - name: MoltBook Publisher
+            url: https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp
+          - name: AgentForge Compare
+            url: https://agentforge-compare-mcp.yagami8095.workers.dev/mcp
+      fail-fast: false
+
+    steps:
+      - name: Check ${{ matrix.server.name }}
+        run: |
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"health-check","version":"1.0.0"}},"id":1}' \
+            '${{ matrix.server.url }}')
+          echo "${{ matrix.server.name }}: HTTP $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "::error::${{ matrix.server.name }} returned HTTP $STATUS"
+            exit 1
+          fi
+          echo "::notice::${{ matrix.server.name }} is healthy (HTTP 200)"

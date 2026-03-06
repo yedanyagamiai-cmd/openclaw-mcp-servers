@@ -1,0 +1,27 @@
+name = "yedan-orchestrator"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+[vars]
+BUNSHIN_URL = "https://openclaw-mcp-servers.onrender.com"
+FLEET_VERSION = "1.0.0"
+
+# Master brain heartbeat - every 2 minutes
+[triggers]
+crons = ["*/2 * * * *"]
+
+# Shared KV for rate limits and state
+[[kv_namespaces]]
+binding = "KV"
+id = "412eb1678043499eb34f0e7f211176b9"
+
+# Army-specific KV for fleet state
+[[kv_namespaces]]
+binding = "ARMY_KV"
+id = "51826cd6550a40e79a61d462b084a1c8"
+
+# Army Command D1 database
+[[d1_databases]]
+binding = "ARMY_DB"
+database_name = "yedan-army-command"
+database_id = "48fa9025-84ba-448a-9993-1d88e37f0a5c"

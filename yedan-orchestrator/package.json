@@ -1,0 +1,11 @@
+{
+  "name": "yedan-orchestrator",
+  "version": "1.0.0",
+  "description": "YEDAN Fleet Orchestrator - Master Brain coordinating entire cloud army",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

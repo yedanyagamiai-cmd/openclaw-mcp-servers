@@ -1,0 +1,11 @@
+{
+  "name": "yedan-intel-ops",
+  "version": "1.0.0",
+  "description": "YEDAN Intel Operations - Competitive intelligence & market monitoring",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

@@ -1,23 +1,41 @@
-# OpenClaw MCP Servers
+<p align="center">
+  <h1 align="center">OpenClaw MCP Servers</h1>
+  <p align="center"><strong>49 AI tools. 9 servers. Zero setup. Connect in 10 seconds.</strong></p>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-blue)](https://modelcontextprotocol.io)
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com)
-[![Servers](https://img.shields.io/badge/Servers-9-green)]()
-[![Tools](https://img.shields.io/badge/Tools-49-green)]()
-[![Smithery](https://img.shields.io/badge/Smithery-Published-purple)](https://smithery.ai)
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT"></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Streamable_HTTP-blue" alt="MCP"></a>
+  <a href="https://workers.cloudflare.com"><img src="https://img.shields.io/badge/Cloudflare-Workers-orange" alt="CF"></a>
+  <a href="#servers--tools"><img src="https://img.shields.io/badge/Servers-9-green" alt="9"></a>
+  <a href="#servers--tools"><img src="https://img.shields.io/badge/Tools-49-green" alt="49"></a>
+  <a href="https://smithery.ai/server/openclaw-ai/json-toolkit"><img src="https://img.shields.io/badge/Smithery-Published-purple" alt="Smithery"></a>
+  <a href="https://clawhub.ai"><img src="https://img.shields.io/badge/ClawHub-9_Skills-teal" alt="ClawHub"></a>
+  <a href="https://github.com/yedanyagamiai-cmd/openclaw-mcp-servers/releases"><img src="https://img.shields.io/github/v/release/yedanyagamiai-cmd/openclaw-mcp-servers?label=Release" alt="Release"></a>
+</p>
 
-**49 tools** across **9 servers** on Cloudflare Workers. Streamable HTTP transport — connect in seconds.
+<p align="center">
+  <a href="#install-in-cursor-one-click">Cursor Install</a> &bull;
+  <a href="#install-in-claude-desktop">Claude Desktop</a> &bull;
+  <a href="#quick-connect">Quick Connect</a> &bull;
+  <a href="#servers--tools">All 49 Tools</a> &bull;
+  <a href="#pricing--pro-api">Get Pro Key</a>
+</p>
 
-**Pro API: $9/mo** = 1000 calls/day across ALL 9 servers with one key.
+---
 
-### Get Pro API Key
+## Why OpenClaw?
 
-**[Buy Pro Key — $9/mo →](https://paypal.me/Yagami8095/9)**
+| Feature | OpenClaw | Others |
+|---------|----------|--------|
+| Setup time | **10 seconds** (paste URL) | npm install + config + restart |
+| Server management | **Zero** (Cloudflare edge) | Self-host or Docker |
+| Uptime | **99.9%** (global CDN) | Depends on your infra |
+| Latency | **<100ms** (edge compute) | 200-500ms (centralized) |
+| Free tier | **Yes** (daily limits) | Most require API keys |
+| Pro upgrade | **$9/mo** = ALL 9 servers | Per-server pricing |
 
-After payment, email yagami8095@gmail.com with your PayPal receipt. API key delivered within 24h.
-
-Or pay per call: USDC $0.05 on Base (x402 auto-pay, no signup).
+---
 
 ## Support OpenClaw
 
@@ -30,22 +48,19 @@ Your support helps keep these 9 MCP servers running and free for everyone!
 
 ## Install in Cursor (One Click)
 
-Click any badge to install directly into [Cursor](https://cursor.com):
+| Server | Install | Tools | Free/day |
+|--------|---------|-------|----------|
+| JSON Toolkit | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=json-toolkit&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vanNvbi10b29sa2l0LW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 6 | 20 |
+| Regex Engine | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=regex-engine&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vcmVnZXgtZW5naW5lLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 5 | 20 |
+| Color Palette | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=color-palette&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vY29sb3ItcGFsZXR0ZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 5 | 25 |
+| Timestamp | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=timestamp-converter&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vdGltZXN0YW1wLWNvbnZlcnRlci1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 5 | 30 |
+| Prompt Enhancer | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=prompt-enhancer&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vcHJvbXB0LWVuaGFuY2VyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 6 | 10 |
+| Market Intelligence | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-intel&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctaW50ZWwtbWNwLnlhZ2FtaTgwOTUud29ya2Vycy5kZXYvbWNwIn0=) | 6 | 10 |
+| Fortune & Tarot | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-fortune&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctZm9ydHVuZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 3 | 50 |
+| Content Publisher | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=moltbook-publisher&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vbW9sdGJvb2stcHVibGlzaGVyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 8 | 5 |
+| AI Tool Compare | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=agentforge-compare&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vYWdlbnRmb3JnZS1jb21wYXJlLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 5 | 10 |
 
-| Server | Install | Tools |
-|--------|---------|-------|
-| JSON Toolkit | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=json-toolkit&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vanNvbi10b29sa2l0LW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 6 |
-| Regex Engine | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=regex-engine&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vcmVnZXgtZW5naW5lLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 5 |
-| Color Palette | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=color-palette&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vY29sb3ItcGFsZXR0ZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 5 |
-| Timestamp Converter | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=timestamp-converter&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vdGltZXN0YW1wLWNvbnZlcnRlci1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 5 |
-| Prompt Enhancer | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=prompt-enhancer&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vcHJvbXB0LWVuaGFuY2VyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 6 |
-| Market Intelligence | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-intel&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctaW50ZWwtbWNwLnlhZ2FtaTgwOTUud29ya2Vycy5kZXYvbWNwIn0=) | 6 |
-| Fortune & Tarot | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=openclaw-fortune&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vb3BlbmNsYXctZm9ydHVuZS1tY3AueWFnYW1pODA5NS53b3JrZXJzLmRldi9tY3AifQ==) | 3 |
-| Content Publisher | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=moltbook-publisher&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vbW9sdGJvb2stcHVibGlzaGVyLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 8 |
-| AI Tool Compare | [![Install](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=agentforge-compare&config=eyJ0eXBlIjogImh0dHAiLCAidXJsIjogImh0dHBzOi8vYWdlbnRmb3JnZS1jb21wYXJlLW1jcC55YWdhbWk4MDk1LndvcmtlcnMuZGV2L21jcCJ9) | 5 |
-
-Also available on [Smithery](https://smithery.ai/server/openclaw-ai/json-toolkit) — install via `npx @smithery/cli install`
-
+Also on [Smithery](https://smithery.ai/server/openclaw-ai/json-toolkit) and [ClawHub](https://clawhub.ai)
 
 ## Install in Claude Desktop
 
@@ -54,223 +69,204 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "openclaw-json": {
-      "type": "streamable-http",
-      "url": "https://json-toolkit-mcp.yagami8095.workers.dev/mcp"
-    },
-    "openclaw-regex": {
-      "type": "streamable-http",
-      "url": "https://regex-engine-mcp.yagami8095.workers.dev/mcp"
-    },
-    "openclaw-colors": {
-      "type": "streamable-http",
-      "url": "https://color-palette-mcp.yagami8095.workers.dev/mcp"
-    },
-    "openclaw-timestamp": {
-      "type": "streamable-http",
-      "url": "https://timestamp-converter-mcp.yagami8095.workers.dev/mcp"
-    },
-    "openclaw-prompt": {
-      "type": "streamable-http",
-      "url": "https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp"
-    }
+    "openclaw-json": { "type": "streamable-http", "url": "https://json-toolkit-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-regex": { "type": "streamable-http", "url": "https://regex-engine-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-colors": { "type": "streamable-http", "url": "https://color-palette-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-timestamp": { "type": "streamable-http", "url": "https://timestamp-converter-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-prompt": { "type": "streamable-http", "url": "https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-intel": { "type": "streamable-http", "url": "https://openclaw-intel-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-fortune": { "type": "streamable-http", "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-moltbook": { "type": "streamable-http", "url": "https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp" },
+    "openclaw-agentforge": { "type": "streamable-http", "url": "https://agentforge-compare-mcp.yagami8095.workers.dev/mcp" }
   }
 }
 ```
 
-> Top 5 most useful servers. Add all 9 from the Quick Connect section below.
-
-## Quick Connect
-
-Copy this JSON into your MCP client config:
-
-```json
-{
-  "mcpServers": {
-    "openclaw-json": {
-      "url": "https://json-toolkit-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-regex": {
-      "url": "https://regex-engine-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-colors": {
-      "url": "https://color-palette-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-timestamp": {
-      "url": "https://timestamp-converter-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-prompt": {
-      "url": "https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-intel": {
-      "url": "https://openclaw-intel-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-fortune": {
-      "url": "https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-moltbook": {
-      "url": "https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp?ref=github"
-    },
-    "openclaw-agentforge": {
-      "url": "https://agentforge-compare-mcp.yagami8095.workers.dev/mcp?ref=github"
-    }
-  }
-}
-```
-
-Or use npm:
-
-```bash
-npx openclaw-mcp-servers --config
-```
-
-### Where to paste
+## Quick Connect (Any MCP Client)
 
 | Client | Config file |
 |--------|------------|
 | Claude Code | `~/.claude.json` or `.mcp.json` |
 | Cursor | `.cursor/mcp.json` |
 | Windsurf | `.windsurf/mcp.json` |
+| OpenClaw | `openclaw.json` → `tools.mcp` |
 | Cline | VS Code MCP settings |
-| Any MCP client | Streamable HTTP transport |
+| Any | Streamable HTTP transport |
 
 ## Servers & Tools
 
-### openclaw-json — JSON Toolkit (6 tools)
+### JSON Toolkit — 6 tools
 
-`https://json-toolkit-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://json-toolkit-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
+| Tool | What it does |
 |------|-------------|
-| `json_format` | Pretty-print or minify JSON. Specify indent level or set minify=true. |
-| `json_validate` | Validate JSON string. Returns type info on success, line/column/error on failure. |
-| `json_diff` | Compare two JSON values. Returns added, removed, and changed paths. |
-| `json_query` | Query JSON with JSONPath. Supports dot notation, wildcards, deep scan, filters. |
-| `json_transform` | Flatten, unflatten, pick, omit, rename keys. Supports deep recursive operations. |
-| `json_schema_generate` | Generate JSON Schema (draft-07) from sample data. Infers types, formats, required fields. |
+| `json_format` | Pretty-print or minify JSON |
+| `json_validate` | Validate JSON with line/column errors |
+| `json_diff` | Compare two JSON values (added/removed/changed) |
+| `json_query` | JSONPath query (dot notation, wildcards, filters) |
+| `json_transform` | Flatten, unflatten, pick, omit, rename keys |
+| `json_schema_generate` | Generate JSON Schema from sample data |
 
-### openclaw-regex — Regex Engine (5 tools)
+### Regex Engine — 5 tools
 
-`https://regex-engine-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://regex-engine-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
+| Tool | What it does |
 |------|-------------|
-| `regex_test` | Test pattern against text. Returns matches, positions, capture groups. |
-| `regex_explain` | Explain regex token-by-token in plain English. |
-| `regex_build` | Build regex from natural language. 25+ built-in patterns (email, URL, IP, phone, date, UUID, JWT, etc). |
-| `regex_replace` | Find-and-replace with regex. Supports backreferences ($1, $2). |
-| `regex_extract` | Extract all matches with named capture group support. |
+| `regex_test` | Test pattern, get matches + positions + groups |
+| `regex_explain` | Token-by-token plain English explanation |
+| `regex_build` | Build regex from natural language (25+ patterns) |
+| `regex_replace` | Find-replace with backreferences |
+| `regex_extract` | Extract all matches with named groups |
 
-### openclaw-colors — Color Palette (5 tools)
+### Color Palette — 5 tools
 
-`https://color-palette-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://color-palette-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
+| Tool | What it does |
 |------|-------------|
-| `generate_palette` | Generate harmonious palette by color theory. Complementary, analogous, triadic, etc. |
-| `contrast_check` | WCAG 2.1 contrast ratio check. AA/AAA pass/fail for normal and large text. |
-| `color_convert` | Convert between hex, rgb, hsl, CSS named colors (140 names). |
-| `css_gradient` | Generate CSS gradient code. Linear, radial, conic from color array. |
-| `tailwind_colors` | Lookup Tailwind v3 colors. All shades (50-950) or find nearest match. |
+| `generate_palette` | Harmonious palette (complementary, triadic, etc) |
+| `contrast_check` | WCAG 2.1 AA/AAA compliance |
+| `color_convert` | Hex/RGB/HSL/CSS named (140 colors) |
+| `css_gradient` | Linear/radial/conic gradient CSS |
+| `tailwind_colors` | Tailwind v3 lookup + nearest match |
 
-### openclaw-timestamp — Timestamp Converter (5 tools)
+### Timestamp Converter — 5 tools
 
-`https://timestamp-converter-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://timestamp-converter-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
+| Tool | What it does |
 |------|-------------|
-| `convert_timestamp` | Convert between unix epoch, ISO 8601, human-readable, relative. Auto-detects input. |
-| `timezone_convert` | Convert datetime between timezones. show_all=true for 7 zones simultaneously. |
-| `parse_cron` | Parse 5-field cron expression. Human description + next 5 run times. |
-| `time_diff` | Calculate difference between two datetimes in seconds/minutes/hours/days/weeks. |
-| `format_duration` | Convert between seconds, human string ("2h 30m"), ISO 8601 duration ("PT2H30M"). |
+| `convert_timestamp` | Unix/ISO/human/relative auto-detect |
+| `timezone_convert` | Between timezones (7 zones at once) |
+| `parse_cron` | Cron expression → human description + next 5 runs |
+| `time_diff` | Difference in seconds/minutes/hours/days |
+| `format_duration` | Seconds ↔ human string ↔ ISO 8601 |
 
-### openclaw-prompt — Prompt Enhancer (6 tools)
+### Prompt Enhancer — 6 tools
 
-`https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
+| Tool | What it does | Tier |
+|------|-------------|------|
+| `enhance_prompt` | Optimize prompt structure + clarity | Free |
+| `analyze_prompt` | Quality score + issues + suggestions | Free |
+| `convert_prompt_format` | Plain/XML/Markdown/JSON conversion | Free |
+| `generate_system_prompt` | System prompt for any role/task | Free |
+| `prompt_template_library` | 30+ production templates | **Pro** |
+| `purchase_pro_key` | Unlock Pro features | — |
+
+### Market Intelligence — 6 tools
+
+`https://openclaw-intel-mcp.yagami8095.workers.dev/mcp`
+
+| Tool | What it does | Tier |
+|------|-------------|------|
+| `get_ai_market_report` | AI agent market report + trends | Free |
+| `get_report_by_id` | Specific report deep-dive | Pro |
+| `list_reports` | Browse all available reports | Free |
+| `get_market_stats` | Real-time ecosystem stats | Free |
+| `purchase_api_key` | Get Pro key for full access | — |
+| `validate_api_key` | Check key validity + quota | Free |
+
+### Fortune & Tarot — 3 tools
+
+`https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp`
+
+| Tool | What it does |
 |------|-------------|
-| `enhance_prompt` | Optimize a prompt with clearer instructions, structure, constraints. FREE. |
-| `analyze_prompt` | Quality analysis: clarity score, specificity, issues, suggestions. FREE. |
-| `convert_prompt_format` | Convert between plain, xml, markdown, json formats. FREE. |
-| `generate_system_prompt` | Generate system prompt for a given role and task. FREE. |
-| `prompt_template_library` | Browse 30+ production-ready templates by category. PRO. |
-| `purchase_pro_key` | Get Pro API key ($9). Unlocks templates + higher limits. |
+| `get_daily_fortune` | Daily horoscope + tarot reading |
+| `get_fortune_ranking` | Today's zodiac ranking (1st-12th) |
+| `get_all_fortunes` | All 12 signs at once |
 
-### openclaw-intel — AI Market Intelligence (6 tools)
+### Content Publisher — 8 tools
 
-`https://openclaw-intel-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
-|------|-------------|
-| `get_ai_market_report` | Latest AI agent market report. GitHub stars, releases, growth trends. |
-| `get_report_by_id` | Specific report by ID. Pro key for full content. |
-| `list_reports` | List available reports with titles and dates. |
-| `get_market_stats` | Real-time ecosystem stats: users, reports, data freshness. |
-| `purchase_api_key` | Purchase Pro key ($9) for full reports + 1000 calls/day. |
-| `validate_api_key` | Check API key validity and remaining quota. |
+| Tool | What it does | Tier |
+|------|-------------|------|
+| `convert_markdown_to_html` | MD → HTML for note.com/Zenn/Qiita | Free |
+| `optimize_for_seo` | SEO analysis for Japanese content | Free |
+| `translate_en_to_jp` | Natural English → Japanese | Free |
+| `generate_article_outline` | Structured outline from topic | Free |
+| `get_trending_topics` | Trending on note.com/Zenn/Qiita | **Pro** |
+| `cross_post_format` | Format for all 3 platforms | **Pro** |
+| `analyze_article_performance` | Predict performance before publish | **Pro** |
+| `purchase_pro_key` | Unlock Pro features ($12/mo) | — |
 
-### openclaw-fortune — Fortune & Tarot (3 tools)
+### AI Tool Compare — 5 tools
 
-`https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp?ref=github`
+`https://agentforge-compare-mcp.yagami8095.workers.dev/mcp`
 
-| Tool | Description |
-|------|-------------|
-| `get_daily_fortune` | Daily horoscope + tarot for a zodiac sign. Scores, lucky items, message. |
-| `get_fortune_ranking` | Today's zodiac ranking 1st-12th with scores and tiers. |
-| `get_all_fortunes` | Complete data for all 12 signs. |
+| Tool | What it does | Tier |
+|------|-------------|------|
+| `compare_ai_tools` | Side-by-side AI tool comparison | Free |
+| `get_tool_profile` | Detailed tool profile + pricing | Free |
+| `recommend_tool` | AI recommendation for your needs | **Pro** |
+| `get_pricing_comparison` | Full pricing table | Free |
+| `purchase_pro_key` | Unlock AI recommendations | — |
 
-### openclaw-moltbook — Content Publisher (8 tools)
+---
 
-`https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp?ref=github`
+## Pricing & Pro API
 
-| Tool | Description |
-|------|-------------|
-| `convert_markdown_to_html` | Markdown to HTML for note.com, Zenn, Qiita. |
-| `optimize_for_seo` | SEO analysis for Japanese article content. |
-| `translate_en_to_jp` | English to natural Japanese translation. |
-| `generate_article_outline` | Structured article outline from topic. |
-| `get_trending_topics` | [PRO] Trending topics on note.com/Zenn/Qiita. |
-| `cross_post_format` | [PRO] Format article for all 3 platforms. |
-| `analyze_article_performance` | [PRO] Predict article performance before publishing. |
-| `purchase_pro_key` | Get Pro key ($12/month). |
+<table>
+<tr><th>Tier</th><th>Cost</th><th>What you get</th></tr>
+<tr><td><strong>Free</strong></td><td>$0</td><td>Limited daily calls per server (see table above)</td></tr>
+<tr><td><strong>Pro</strong></td><td><strong>$9/mo</strong></td><td>1,000 calls/day across ALL 9 servers + Pro-only tools</td></tr>
+<tr><td><strong>x402</strong></td><td>$0.05/call</td><td>Pay-per-call with USDC on Base L2 (auto-pay, no signup)</td></tr>
+</table>
 
-### openclaw-agentforge — AI Tool Comparison (5 tools)
+### Get Pro Key
 
-`https://agentforge-compare-mcp.yagami8095.workers.dev/mcp?ref=github`
+| Method | Link |
+|--------|------|
+| **Stripe** (Card) | [Buy Pro Key - $9/mo](https://buy.stripe.com/4gw5na5U19SP9TW288) |
+| **PayPal** | [paypal.me/Yagami8095/9](https://paypal.me/Yagami8095/9) |
+| **Product Store** | [product-store.yagami8095.workers.dev](https://product-store.yagami8095.workers.dev) |
 
-| Tool | Description |
-|------|-------------|
-| `compare_ai_tools` | Compare 2+ AI coding tools side-by-side. Claude Code, Cursor, Windsurf, Devin, etc. |
-| `get_tool_profile` | Detailed profile: features, pricing, strengths, weaknesses, use cases. |
-| `recommend_tool` | [PRO] AI-powered recommendation based on your requirements. |
-| `get_pricing_comparison` | Complete pricing table for all AI coding tools. FREE. |
-| `purchase_pro_key` | Get Pro key ($9) for full comparisons + AI recommendations. |
+After payment, email **yagami8095@gmail.com** with your receipt. API key delivered within 24h.
 
-## Pricing
+### Intel Pro (Advanced)
 
-| Tier | Cost | Limit |
-|------|------|-------|
-| x402 | $0.05/call | USDC on Base L2 — automatic, no signup |
-| Pro | $9/mo | 1000 calls/day across all 9 servers |
+Deep AI market analysis powered by DeepSeek R1:
 
-**[Get Pro Key →](https://paypal.me/Yagami8095/9)**
+| Tier | Cost | Access |
+|------|------|--------|
+| Free | $0 | 5 queries/day |
+| Pro | $19/mo | Unlimited + deep analysis |
+| Agent | $0.05/query | API access for AI agents |
 
-### x402 Flow
+[Intel Pro Dashboard](https://openclaw-intel-pro.onrender.com)
 
-When rate limited, the server returns:
+### x402 Auto-Pay
+
+When rate limited, servers return HTTP 402 with payment headers. Agents using `@x402/fetch` automatically pay and retry:
 
 ```
 HTTP/1.1 402 Payment Required
-X-Payment: required
 X-Payment-Network: base
 X-Payment-Amount: 0.05
 X-Payment-Currency: USDC
 X-Payment-Address: 0x72aa56DAe3819c75C545c57778cc404092d60731
 ```
 
-x402-compatible agents (using `@x402/fetch`) automatically pay and retry.
+---
+
+## Also Available On
+
+| Platform | Status | Link |
+|----------|--------|------|
+| Smithery | 9/9 Published | [smithery.ai/server/openclaw-ai](https://smithery.ai/server/openclaw-ai/json-toolkit) |
+| ClawHub | 9/9 Skills | [clawhub.ai](https://clawhub.ai) |
+| MCPize | 9/9 Monetized | [mcpize.com](https://mcpize.com) |
+| Apify | 9/9 Public | [apify.com/yagamiyedan](https://apify.com/yagamiyedan) |
+| Poe | 9/9 Live | [poe.com](https://poe.com) |
+| Official MCP Registry | 9/9 Active | [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io) |
+| PulseMCP | 9/9 Indexed | [pulsemcp.com](https://pulsemcp.com) |
+| mcpservers.org | 9/9 Indexed | [mcpservers.org](https://mcpservers.org) |
+| mcp.so | 9/9 Indexed | [mcp.so](https://mcp.so) |
 
 ## npm Package
 
@@ -280,43 +276,24 @@ npm install openclaw-mcp-servers
 
 ```javascript
 const openclaw = require('openclaw-mcp-servers');
-
-// Get config JSON for your MCP client
 console.log(JSON.stringify(openclaw.config(), null, 2));
-
-// Access server metadata
-console.log(openclaw.servers);       // All 9 servers
-console.log(openclaw.totalTools);    // 49
-console.log(openclaw.x402);          // Payment info
 ```
-
-CLI:
 
 ```bash
 npx openclaw-mcp-servers --config    # MCP config JSON
 npx openclaw-mcp-servers --list      # All 49 tools
 npx openclaw-mcp-servers --servers   # 9 endpoint URLs
-npx openclaw-mcp-servers --x402      # Payment info
 ```
-
-## Support OpenClaw
-
-If these servers save you time, consider supporting the project:
-
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://github.com/sponsors/yedanyagamiai-cmd)
-[![PayPal](https://img.shields.io/badge/PayPal-Donate-blue)](https://paypal.me/Yagami8095)
-[![Pro Key](https://img.shields.io/badge/Pro_Key-%249%2Fmo-green)](https://product-store.yagami8095.workers.dev)
-
-| Support | Link |
-|---------|------|
-| GitHub Sponsors | [Become a Sponsor](https://github.com/sponsors/yedanyagamiai-cmd) |
-| PayPal | [paypal.me/Yagami8095](https://paypal.me/Yagami8095) |
-| Pro API Key ($9/mo) | [Product Store](https://product-store.yagami8095.workers.dev) |
-| x402 Pay-per-call | $0.05 USDC/call — automatic |
 
 ## Architecture
 
-All servers run on Cloudflare Workers with Streamable HTTP transport (MCP spec 2025-03-26). Rate limiting via Cloudflare KV. x402 compliant (HTTP 402 + payment headers).
+All servers run on Cloudflare Workers (edge compute, 300+ PoPs worldwide). Streamable HTTP transport per MCP spec 2025-03-26. Rate limiting via Cloudflare KV. x402 payment protocol compliant.
+
+## Support
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://github.com/sponsors/yedanyagamiai-cmd)
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-blue)](https://paypal.me/Yagami8095)
+[![Pro Key](https://img.shields.io/badge/Pro_Key-%249%2Fmo-green)](https://buy.stripe.com/4gw5na5U19SP9TW288)
 
 ## License
 
@@ -324,4 +301,4 @@ MIT
 
 ---
 
-Built by [OpenClaw Intelligence](https://product-store.yagami8095.workers.dev) | [GitHub Sponsors](https://github.com/sponsors/yedanyagamiai-cmd) | [PayPal](https://paypal.me/Yagami8095)
+Built by [OpenClaw Intelligence](https://product-store.yagami8095.workers.dev) | 9 servers, 49 tools, 10+ platforms
