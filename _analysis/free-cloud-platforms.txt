@@ -1,0 +1,1152 @@
+================================================================================
+FREE CLOUD PLATFORMS — COMPREHENSIVE COMPARISON FOR AI AGENTS & REVENUE SERVICES
+Generated: 2026-03-07 | OpenClaw Ecosystem Research
+================================================================================
+
+RESEARCH METHODOLOGY
+--------------------
+All data sourced via live WebSearch on 2026-03-07 from official docs, pricing
+pages, and community reports. Ranked for utility in deploying:
+  - Always-on AI agents (long-running processes)
+  - Revenue-generating API services
+  - Cron/scheduled automation workers
+  - Databases for agent state/memory
+  - Edge functions for low-latency routing
+
+================================================================================
+PLATFORM INDEX (sorted alphabetically)
+================================================================================
+
+ 1. Cloudflare Workers           (Edge compute, our current fleet backbone)
+ 2. Deno Deploy                  (Edge TypeScript/JS)
+ 3. Fly.io                       (Container VMs — free tier ENDED)
+ 4. Glitch                       (DEAD — shut down July 2026)
+ 5. Google Cloud Run             (Serverless containers)
+ 6. Hugging Face Spaces          (ML/AI model hosting)
+ 7. Koyeb                        (Always-on containers)
+ 8. Neon                         (Serverless PostgreSQL)
+ 9. Netlify                      (JAMstack + serverless functions)
+10. open.claw.cloud              (Managed OpenClaw VM)
+11. Oracle Cloud Always Free     (ARM VPS — best free compute)
+12. PlanetScale                  (DEAD — free tier ended April 2024)
+13. Railway                      ($5 trial only, then $1/mo credit)
+14. Render                       (Our current Bunshin host)
+15. Replit                       (IDE + hosting, sleeps on free)
+16. Supabase                     (PostgreSQL + edge functions)
+17. Vercel                       (Frontend + serverless, NO commercial)
+18. Zeabur                       ($5 trial credit, serverless plan)
+
+================================================================================
+DETAILED PLATFORM PROFILES
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. CLOUDFLARE WORKERS
+   STATUS: ACTIVE — Our primary fleet backbone (30 Workers running)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 100,000 requests/day (resets 00:00 UTC daily)
+  - 1,000 requests/minute cap on free plan
+  - CPU time: 10ms per invocation (average), burst allowed
+  - Global edge network — 300+ PoPs worldwide, ~0ms cold start
+  - No persistent processes — stateless invocations only
+
+STORAGE (FREE TIER)
+  - KV: 100K reads/day, 1K writes/day, 1K deletes/day, 1K list/day
+  - D1 (SQLite): included on free — rows read/written limits daily reset
+  - R2: 10 GB storage, 1M Class A ops, 10M Class B ops/month (separate free)
+
+SCHEDULED TASKS (CRON)
+  - YES — Cron Triggers supported natively on free plan
+  - Minimum interval: */1 (every minute)
+  - Up to 5 Cron Triggers per Worker on free plan
+
+RUNTIMES
+  - JavaScript/TypeScript (V8 isolates)
+  - WebAssembly
+  - No Node.js native modules (Web APIs only)
+
+DATABASES INCLUDED
+  - D1 (SQLite, free tier with row limits)
+  - KV (key-value, 100K reads/day free)
+  - R2 (object storage, separate free tier)
+  - Durable Objects (SQLite backend, billing started Jan 2026)
+
+CUSTOM DOMAINS
+  - YES — free on all plans
+
+ALWAYS-ON
+  - YES — event-driven, no sleep, no cold starts
+  - Workers wake instantly on each request
+
+COMMERCIAL USE
+  - YES — no restrictions
+
+PAID UPGRADE
+  - $5/month Workers Paid: 10M req/month, higher KV limits
+
+BEST FOR OUR ECOSYSTEM
+  - Fleet workers (orchestrator, health-commander, revenue-sentinel, etc.)
+  - Cron automation at sub-minute intervals
+  - Low-latency API routing and edge logic
+  - KV state caching between agents
+  - D1 task queues (already using: agi-memory-sql)
+
+CURRENT USAGE
+  - 30 Workers deployed, 12 D1 databases, 21 KV namespaces
+  - yedan-orchestrator, health-commander, revenue-sentinel,
+    cloud-executor, content-engine, intel-ops (6 fleet workers)
+  - CF Browser Worker v2.0 at :18791 (stealth CDP)
+
+VERDICT: TIER 1 — Irreplaceable backbone. Free tier is the most generous
+          per-day request limit. Cron support makes it perfect for automation.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. DENO DEPLOY
+   STATUS: ACTIVE — Underutilized, high potential
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 1,000,000 requests/month (free — NOT 100K/day as commonly misreported)
+  - 100 GB egress/month
+  - Global edge deployment (similar to CF Workers)
+  - V8 isolates, near-zero cold start
+
+STORAGE (FREE TIER)
+  - KV: 1 GB included (free, no credit card required)
+  - Built-in job queue APIs (Web Platform native)
+
+SCHEDULED TASKS (CRON)
+  - Limited native cron — use Deno Cron (beta, available on paid)
+  - Free tier: no native scheduled tasks — use external ping
+
+RUNTIMES
+  - Deno (TypeScript/JavaScript natively)
+  - Standard Web APIs + Deno APIs
+  - Node.js compatibility layer available
+  - WebAssembly
+
+DATABASES INCLUDED
+  - Deno KV: 1 GB free (built-in, first-class support)
+  - No PostgreSQL included
+
+CUSTOM DOMAINS
+  - YES — free on all plans
+
+ALWAYS-ON
+  - YES — edge function model, no sleep
+
+COMMERCIAL USE
+  - YES — no restrictions stated
+
+PAID UPGRADE
+  - Pro: $20/month, 5M req/month, 200 GB egress
+
+BEST FOR OUR ECOSYSTEM
+  - TypeScript microservices with built-in KV
+  - High-throughput APIs (1M req/month free is 33K/day)
+  - Alternative edge layer to Cloudflare Workers
+  - Deno KV as lightweight agent state store
+
+VERDICT: TIER 2 — Good secondary edge platform. 1M req/month is generous.
+          KV included is a bonus. No native cron is a gap for automation.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. FLY.IO
+   STATUS: EFFECTIVELY DEAD for free users — credit card required
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - Free trial: 2 hours VM runtime OR 7 days (whichever first)
+  - Legacy (grandfathered): 3x shared-cpu-1x 256MB VMs
+  - NO real free tier for new users as of 2026
+  - Adding credit card ends trial, billing starts immediately
+
+STORAGE
+  - Trial: 20 GB volume storage
+  - Legacy: 3 GB persistent storage (grandfathered only)
+
+SCHEDULED TASKS
+  - Not a native feature — requires custom cron setup
+
+RUNTIMES
+  - Docker containers (any runtime)
+  - Pre-built Node.js, Python, Go, etc. builders
+
+DATABASES
+  - Fly Postgres (managed, paid)
+  - No free DB included
+
+CUSTOM DOMAINS
+  - YES (paid)
+
+ALWAYS-ON
+  - YES if running (scale-to-zero optional) — but no free tier to use it
+
+COMMERCIAL USE
+  - YES
+
+VERDICT: SKIP — No meaningful free tier for new accounts. Do not invest.
+          Historical 3-VM free tier is gone for new signups.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. GLITCH
+   STATUS: DEAD — Hosting shut down July 8, 2025
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Glitch ended all web hosting on July 8, 2025
+- Subdomain redirects kept until end of 2026, then fully gone
+- DO NOT deploy anything to Glitch
+- Platform is in maintenance/shutdown mode only
+
+VERDICT: DEAD — Do not use. Migrate anything here immediately.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. GOOGLE CLOUD RUN
+   STATUS: ACTIVE — Powerful Always-Free tier with containers
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE (ALWAYS FREE — no expiry)
+  - 2,000,000 requests/month
+  - 180,000 vCPU-seconds/month (~50 CPU hours)
+  - 360,000 GiB-seconds/month (~100 hours for 1GB container)
+  - Must deploy in: us-central1, us-east1, or us-west1
+  - Scale-to-zero by default (cold start ~1-3 seconds for Node/Python)
+
+STORAGE
+  - 1 GB free egress/month (North America)
+  - No persistent storage included — use Cloud Storage (separate free tier)
+  - Cloud Firestore: 1 GB free, 50K reads/day, 20K writes/day (Always Free)
+
+SCHEDULED TASKS (CRON)
+  - YES — Cloud Scheduler: 3 jobs free/month
+  - Can trigger Cloud Run via HTTP on schedule
+
+RUNTIMES
+  - Docker containers (any runtime, any language)
+  - Requires Dockerfile or buildpack
+  - Node.js, Python, Go, Java, Ruby all supported
+
+DATABASES INCLUDED
+  - NO — must connect to Cloud SQL (paid) or Firestore (free tier)
+  - Firestore Always Free: 1 GB storage, 50K reads/day, 20K writes/day
+  - Cloud Storage Always Free: 5 GB US multi-region
+
+CUSTOM DOMAINS
+  - YES — Cloud Run supports custom domains (may need Load Balancer, extra cost)
+
+ALWAYS-ON
+  - NO by default — scale-to-zero
+  - YES with min-instances=1 setting (uses vCPU-seconds budget)
+  - 2M requests/month = ~667K/day — very generous
+
+COMMERCIAL USE
+  - YES
+
+AUTHENTICATION REQUIRED
+  - Google account, credit card required to set up billing account
+  - But Always Free resources are never charged
+
+BEST FOR OUR ECOSYSTEM
+  - Containerized agents that need more RAM/CPU than edge functions allow
+  - Bunshin-like services with complex dependencies
+  - Python ML/AI workloads in containers
+  - Services needing 50+ CPU hours/month free
+
+VERDICT: TIER 1 — Exceptionally powerful free tier. 2M req/month + Docker
+          support. Best choice for containerized AI agents. Requires GCP
+          account + credit card (but won't charge on free tier). Cold starts
+          are the main limitation.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. HUGGING FACE SPACES
+   STATUS: ACTIVE — Best free ML/AI model hosting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - CPU Spaces: FREE (basic 2 vCPU, ~16 GB RAM shared)
+  - ZeroGPU: FREE access to NVIDIA H200 (70 GB VRAM) — dynamic allocation
+  - ZeroGPU daily quota: ~214 seconds for free users (PRO gets 1,500s/day)
+  - ZeroGPU: Gradio SDK only, GPU allocated per-inference only
+  - Paid GPU: T4 ($0.40/hr), L4 ($1.80/hr), A100 ($4.13/hr)
+
+STORAGE
+  - Free model/dataset hosting (Git LFS)
+  - No persistent volume on free Spaces (use Datasets repo as workaround)
+
+SCHEDULED TASKS
+  - NO native cron — Spaces are event-driven
+  - Use external ping to keep Space warm
+
+RUNTIMES
+  - Python (Gradio, Streamlit primary)
+  - Docker Spaces (any runtime)
+  - Static HTML Spaces
+
+DATABASES
+  - NO included database
+  - Use external (Neon, Supabase free tiers)
+
+CUSTOM DOMAINS
+  - YES on PRO ($9/month) and Enterprise plans
+
+ALWAYS-ON
+  - CPU Spaces: YES — always running (may go to sleep after long inactivity)
+  - ZeroGPU: NO — GPU deallocated when not in use
+  - Duplicated Spaces with GPU hardware sleep when idle
+
+COMMERCIAL USE
+  - YES — Spaces can be public or private (private requires PRO/Org)
+
+BEST FOR OUR ECOSYSTEM
+  - Hosting open-source AI models (embedding models, LLMs)
+  - BAAI/bge embedding endpoint as backup to DeepInfra
+  - Gradio-based demo UIs for Intel Pro or other products
+  - Free GPU inference for model testing (ZeroGPU with H200!)
+
+VERDICT: TIER 2 — Essential for AI/ML workloads. Free CPU Spaces are
+          genuinely always-on. ZeroGPU H200 access is extraordinary for
+          free inference. Not suitable as primary agent host (no cron,
+          no DB), but excellent for ML model serving.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. KOYEB
+   STATUS: ACTIVE — True always-on free tier, unique in the space
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 1 free Service (Firecracker microVM)
+  - 512 MB RAM, 0.1 vCPU (nano instance)
+  - 2 GB disk
+  - ALWAYS ON — does NOT sleep on inactivity (key differentiator!)
+  - Only restarts if unresponsive (health check failure)
+  - Runs on bare metal (not AWS/GCP) — lower infrastructure cost
+
+STORAGE
+  - 2 GB disk included
+
+SCHEDULED TASKS
+  - YES — Koyeb supports cron jobs natively
+
+RUNTIMES
+  - Docker containers
+  - Node.js, Python, Go, Rust, Ruby (native buildpacks)
+  - Git-based or Docker-based deployment
+
+DATABASES
+  - YES — Free PostgreSQL database included (Starter plan)
+  - Specs: nano instance (limited storage)
+
+CUSTOM DOMAINS
+  - YES — 5 custom domains on Starter plan
+
+ALWAYS-ON
+  - YES — true always-on, no sleep, no ping needed
+  - Scale-to-zero available as option but not forced on free tier
+
+COMMERCIAL USE
+  - YES
+
+BANDWIDTH
+  - Not clearly documented — assumed generous for nano workload
+
+LIMITATIONS
+  - 0.1 vCPU is very limited — only suitable for lightweight agents
+  - 512 MB RAM — enough for Node.js/Python bots, not ML workloads
+  - 1 service only on free tier
+
+PAID UPGRADE
+  - Pro: $29/month, Eco instances from $1.61/month
+
+BEST FOR OUR ECOSYSTEM
+  - Lightweight always-on bot/agent that must never sleep
+  - Telegram webhook handler or Discord bot
+  - Health monitor that pings other services
+  - Persistent process that can't tolerate Render's 15-min sleep
+
+VERDICT: TIER 2 — The ONLY free always-on container service (no sleep).
+          Low power but constant uptime makes it valuable for lightweight
+          persistent agents. Deploy a watchdog or Telegram bot here.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. NEON (Serverless PostgreSQL)
+   STATUS: ACTIVE — Best free serverless PostgreSQL in 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE (DATABASE ONLY)
+  - 100 projects on free plan
+  - 100 CU-hours per project per month (doubled from 50 in Oct 2025)
+  - 1 CU = 1 vCPU + 4 GB RAM
+  - 0.25 CU minimum → 400 hours/month at minimum size
+  - Cannot run 24/7 at min size (400h < 720h/month) — but close
+  - Scale-to-zero: 5-minute idle timeout (cold start ~1s)
+  - Auto-scales up to 2 CU on demand
+
+STORAGE
+  - 0.5 GB per project (free)
+  - Auto-scales, pay-as-you-grow on paid
+  - Branching: 10 branches per project
+
+RUNTIMES
+  - PostgreSQL 14/15/16 compatible
+  - pgvector, PostGIS, TimescaleDB extensions supported
+  - pgBouncer connection pooling (up to 10,000 connections)
+
+SCHEDULED TASKS
+  - N/A — database only
+
+DATABASES
+  - IT IS the database — PostgreSQL
+  - Neon Auth: 60,000 MAU free (password/OAuth)
+
+CUSTOM DOMAINS
+  - N/A — connection string based
+
+ALWAYS-ON
+  - NO — scale-to-zero with 5-min idle timeout
+  - Fast wake: ~1 second cold start
+  - Use connection pooler to minimize cold starts
+
+COMMERCIAL USE
+  - YES
+
+EGRESS
+  - 5 GB/month per project
+
+BEST FOR OUR ECOSYSTEM
+  - Primary free PostgreSQL for any new service
+  - Replacement for Render's expiring 30-day free Postgres
+  - Agent memory/state persistence (scale-to-zero ok for infrequent writes)
+  - pgvector for AI embedding search (competitor to Supabase vector)
+  - 100 projects = can give each agent its own isolated DB
+
+VERDICT: TIER 1 — Best free PostgreSQL available. 100 projects, pgvector
+          support, branching, no credit card needed. Replace Render DB with
+          Neon immediately. Scale-to-zero is fine for agent use patterns.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. NETLIFY
+   STATUS: ACTIVE — Good for frontend + serverless, commercial use OK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 125,000 serverless function invocations/month
+  - 1,000,000 edge function invocations/month
+  - 100 GB bandwidth/month
+  - 300 build minutes/month
+  - 10-second function timeout
+
+STORAGE
+  - 10 GB storage
+
+SCHEDULED TASKS
+  - YES — Netlify Scheduled Functions (cron) supported on free
+  - Minimum: every 15 minutes on free tier
+
+RUNTIMES
+  - Node.js (primary)
+  - Go, Rust (edge functions via Deno runtime)
+  - Static site hosting (always-on, CDN)
+
+DATABASES
+  - NO included database — integrate external
+
+CUSTOM DOMAINS
+  - YES — free on all plans
+
+ALWAYS-ON
+  - Static sites: YES — always-on CDN
+  - Functions: event-driven, no persistent state
+  - NO always-on server process
+
+COMMERCIAL USE
+  - YES — explicitly stated (unlike Vercel)
+
+HARD LIMITS
+  - If one project exceeds limits, ALL projects paused for rest of month
+  - No ability to buy overages on free plan — site suspends
+
+BEST FOR OUR ECOSYSTEM
+  - Intel Pro landing page / marketing sites
+  - Product Store frontend
+  - API proxies using edge functions (low compute, 1M invocations)
+  - Scheduled jobs via Netlify Functions cron (15-min minimum)
+
+VERDICT: TIER 2 — Solid free tier, commercial use allowed. 1M edge function
+          invocations/month is very generous. Main risk: account-wide
+          suspension if any project hits limits. Use for lightweight frontends
+          and API proxies, not heavy compute.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. OPEN.CLAW.CLOUD
+    STATUS: ACTIVE — Managed OpenClaw VM, referral-extendable free tier
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 7 days free compute (full VM with OpenClaw pre-installed)
+  - Unlimited GLM-4.7 (Slow) during free period
+  - Extends: +1 day per referral, up to 50 days total
+  - Max free time achievable: 7 + 50 = 57 days
+
+STORAGE
+  - VM state persisted for 30 days after compute expires
+  - Data preserved on VM restart after refilling compute time
+
+AI MODELS
+  - GLM-4.7 (Slow) — free tier
+  - GLM-4.7 (Fast) + GLM-5 — Plus plan
+  - Claude Sonnet 4.6 — available (likely Plus plan)
+
+SCHEDULED TASKS
+  - YES — it's a full VM, can run any cron
+
+RUNTIMES
+  - Full Linux VM — any runtime
+  - OpenClaw Gateway pre-configured
+
+DATABASES
+  - YES — can run any DB on the VM
+
+CUSTOM DOMAINS
+  - Plus plan: public IP
+  - Free tier: no public IP (NAT only)
+
+ALWAYS-ON
+  - YES — while compute time is running
+  - VM pauses when compute runs out (not deleted immediately)
+
+COMMERCIAL USE
+  - Not explicitly restricted (it's your VM)
+
+BEST FOR OUR ECOSYSTEM
+  - Testing second OpenClaw Gateway in cloud
+  - Backup agent executor when local WSL2 is offline
+  - Running a second brain without any setup cost
+  - Referral-chain: 50 referrals = 50 extra days = basically permanent
+
+LIMITATIONS
+  - No public IP on free tier (can't receive webhooks directly)
+  - GLM-4.7 Slow is much weaker than our DeepSeek R1
+  - Depends on open.claw.cloud uptime/reliability
+  - 7-day base is short — needs active referral strategy
+
+VERDICT: TIER 3 — Interesting niche platform. Good for a backup executor
+          or testing second Gateway. Referral loop could extend to 57 days
+          effectively free. Priority: get account first, then do referrals.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. ORACLE CLOUD ALWAYS FREE
+    STATUS: ACTIVE — THE most powerful free compute in the industry
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE (ALWAYS FREE — never expires)
+  - 4 OCPUs (Ampere A1, ARM64 Neoverse-N1)
+  - 24 GB RAM
+  - Up to 4 VM instances (flex allocation of 4 OCPU + 24 GB across them)
+  - Example configs:
+      * 1x VM: 4 OCPU / 24 GB RAM (single large instance)
+      * 2x VM: 2 OCPU / 12 GB RAM each
+      * 4x VM: 1 OCPU / 6 GB RAM each
+  - Additional: 2x VM.Standard.E2.1.Micro (AMD, 1 OCPU, 1 GB RAM each)
+  - NEVER expires — truly always free
+
+STORAGE (ALWAYS FREE)
+  - 200 GB block storage total
+  - 47 GB minimum per boot volume
+  - 10 TB outbound data/month (EXTREMELY generous)
+  - Object Storage: 20 GB free
+  - Archive Storage: 20 GB free
+
+NETWORK
+  - 10 TB egress/month — no practical limit for our use
+  - 1 Gbps network interface
+  - Public IP included (Ephemeral — changes on restart)
+  - Reserved IP: 2 free reserved public IPs
+
+SCHEDULED TASKS
+  - YES — full Linux, use crontab or systemd timers
+
+RUNTIMES
+  - Full Linux (Ubuntu, Debian, Oracle Linux, etc.)
+  - Any runtime: Node.js, Python, Docker, etc.
+  - ARM64 (aarch64) — most modern software supports it
+
+DATABASES
+  - YES — run PostgreSQL, SQLite, Redis, etc. on the VM directly
+  - Oracle Autonomous Database: 20 GB free (separate Always Free)
+  - NoSQL Database: 133 million reads, 133 million writes, 25 GB/month free
+
+CUSTOM DOMAINS
+  - YES — point DNS to your public IP
+
+ALWAYS-ON
+  - YES — persistent VMs, always running
+  - WARNING: Oracle reclaims idle instances if:
+    * CPU usage < 20% for 95th percentile over 7 days
+    * Must configure a keep-alive workload or upgrade to PAYG
+
+COMMERCIAL USE
+  - YES
+
+LIMITATIONS
+  - ARM64 — most software works but some edge cases
+  - Provisioning often fails with "Out of capacity" in busy regions
+  - Must try multiple times or in off-peak hours
+  - Idle reclamation policy (keep CPU > 20% via synthetic workload)
+  - Requires credit card to sign up (but won't be charged on free tier)
+  - PAYG upgrade recommended: removes reclamation, no accidental charges
+    if you only use Always Free resources
+
+BEST FOR OUR ECOSYSTEM
+  - Primary self-hosted alternative to Render for Bunshin
+  - Run full OpenClaw Gateway as 24/7 cloud executor
+  - 4 OCPU + 24 GB = can run 4+ agents simultaneously
+  - Docker Compose stack (YEDAN + Postgres + Redis + Bunshin)
+  - Eliminate Render $0 dependency — nothing expires here
+
+VERDICT: TIER 1 — THE single most powerful free compute tier available
+          anywhere. 4 ARM cores + 24 GB RAM + 10 TB bandwidth — forever.
+          The provisioning lottery is the only obstacle. Worth multiple
+          attempts. This is our strategic backup infrastructure.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. PLANETSCALE
+    STATUS: DEAD — Free tier ended April 8, 2024
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Hobby plan (free tier) permanently discontinued April 2024
+- Current minimum plan: $39/month
+- DO NOT use for free deployments
+- Use Neon (PostgreSQL) or Supabase instead
+
+VERDICT: DEAD — Skip entirely.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13. RAILWAY
+    STATUS: LIMITED — $5 one-time trial, then $1/month credit (not useful)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - Free Trial: $5 one-time credit, 30 days, 1 GB RAM, shared vCPU
+  - After trial: $1/month recurring credit (barely enough for anything)
+  - Hobby Plan: $5/month flat fee + $5 usage credit included
+  - No always-free persistent services
+
+STORAGE
+  - Volumes: $0.16/GB/month (post-trial)
+
+SCHEDULED TASKS
+  - YES — cron jobs supported natively
+
+RUNTIMES
+  - Docker containers
+  - Node.js, Python, Go, Rust buildpacks
+  - Any Dockerfile
+
+DATABASES
+  - PostgreSQL, MySQL, Redis, MongoDB available (paid)
+  - $0.000006/second (~$0.52/day for tiny PostgreSQL)
+
+CUSTOM DOMAINS
+  - YES
+
+ALWAYS-ON
+  - YES — containers run continuously (billed per second)
+
+COMMERCIAL USE
+  - YES
+
+BEST FOR OUR ECOSYSTEM
+  - Use the $5 free trial to prototype new services
+  - NOT suitable as ongoing free host
+  - Hobby plan at $5/month is reasonable if service earns revenue
+
+VERDICT: TIER 3 — One-time trial only. $1/month recurring credit is
+          insufficient for any real service. Use trial for prototyping,
+          then migrate to Oracle/Koyeb/Google Cloud Run.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+14. RENDER
+    STATUS: ACTIVE — Current Bunshin host, limited free tier
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 750 hours/month free (covers 1 service 24/7 since 750 > 720)
+  - Sleep after 15 minutes of inactivity — takes 60 seconds to wake
+  - Free services are NOT always-on without external ping workaround
+  - UptimeRobot workaround: ping every 5 minutes to prevent sleep
+
+STORAGE
+  - Ephemeral disk only — local filesystem changes lost on sleep/restart
+  - No persistent disk on free tier
+
+SCHEDULED TASKS
+  - NO built-in cron on free tier
+  - Can use external cron to ping an HTTP endpoint
+
+RUNTIMES
+  - Docker containers
+  - Node.js, Python, Ruby, Go, Rust, Elixir buildpacks
+  - Static sites (always-on, CDN-backed)
+
+DATABASES
+  - YES — Free PostgreSQL: 1 GB, EXPIRES AFTER 30 DAYS
+  - Must upgrade or recreate after 30 days (all data lost if not migrated)
+  - Only 1 free DB per workspace
+
+CUSTOM DOMAINS
+  - YES — free on all plans
+
+ALWAYS-ON
+  - NO for web services — sleeps after 15 min inactivity
+  - YES for static sites (CDN-backed, no sleep)
+  - Workaround: UptimeRobot free plan pings every 5 minutes
+
+COMMERCIAL USE
+  - YES (no explicit restriction)
+
+PAID UPGRADE
+  - Starter: $7/month per service, always-on
+
+BEST FOR OUR ECOSYSTEM
+  - Currently hosting Bunshin v4.1.2 — works with UptimeRobot ping
+  - Free static site hosting for marketing pages
+  - Quick prototyping (Docker + buildpacks easy to use)
+  - DO NOT use for DB long-term (30-day expiry is a timebomb)
+
+ACTIVE WARNING
+  - Bunshin's Render free Postgres EXPIRES 2026-04-05
+  - Must migrate to Neon before that date
+  - Connection string: migrate app env var to Neon URL
+
+VERDICT: TIER 2 — Adequate for Bunshin with UptimeRobot workaround.
+          Main liability: 30-day PostgreSQL expiry. Good DX, easy deploys.
+          Consider migrating Bunshin to Koyeb (true always-on) or
+          Oracle Cloud (zero cost, no expiry) when time permits.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+15. REPLIT
+    STATUS: POOR — Sleeps after 5 min, 30-day deployment expiry
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - Starter (free): 1 vCPU, 2 GB RAM (shared), 2 GB storage
+  - 1,200 development minutes/month (20 hours)
+  - 10 GB/month outbound transfer
+  - Sleep after 5 minutes of inactivity (even faster than Render)
+  - Published apps expire after 30 days on free tier
+
+STORAGE
+  - 2 GB storage
+
+SCHEDULED TASKS
+  - NO native cron on free tier
+
+RUNTIMES
+  - Node.js, Python, HTML/CSS/JS, many others
+  - Built-in web IDE
+
+DATABASES
+  - Replit Database (key-value, free)
+  - No PostgreSQL included
+
+CUSTOM DOMAINS
+  - NO on free tier
+
+ALWAYS-ON
+  - NO — 5-minute sleep, 30-day deploy expiry
+
+COMMERCIAL USE
+  - Unclear — primarily learning platform
+
+PAID
+  - Core: $20-25/month for always-on + persistent deploys
+
+BEST FOR OUR ECOSYSTEM
+  - Quick prototyping during development (IDE is convenient)
+  - NOT suitable for production deployment
+  - Use for learning/testing new agent patterns
+
+VERDICT: TIER 4 — Only useful for throwaway prototypes. 5-minute sleep
+          and 30-day expiry make it worse than Render. Not recommended
+          for any production or persistent service.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+16. SUPABASE
+    STATUS: ACTIVE — Best integrated backend platform (DB + Auth + Edge)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 500,000 edge function invocations/month (free)
+  - Edge functions: 2 second CPU time limit, 150s response timeout
+  - 2 projects maximum on free plan
+
+STORAGE
+  - 500 MB PostgreSQL database storage
+  - 1 GB file storage
+  - 2 GB DB egress, 2 GB storage egress/month
+
+SCHEDULED TASKS
+  - YES — pg_cron extension (runs SQL on schedule inside PostgreSQL)
+  - Edge function cron: via Supabase Cron (built-in scheduler)
+  - Free tier: limited cron jobs
+
+RUNTIMES
+  - Edge Functions: Deno (TypeScript/JavaScript)
+  - PostgreSQL: full Postgres with extensions
+  - Python not natively supported in edge functions
+
+DATABASES
+  - YES — PostgreSQL 15+ included
+  - Extensions: pgvector, PostGIS, pg_cron, many more
+  - Auth: 50,000 MAU free (email, OAuth, magic links)
+  - Realtime: included
+
+CUSTOM DOMAINS
+  - YES (on paid plans)
+
+ALWAYS-ON
+  - PostgreSQL: YES — always running
+  - Projects PAUSED after 1 week of inactivity (free tier only)
+  - De-pause by visiting dashboard or API call
+
+COMMERCIAL USE
+  - YES
+
+INACTIVITY PAUSE RISK
+  - 7 days inactivity → project paused automatically
+  - Must manually or programmatically wake it
+  - Bunshin keepalive cron could hit Supabase endpoint to prevent pause
+
+BEST FOR OUR ECOSYSTEM
+  - Backend for Intel Pro API (auth + DB + edge functions in one)
+  - Agent state storage with real-time subscriptions
+  - pgvector for semantic search / RAG (alternative to DeepInfra embeddings)
+  - Auth system for Product Store / paid API products
+  - Quick MVP backend: auth + DB + API in one service
+
+VERDICT: TIER 1 — Most complete free backend suite. pgvector + pg_cron +
+          Edge Functions + Auth in one platform. Main risk: 7-day pause.
+          Use Bunshin keepalive or a CF Worker to ping Supabase daily.
+          500K edge invocations/month is very generous.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+17. VERCEL
+    STATUS: ACTIVE — NO COMMERCIAL USE on free tier (critical limitation)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - 150,000 serverless function invocations/month
+  - 100 GB bandwidth/month
+  - Function memory: 2 GB / 1 vCPU (fixed)
+  - Function timeout: 10 seconds (vs 60s on Pro)
+
+STORAGE
+  - NO database included
+  - External only (Neon, Supabase, etc.)
+
+SCHEDULED TASKS
+  - YES — Vercel Cron Jobs (free tier: 2 cron jobs, daily minimum interval)
+
+RUNTIMES
+  - Node.js, Python, Go, Ruby, Edge Runtime
+  - Static sites (Next.js, Nuxt, SvelteKit, etc.)
+
+DATABASES
+  - Vercel Postgres (powered by Neon) — NOT free tier
+  - Vercel KV (powered by Upstash) — NOT free tier
+
+CUSTOM DOMAINS
+  - YES — free on all plans
+
+ALWAYS-ON
+  - NO — serverless only, event-driven
+
+COMMERCIAL USE
+  - NO — Hobby plan strictly personal/non-commercial
+  - Violates ToS if used for business/revenue
+
+BEST FOR OUR ECOSYSTEM
+  - Personal/portfolio sites that won't generate revenue
+  - Next.js apps during development phase
+  - Quick frontend prototypes
+  - NOT for Intel Pro, Product Store, or any revenue service
+
+VERDICT: TIER 3 — Technically excellent, but COMMERCIAL USE BANNED on
+          free tier. Cannot use for any of our revenue-generating services.
+          If deploying revenue apps on Vercel, MUST upgrade to Pro ($20/mo).
+          Use Netlify instead (commercial use allowed on free).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+18. ZEABUR
+    STATUS: LIMITED — $5 trial credit, niche serverless plan
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMPUTE
+  - Free Trial: $5 monthly credit, no credit card required
+  - Up to 1 vCPU, 2 GB RAM per service
+  - Serverless Plan: unlimited projects, serverless from GitHub only
+  - Deploy in "free regions" only on trial
+
+STORAGE
+  - Not clearly specified for free tier
+
+SCHEDULED TASKS
+  - Not clearly documented for free tier
+
+RUNTIMES
+  - Docker containers (Developer plan+)
+  - Node.js, Python, Go buildpacks
+  - Static sites
+  - Marketplace one-click apps (n8n, Wordpress, etc.)
+
+DATABASES
+  - PostgreSQL, MySQL, MongoDB, Redis available (paid)
+  - Limited on free trial
+
+CUSTOM DOMAINS
+  - Developer plan+ only
+
+ALWAYS-ON
+  - Serverless Plan: event-driven (not persistent)
+  - Paid plans: persistent containers
+
+COMMERCIAL USE
+  - YES
+
+PAID
+  - Developer: $5/month + compute
+  - Team: $80/month
+
+BEST FOR OUR ECOSYSTEM
+  - One-click marketplace deploys (n8n, monitoring tools)
+  - Testing new service configurations with $5 trial
+  - BYOS (Bring Your Own Server) mode could be useful with Oracle ARM
+
+VERDICT: TIER 3 — Trial credit is useful for testing. Serverless plan
+          is limited. Developer plan at $5/month is competitive with Railway.
+          The marketplace is useful for one-click n8n/monitoring deploys.
+          Not a priority free tier — use Railway trial or Koyeb first.
+
+================================================================================
+MASTER RANKINGS — BY VALUE FOR AI AGENTS & REVENUE SERVICES
+================================================================================
+
+TIER 1 — MUST USE (Foundational Infrastructure)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+#1  ORACLE CLOUD ALWAYS FREE
+    Score: 100/100
+    Why: 4 OCPU + 24 GB ARM + 10 TB bandwidth + NEVER EXPIRES
+         Best free compute on the planet. Deploy entire stack here.
+    Action: Get account NOW (lottery for ARM instances, keep trying)
+    Use: Run OpenClaw Gateway as cloud executor + Bunshin backup
+
+#2  CLOUDFLARE WORKERS
+    Score: 97/100
+    Why: Already using, 100K req/day + cron + KV + D1 + always-on
+         Irreplaceable for fleet workers and cron automation
+    Action: Continue expanding fleet, optimize D1 usage
+    Use: All 6 fleet workers, cron automation, edge routing
+
+#3  SUPABASE
+    Score: 88/100
+    Why: PostgreSQL + pgvector + Edge Functions + Auth + pg_cron all free
+         Most complete free backend suite available
+    Action: Deploy Intel Pro backend here, add keepalive ping
+    Use: Auth for paid API products, pgvector for RAG, agent state
+
+#4  NEON
+    Score: 85/100
+    Why: 100 projects, pgvector, 100 CU-hours each, no expiry
+         Best standalone PostgreSQL free tier
+    Action: IMMEDIATELY migrate Render's expiring Postgres to Neon
+    Use: Primary DB for all new services, Bunshin DB migration
+
+TIER 2 — HIGH VALUE (Specialized Roles)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+#5  KOYEB
+    Score: 75/100
+    Why: ONLY always-on free container (never sleeps)
+         0.1 vCPU / 512 MB but truly persistent
+    Action: Deploy lightweight always-on agent (Telegram bot, watchdog)
+    Use: Persistent process that cannot tolerate cold starts
+
+#6  GOOGLE CLOUD RUN
+    Score: 73/100
+    Why: 2M req/month + Docker + 50 CPU hours — never expires
+         Best for containerized Python/ML agents
+    Action: Set up GCP account, deploy Bunshin or Intel Pro here
+    Use: Heavier agents needing more than CF Workers can offer
+
+#7  RENDER
+    Score: 68/100
+    Why: Currently hosting Bunshin — good DX, easy deploys
+         But: 15-min sleep, 30-day DB expiry are real liabilities
+    Action: Keep Bunshin here with UptimeRobot, migrate DB to Neon
+    Use: Bunshin coordinator (already live, working)
+
+#8  NETLIFY
+    Score: 65/100
+    Why: 1M edge invocations/month, commercial OK, built-in cron
+    Action: Host static marketing pages and lightweight API proxies
+    Use: Intel Pro landing page, Product Store frontend
+
+#9  HUGGING FACE SPACES
+    Score: 63/100
+    Why: Free CPU hosting + ZeroGPU H200 access = extraordinary for ML
+    Action: Deploy embedding model endpoint as DeepInfra backup
+    Use: BGE embedding model, model demos, AI showcases
+
+#10 DENO DEPLOY
+    Score: 58/100
+    Why: 1M req/month + 1 GB KV included + TypeScript native
+    Action: Use as secondary edge layer or TypeScript microservices
+    Use: KV-heavy APIs, TypeScript agent utilities
+
+TIER 3 — SITUATIONAL USE
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+#11 OPEN.CLAW.CLOUD
+    Score: 45/100
+    Why: 7-day base + 50 days from referrals = 57 days free VM
+    Action: Get account, do referrals, use as backup Gateway
+    Use: Cloud OpenClaw executor, second brain
+
+#12 RAILWAY
+    Score: 35/100
+    Why: $5 one-time trial only — not sustainable as free tier
+    Action: Use trial for prototyping new services
+    Use: Prototype only, then migrate
+
+#13 VERCEL
+    Score: 30/100
+    Why: Excellent tech but NO COMMERCIAL USE on free plan
+    Action: Only for personal/portfolio projects
+    Use: Non-revenue frontend projects ONLY
+
+#14 ZEABUR
+    Score: 28/100
+    Why: Limited free, useful marketplace
+    Action: Use for marketplace one-clicks only
+    Use: n8n, monitoring tools via BYOS
+
+#15 REPLIT
+    Score: 15/100
+    Why: 5-min sleep, 30-day expiry — worst production viability
+    Action: Development IDE only, no deployments
+    Use: Quick code testing during development
+
+TIER 4 — DO NOT USE
+━━━━━━━━━━━━━━━━━━
+
+#16 FLY.IO           — No real free tier for new users (SKIP)
+#17 GLITCH           — DEAD as of July 2025 (SKIP)
+#18 PLANETSCALE      — Free tier ended April 2024 (SKIP)
+
+================================================================================
+STRATEGIC DEPLOYMENT MAP — OPENCLAW ECOSYSTEM 2026
+================================================================================
+
+CURRENT STATE:
+  CF Workers:    Fleet workers (6), browser, API routing     [KEEP]
+  Render:        Bunshin v4.1.2 (with UptimeRobot ping)     [MIGRATE DB]
+  CF D1:         agi-memory-sql task queue, army-command     [KEEP]
+  Render PG:     Bunshin PostgreSQL — EXPIRES 2026-04-05    [MIGRATE NOW!]
+
+IMMEDIATE ACTIONS (THIS WEEK):
+  1. Migrate Render Postgres → Neon (free, no expiry)
+     - Create Neon project for Bunshin
+     - Update Bunshin DATABASE_URL env var on Render
+     - Test all 9 tables migrated correctly
+     - DEADLINE: Before 2026-04-05
+
+  2. Set up Oracle Cloud account
+     - Sign up, add credit card (required but won't be charged)
+     - Try provisioning ARM A1 instance (may need multiple attempts)
+     - If successful: install Docker + set up backup Gateway
+
+  3. Set up Supabase project for Intel Pro
+     - Auth: API key tiers (free, pro, agent)
+     - DB: usage tracking, revenue events
+     - Edge Functions: rate limiting middleware
+
+SHORT-TERM (THIS MONTH):
+  4. Deploy Koyeb service (always-on watchdog/Telegram bot)
+  5. Set up GCP Cloud Run for heavier Python workloads
+  6. Create open.claw.cloud account + referral strategy
+  7. Move Intel Pro landing page to Netlify (commercial OK)
+
+LONG-TERM ARCHITECTURE:
+  [CF Workers] ←→ [YEDAN WSL2] ←→ [Bunshin/Render]
+       ↕                ↕                 ↕
+  [CF D1/KV]    [Neon (primary DB)]  [Supabase (auth+vector)]
+       ↕                ↕
+  [Oracle ARM]    [GCP Cloud Run]
+  (backup Gateway) (heavy Python agents)
+
+================================================================================
+PLATFORM COMPARISON QUICK REFERENCE TABLE
+================================================================================
+
+Platform         | Free Compute    | Always-On | DB Free | Cron | Commercial
+-----------------|-----------------|-----------|---------|------|------------
+Cloudflare       | 100K req/day    | YES (edge)| D1+KV   | YES  | YES
+Oracle Cloud     | 4 OCPU 24GB ARM | YES (VM)  | 20GB    | YES  | YES
+Supabase         | 500K edge/mo    | DB only   | 500MB PG| YES  | YES
+Neon             | 100 CU-hr/proj  | DB only   | 0.5GB PG| NO   | YES
+Koyeb            | 0.1vCPU 512MB   | YES(!)    | YES nano| YES  | YES
+GCP Cloud Run    | 2M req/mo       | NO(scale0)| Firestor| 3/mo | YES
+Render           | 750 hr/mo       | NO(15min) | 1GB/30d | NO   | YES
+Netlify          | 125K func/mo    | Static    | NO      | YES  | YES
+Deno Deploy      | 1M req/mo       | YES(edge) | KV 1GB  | NO   | YES
+HF Spaces        | CPU free        | YES(CPU)  | NO      | NO   | YES
+open.claw.cloud  | 7d VM           | YES(VM)   | YES(VM) | YES  | YES
+Vercel           | 150K func/mo    | NO        | NO      | 2/mo | NO (!)
+Railway          | $5 trial        | YES(paid) | Paid    | YES  | YES
+Zeabur           | $5 trial        | Serverless| Paid    | NO   | YES
+Replit           | 1200 dev-min/mo | NO(5min)  | KV only | NO   | ?
+Fly.io           | 2hr trial only  | NO        | Paid    | NO   | YES
+Glitch           | DEAD            | DEAD      | DEAD    | DEAD | DEAD
+PlanetScale      | DEAD            | DEAD      | DEAD    | DEAD | DEAD
+
+================================================================================
+DATABASE TIER COMPARISON (Free PostgreSQL Options)
+================================================================================
+
+#1 NEON            — Best: 100 projects, 100 CU-hr each, pgvector, branches
+#2 SUPABASE        — Runner-up: 2 projects, 500MB, pgvector, auth, pause risk
+#3 KOYEB           — Included: nano instance, limited storage
+#4 RENDER          — Worst: 1 project, 1GB, 30-day expiry (timebomb)
+#5 ORACLE          — Run your own: PostgreSQL on ARM VM, 200GB block storage
+
+RECOMMENDATION: Use NEON as primary DB for all new services.
+                Migrate Render Postgres to Neon immediately.
+                Use Supabase for projects needing auth + pgvector + cron.
+
+================================================================================
+COST-TO-VALUE SUMMARY
+================================================================================
+
+$0/month achievable architecture:
+  - 6 CF Workers (fleet): $0 (100K req/day each)
+  - Bunshin on Render: $0 (with UptimeRobot ping)
+  - Bunshin DB on Neon: $0 (after migration from Render)
+  - Supabase backend for Intel Pro: $0
+  - 1 Koyeb always-on agent: $0
+  - HF Space for embedding: $0
+  - Oracle ARM (4 OCPU 24GB): $0 (once provisioned)
+
+Total free compute: ~4 ARM cores + 24GB RAM + 6 edge workers + 1 container
+Total free DB: 100+ PostgreSQL projects (Neon) + 2 Supabase projects
+Total free requests: 100K/day (CF) + 500K/mo (Supabase edge) + 1M/mo (Deno)
+Total free bandwidth: 10 TB/month (Oracle) + unlimited CDN (CF/Netlify)
+
+================================================================================
+END OF REPORT | Generated 2026-03-07 for OpenClaw Ecosystem
+Sources: Cloudflare Docs, Render Docs, Koyeb Docs, Neon Docs, Supabase Docs,
+         Oracle Cloud Docs, Vercel Docs, Netlify Docs, Deno Deploy Pricing,
+         HuggingFace Pricing, various 2026 pricing comparison sites
+================================================================================

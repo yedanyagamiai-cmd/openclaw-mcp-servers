@@ -1,0 +1,20 @@
+{
+  "name": "openclaw-golem-agent",
+  "version": "1.0.0",
+  "description": "Lightweight Golem adapter — Playwright + Telegram + Bunshin orchestration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "playwright-core": "^1.44.0",
+    "node-telegram-bot-api": "^0.65.1",
+    "dotenv": "^16.4.5"
+  },
+  "keywords": ["golem", "playwright", "openclaw", "telegram"],
+  "license": "MIT"
+}

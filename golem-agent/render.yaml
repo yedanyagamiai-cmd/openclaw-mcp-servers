@@ -1,0 +1,45 @@
+# Render Blueprint — one-click deploy
+# https://render.com/docs/blueprint-spec
+#
+# Usage:
+#   1. Push this repo to GitHub
+#   2. Go to Render Dashboard → New → Blueprint
+#   3. Connect repo → Render reads this file
+#   4. Set env vars in the Render dashboard (the envVarGroups below are prompts)
+
+services:
+  - type: web
+    name: openclaw-golem-agent
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free          # Free tier: 512MB RAM, sleeps after 15min inactivity
+    region: oregon      # us-west — closest to CF Browser worker
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: NODE_ENV
+        value: production
+
+      # ── Set these in Render Dashboard → Environment ──
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        value: "7848052227"
+      - key: CF_BROWSER_URL
+        value: https://openclaw-browser.yagami8095.workers.dev
+      - key: CF_BROWSER_TOKEN
+        value: openclaw-browser-2026
+      - key: DEEPINFRA_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BUNSHIN_URL
+        value: https://openclaw-mcp-servers.onrender.com
+      - key: BUNSHIN_TOKEN
+        value: openclaw-bunshin-2026
+
+    # Render free tier — keep alive with external ping (use UptimeRobot or CF Worker cron)
+    # The CF yedan-keepalive worker already pings Bunshin; add this URL there.

@@ -1,0 +1,751 @@
+================================================================================
+PROJECT GOLEM SOURCE SCAN
+Repository: https://github.com/Arvincreator/project-golem
+Scanned: 2026-03-07
+Version: 9.0.0 (actual runtime: 9.0.5 per index.js comments)
+Stars: ~265 (referenced in MEMORY.md)
+License: MIT
+Author: Arvin Chen (Arvincreator), @sz9751210
+Language: Traditional Chinese primary, English docs available
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1: FULL DIRECTORY TREE
+--------------------------------------------------------------------------------
+
+project-golem-source/
+├── .dockerignore
+├── .env.example                    # Template for all env vars
+├── .gitignore
+├── Dockerfile                      # Docker build (node:20-slim + chromium)
+├── LICENSE
+├── README.md                       # zh-TW primary readme
+├── assets/
+│   ├── bmc_qr.png
+│   └── logo.png
+├── dashboard.js                    # Terminal TUI + Web dashboard launcher
+├── docker-compose.yml              # Single-service compose (port 3000)
+├── docs/
+│   ├── README_EN.md                # English documentation
+│   ├── README_ZH.md                # Traditional Chinese documentation
+│   ├── golem指令說明一覽表.md       # Command reference table
+│   └── 如何獲取TG或DC的Token及開啟權限.md  # Token setup guide
+├── index.js                        # MAIN ENTRY POINT (Golem Kernel, v9.0.5)
+├── memory.html                     # Browser-based IndexedDB memory engine
+├── package-lock.json
+├── package.json                    # Root deps (Node.js core bot)
+├── scripts/
+│   ├── lib/
+│   │   ├── colors.sh
+│   │   ├── docker_manager.sh
+│   │   ├── installer.sh
+│   │   ├── menu_system.sh
+│   │   ├── system_check.sh
+│   │   ├── ui_components.sh
+│   │   └── utils.sh
+│   └── start-host-chrome.sh        # Launch Chrome with remote debugging on host
+├── setup.bat                       # Windows auto-installer
+├── setup.ps1                       # PowerShell installer
+├── setup.sh                        # Linux/Mac interactive menu installer
+├── skills.js                       # Dynamic skill loader (scans src/skills/core/)
+├── src/
+│   ├── config/
+│   │   └── index.js                # CONFIG object, env var loading & validation
+│   ├── core/
+│   │   ├── BrowserLauncher.js      # Puppeteer launch + remote Chrome connect
+│   │   ├── ConversationManager.js  # Message queue / debounce
+│   │   ├── Executor.js             # Shell command executor
+│   │   ├── GolemBrain.js           # Core brain facade (browser + memory)
+│   │   ├── InteractiveMultiAgent.js # Multi-agent conversation system
+│   │   ├── MessageManager.js       # Message routing
+│   │   ├── NeuroShunter.js         # Response parser / action dispatcher
+│   │   ├── NodeRouter.js           # Built-in command router (/sos, /new, /model)
+│   │   ├── PageInteractor.js       # Puppeteer DOM interactions
+│   │   ├── ResponseExtractor.js    # Extract AI response from DOM
+│   │   ├── TaskController.js       # Action sequence runner with approval flow
+│   │   ├── UniversalContext.js     # Unified Telegram/Discord context wrapper
+│   │   ├── action_handlers/
+│   │   │   ├── CommandHandler.js   # Shell command execution handler
+│   │   │   ├── MultiAgentHandler.js # Multi-agent spawner
+│   │   │   ├── ScheduleHandler.js  # Chronos task scheduler
+│   │   │   └── SkillHandler.js     # Dynamic skill dispatcher
+│   │   └── constants.js            # Timing, limits, URLs, browser args
+│   ├── managers/
+│   │   ├── AutonomyManager.js      # Butler mode / free-will autonomous actions
+│   │   ├── ChatLogManager.js       # JSONL conversation logging
+│   │   ├── DashboardManager.js     # TUI state management
+│   │   ├── HelpManager.js          # /help command
+│   │   ├── PatchManager.js         # Self-patch apply/test system
+│   │   ├── SecurityManager.js      # Command risk assessor (SAFE/WARNING/DANGER/BLOCKED)
+│   │   ├── SkillArchitect.js       # Skill creation/modification
+│   │   ├── SkillManager.js         # Skill runtime management
+│   │   ├── SystemUpgrader.js       # OTA update via GitHub raw URL
+│   │   └── ToolScanner.js          # Auto-detect system tools
+│   ├── memory/
+│   │   ├── BrowserMemoryDriver.js  # IndexedDB via memory.html (DEFAULT mode)
+│   │   ├── ExperienceMemory.js     # Simple JSON-based memory
+│   │   ├── SystemNativeDriver.js   # Markdown file-based memory (./golem_memory/knowledge/)
+│   │   └── SystemQmdDriver.js      # Advanced qmd vector search (requires Bun + qmd)
+│   ├── services/
+│   │   ├── DOMDoctor.js            # AI-powered CSS selector self-repair (Gemini 2.5 Flash API)
+│   │   ├── Introspection.js        # Self-reads project structure and source
+│   │   ├── KeyChain.js             # Multi-key rotation + cooldown
+│   │   ├── OpticNerve.js           # Image/file analysis (Gemini 2.5 Flash API)
+│   │   └── ProtocolFormatter.js    # Titan Protocol prompt builder + [[BEGIN]][[END]] tags
+│   ├── skills/
+│   │   ├── core/
+│   │   │   ├── definition.js       # Core system prompt definition
+│   │   │   ├── moltbot.js          # Moltbook social network client (REST API)
+│   │   │   ├── persona.js          # Agent persona management
+│   │   │   ├── reincarnate.js      # Memory reincarnation (context reset w/ summary)
+│   │   │   └── schedule.js         # Schedule management skill
+│   │   ├── index.js                # Dynamic skill auto-loader
+│   │   └── lib/                    # Skill prompt .md files (injected into system prompt)
+│   │       ├── actor.md
+│   │       ├── chronos.md
+│   │       ├── cloud.md            # Google Search native grounding skill
+│   │       ├── code-wizard.md
+│   │       ├── evolution.md
+│   │       ├── git.md
+│   │       ├── image-prompt.md
+│   │       ├── memory.md
+│   │       ├── moltbot.md
+│   │       ├── multi-agent.md
+│   │       ├── optic-nerve.md
+│   │       ├── reincarnate.md
+│   │       ├── spotify.md
+│   │       ├── sys-admin.md
+│   │       ├── tool-explorer.md
+│   │       └── youtube.md
+│   ├── utils/
+│   │   ├── ConsoleInterceptor.js   # Hijacks console for TUI rendering
+│   │   ├── ResponseParser.js       # Parse [GOLEM_MEMORY]/[GOLEM_ACTION]/[GOLEM_REPLY]
+│   │   └── system.js               # System info utilities
+│   └── views/
+│       └── TerminalView.js         # blessed TUI view
+└── web-dashboard/                  # Next.js 16 web UI
+    ├── README.md
+    ├── eslint.config.mjs
+    ├── next.config.ts
+    ├── package.json
+    ├── package-lock.json
+    ├── postcss.config.mjs
+    ├── public/                     # Static assets (pixel art characters, office props)
+    ├── server.js                   # Express + Socket.IO server (serves Next.js static export)
+    ├── src/
+    │   ├── app/
+    │   │   ├── dashboard/
+    │   │   │   ├── agents/page.tsx # Agent monitoring page
+    │   │   │   ├── layout.tsx
+    │   │   │   ├── office/page.tsx # Pixel-art virtual office view
+    │   │   │   └── page.tsx        # Main dashboard page
+    │   │   ├── globals.css
+    │   │   ├── layout.tsx
+    │   │   └── page.tsx
+    │   ├── components/
+    │   │   ├── AgentChat.tsx
+    │   │   ├── ChatBubble.tsx
+    │   │   ├── LogStream.tsx
+    │   │   ├── MemoryTable.tsx
+    │   │   ├── MetricCard.tsx
+    │   │   └── ui/
+    │   │       ├── button.tsx
+    │   │       └── card.tsx
+    │   └── lib/
+    │       ├── socket.ts           # Socket.IO client
+    │       └── utils.ts
+    └── tsconfig.json
+
+
+--------------------------------------------------------------------------------
+SECTION 2: DEPENDENCIES AND VERSIONS
+--------------------------------------------------------------------------------
+
+ROOT PACKAGE (package.json) — Runtime bot:
+  name: "project-golem"  version: "9.0.0"
+  engines: node >= 18.0.0
+
+  dependencies:
+    @google/generative-ai   ^0.21.0   # Gemini API (for DOMDoctor + OpticNerve)
+    blessed                 ^0.1.81   # Terminal TUI framework
+    blessed-contrib         ^4.11.0   # TUI charts/widgets
+    discord.js              ^14.14.1  # Discord bot
+    dotenv                  ^16.4.5   # .env loader
+    node-telegram-bot-api   ^0.65.1   # Telegram bot
+    puppeteer               ^22.6.0   # Headless Chrome control
+    puppeteer-extra         ^3.3.6    # Puppeteer plugin system
+    puppeteer-extra-plugin-stealth  ^2.11.2  # Anti-bot detection
+    socket.io-client        ^4.8.3    # WebSocket to dashboard
+    uuid                    ^9.0.1    # UUID generation
+
+  devDependencies:
+    nodemon                 ^3.0.2    # Hot reload for dev
+
+WEB-DASHBOARD (web-dashboard/package.json) — Next.js UI:
+  name: "web-dashboard"  version: "0.1.0"
+  engines: node >= 18.0.0
+
+  dependencies:
+    @radix-ui/react-slot    ^1.2.4
+    class-variance-authority ^0.7.1
+    clsx                    ^2.1.1
+    cors                    ^2.8.6
+    express                 ^5.2.1    # Serves static Next.js export
+    lucide-react            ^0.564.0
+    next                    16.1.6
+    react                   19.2.3
+    react-dom               19.2.3
+    recharts                ^3.7.0
+    socket.io               ^4.8.3
+    socket.io-client        ^4.8.3
+    tailwind-merge          ^3.4.1
+
+  devDependencies:
+    @tailwindcss/postcss    ^4
+    @types/node             ^20
+    @types/react            ^19
+    @types/react-dom        ^19
+    eslint                  ^9
+    eslint-config-next      16.1.6
+    tailwindcss             ^4
+    typescript              ^5
+
+
+--------------------------------------------------------------------------------
+SECTION 3: ENVIRONMENT VARIABLES
+--------------------------------------------------------------------------------
+
+REQUIRED:
+  GEMINI_API_KEYS       Google Gemini API keys (comma-separated for key rotation)
+                        Used by: DOMDoctor (CSS self-repair), OpticNerve (image analysis)
+                        NOT used as the main LLM brain — that goes through Web Gemini via Puppeteer
+  TELEGRAM_TOKEN        Telegram Bot Token (@BotFather)
+  ADMIN_ID              Telegram User ID (authentication gatekeeper)
+
+OPTIONAL:
+  TG_AUTH_MODE          ADMIN (default) | CHAT (restrict to specific group chat)
+  TG_CHAT_ID            Chat/Group ID when TG_AUTH_MODE=CHAT
+  DISCORD_TOKEN         Discord Bot Token
+  DISCORD_ADMIN_ID      Discord User ID for admin commands
+  USER_DATA_DIR         Puppeteer browser profile path (default: ./golem_memory)
+  GOLEM_TEST_MODE       true|false — dry run without browser (default: false)
+  DASHBOARD_PORT        Web dashboard port (default: 3000)
+  GOLEM_MEMORY_MODE     browser (default) | qmd | native | system
+  GOLEM_QMD_PATH        Path to qmd binary (only if GOLEM_MEMORY_MODE=qmd)
+  GITHUB_REPO           OTA update source URL (default: official GitHub raw)
+  ENABLE_WEB_DASHBOARD  true|false
+  PUPPETEER_HEADLESS    true | new | (empty = headed)
+  PUPPETEER_REMOTE_DEBUGGING_PORT  Default: 9222 (for Docker remote Chrome)
+  HOST_PROJECT_DIR      Host project path (Docker only, for memory.html file:// URL)
+  MOLTBOOK_API_KEY      Moltbook social network API key (optional, can auto-register)
+  MOLTBOOK_AGENT_NAME   Display name on Moltbook
+
+DOCKER ENV ALSO SETS:
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+  PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+  NEXT_TELEMETRY_DISABLED=1
+  NODE_ENV=production
+
+
+--------------------------------------------------------------------------------
+SECTION 4: DEPLOYMENT METHODS SUPPORTED
+--------------------------------------------------------------------------------
+
+METHOD 1: BARE METAL / VPS (Linux/Mac/Windows)
+  Prerequisites: Node.js >= 18, Google Chrome (latest)
+  Install:       ./setup.sh --install
+  Start:         ./setup.sh --start   OR   npm start
+  Dashboard:     npm run dashboard   (enables TUI + web UI at :3000)
+  Windows:       double-click setup.bat
+
+METHOD 2: DOCKER COMPOSE
+  Prerequisites: Docker, Docker Compose
+  Build/Start:   docker compose up -d   OR   ./setup.sh --docker
+  Port exposed:  3000
+  Volumes:
+    ./golem_memory  ->  /app/golem_memory  (persistent memory + Chrome profile)
+    ./logs          ->  /app/logs
+    ./.env          ->  /app/.env
+  NOTE: Docker container uses system Chromium, NOT Puppeteer's bundled Chrome.
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true, PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+METHOD 3: DOCKER WITH REMOTE HOST CHROME (Advanced)
+  The Docker container can connect to Chrome running on the host machine
+  via CDP remote debugging protocol.
+  Setup: run scripts/start-host-chrome.sh on the host first
+  Then set: PUPPETEER_REMOTE_DEBUGGING_PORT=9222 in docker-compose.yml
+
+npm SCRIPTS:
+  npm start              -> node index.js (headless, no TUI)
+  npm run dashboard      -> node index.js dashboard (TUI + web UI)
+  npm run dev            -> nodemon index.js dashboard (hot reload)
+  npm run win:setup      -> setup.bat
+  npm run unix:setup     -> ./setup.sh
+
+
+--------------------------------------------------------------------------------
+SECTION 5: API ENDPOINTS EXPOSED
+--------------------------------------------------------------------------------
+
+Web Dashboard Server (Express + Socket.IO, port 3000 by default):
+
+  GET  /                          Redirects to /dashboard
+  GET  /dashboard                 Main dashboard HTML (Next.js static export)
+  GET  /dashboard/agents          Agents monitoring page
+  GET  /dashboard/office          Pixel-art office view page
+
+  REST API:
+  GET  /api/memory                List/search memory entries
+  POST /api/memory                Add a memory entry
+                                  Body: { text: string, metadata: object }
+  GET  /api/agent/logs            Return last 1000 chat log entries (JSONL)
+  POST /api/system/reload         Restart the entire process (spawns detached child)
+
+  Socket.IO events (server -> client):
+    init              Initial state + log buffer on connect
+    log               Real-time log entry { time, msg, type, raw }
+    state_update      Queue count + last schedule
+    heartbeat         { memUsage, uptime, cpu }
+    memory_update     { action, text, metadata } on POST /api/memory
+
+  Socket.IO events (client -> server):
+    request_logs      Request buffered log history
+
+No external HTTP server exposed by the bot itself.
+All user interaction is via Telegram polling or Discord WebSocket.
+
+
+--------------------------------------------------------------------------------
+SECTION 6: ARCHITECTURE — HOW IT WORKS (CRITICAL FOR UNDERSTANDING)
+--------------------------------------------------------------------------------
+
+THE CORE TRICK: "Browser-in-the-Loop"
+  Golem does NOT use the Gemini REST API as its primary LLM.
+  Instead, it uses Puppeteer to control a real Chrome browser logged into
+  https://gemini.google.com/app (Web Gemini).
+
+  This means:
+  1. You must have a Google account logged into the Chrome profile stored in USER_DATA_DIR
+  2. The browser session must be maintained (cookies in golem_memory/)
+  3. On first run, a headed Chrome window opens for you to log in manually
+  4. After login, Puppeteer switches to headless mode (in Docker: always headless)
+
+THE GEMINI API IS SECONDARY:
+  GEMINI_API_KEYS is ONLY used for:
+  - DOMDoctor: when Puppeteer selectors break, calls Gemini 2.5 Flash API to repair them
+  - OpticNerve: image/file analysis (multimodal), using Gemini 2.5 Flash API
+
+TITAN PROTOCOL (AI communication standard):
+  All prompts sent to Web Gemini expect responses in this structured format:
+    [GOLEM_MEMORY]   <- facts to store in long-term memory
+    [GOLEM_ACTION]   <- JSON array of actions to execute
+    [GOLEM_REPLY]    <- natural language reply to user
+
+  NeuroShunter.js parses this output and dispatches to:
+  - Brain.memorize()          (for GOLEM_MEMORY)
+  - ScheduleHandler           (for action.type = "schedule")
+  - MultiAgentHandler         (for action.type = "multi_agent")
+  - SkillHandler              (for known skill names)
+  - CommandHandler/Executor   (for shell commands, with SecurityManager gating)
+
+MEMORY MODES:
+  browser (default): Memory stored in IndexedDB inside memory.html via a second
+                     Puppeteer browser tab. No external DB needed.
+  native/system:     Memory stored as .md files in ./golem_memory/knowledge/
+                     Keyword search only (no vector similarity).
+  qmd:               Advanced vector search. Requires Bun runtime + qmd binary.
+                     Heaviest option, best semantic recall.
+
+AUTONOMY / BUTLER MODE:
+  AutonomyManager schedules self-awakening every 2-5 hours (skips 1am-7am).
+  On awakening, randomly does one of:
+    - performSelfReflection (20% chance): reads own source code, proposes patches
+    - performNewsChat (40% chance): browses trending topics, messages user
+    - performSpontaneousChat (40% chance): sends proactive message to user
+
+
+--------------------------------------------------------------------------------
+SECTION 7: DATABASE REQUIREMENTS
+--------------------------------------------------------------------------------
+
+NO EXTERNAL DATABASE REQUIRED (default setup).
+
+Storage is entirely file-based:
+  ./golem_memory/           Chrome user data dir (cookies, session, cache)
+                            Also contains knowledge/ for native memory mode
+  ./golem_selectors.json    Cached Puppeteer CSS selectors (auto-healed by DOMDoctor)
+  ./moltbot_auth.json       Moltbook API key + agent name
+  ./moltbot_history.log     Audit log of all social actions
+  ./schedules.json          Pending Chronos schedule tasks
+  ./logs/                   Application logs (Docker volume)
+
+Optional advanced memory:
+  qmd mode: requires external qmd binary (vector DB, Bun-based)
+             stores data in its own internal store
+
+For web dashboard chat logs:
+  brain.chatLogFile          JSONL file (path from ChatLogManager)
+
+
+--------------------------------------------------------------------------------
+SECTION 8: MEMORY AND CPU REQUIREMENTS
+--------------------------------------------------------------------------------
+
+MINIMUM (bare-metal, no TUI):
+  RAM:  ~200-400 MB
+        Node.js process: ~50-100 MB
+        Chrome (headless): ~200-400 MB (single tab for Gemini + memory.html tab)
+        Both tabs open = two Chrome tabs worth of RAM
+  CPU:  Minimal when idle. Spikes during AI responses (DOM polling loop)
+  Disk: ~500 MB for node_modules + Chrome cache + Puppeteer binaries
+
+WITH DASHBOARD (TUI + web UI):
+  RAM:  +50 MB for Next.js server + blessed TUI
+  CPU:  +slight overhead for 1-second metric polling interval
+
+WITH DOCKER:
+  RAM:  ~400-600 MB (system Chromium tends to be leaner than bundled)
+  Disk: Docker image ~1.5-2 GB (node:20-slim + all chromium deps + npm install + next build)
+
+BOTTLENECK: The Chrome process for Gemini web.
+  Each sendMessage() call must:
+  1. Type text into the Gemini input field via CDP
+  2. Poll DOM every 500ms until response completes (up to 5-minute timeout)
+  3. Extract text from response DOM element
+
+  This is I/O-bound, not CPU-bound. Memory is the primary constraint.
+
+
+--------------------------------------------------------------------------------
+SECTION 9: FREE TIER COMPATIBILITY ANALYSIS
+--------------------------------------------------------------------------------
+
+RENDER FREE TIER:
+  RAM: 512 MB   [CRITICAL PROBLEM]
+  Chrome + Node.js together need ~400-600 MB minimum.
+  Render Free gives 512 MB — this is right at the edge and likely to OOM.
+  Additionally: Render Free containers sleep after 15 minutes of inactivity.
+  A sleeping container = Chrome session dies = Google login lost.
+  Verdict: NOT RECOMMENDED. Very likely to fail due to RAM and sleep behavior.
+
+RAILWAY FREE TIER (if available):
+  RAM: 512 MB   [Same problem as Render]
+  Similar sleep behavior.
+  Verdict: NOT RECOMMENDED for same reasons.
+
+FLY.IO FREE TIER:
+  RAM: 256 MB (free machines) or 512 MB
+  Same memory constraint. Fly.io free VMs can be set to not suspend (scale-to-zero=false)
+  but 256 MB is definitely insufficient.
+  Verdict: NOT RECOMMENDED. Insufficient RAM.
+
+KOYEB FREE TIER:
+  RAM: 512 MB
+  Koyeb free tier containers do not sleep but are limited resources.
+  512 MB may be insufficient for Chrome.
+  Verdict: BORDERLINE. Might work with aggressive Chrome flags but risky.
+
+DOCKER ON VPS (DigitalOcean $6/mo, Hetzner Cloud, etc.):
+  RAM: 1-2 GB   [RECOMMENDED MINIMUM]
+  VPS with 1 GB RAM is the MINIMUM viable deployment.
+  Verdict: WORKS WELL. Best value is 2 GB RAM VPS.
+
+LOCAL MACHINE / RASPBERRY PI:
+  If running on a machine that stays on 24/7, this is ideal.
+  The setup.sh script is designed for this use case.
+  Verdict: BEST OPTION for home server setup.
+
+KEY BLOCKER FOR ALL CLOUD FREE TIERS:
+  The fundamental architecture requires:
+  1. A persistent Chrome browser session logged into Google account
+  2. RAM for headless Chrome (~200-400 MB)
+  3. No sleep/suspension (otherwise Google login session expires)
+  4. Ability to run headless Chrome with --no-sandbox flag
+
+  Most free tiers fail on 1, 2, or 3.
+  --no-sandbox IS included in BROWSER_ARGS so that constraint is met.
+
+ALTERNATIVE APPROACH (would allow cloud deployment):
+  The project could theoretically be modified to use Gemini REST API instead of
+  Web Gemini browser automation. This would eliminate the Chrome requirement.
+  The GEMINI_API_KEYS env var is already there; it's just not used as the primary brain.
+  DOMDoctor already demonstrates this pattern (@google/generative-ai SDK).
+
+
+--------------------------------------------------------------------------------
+SECTION 10: LLM PROVIDER CONNECTION
+--------------------------------------------------------------------------------
+
+PRIMARY BRAIN (Web Gemini via Puppeteer):
+  - Connects to: https://gemini.google.com/app
+  - Method: Puppeteer + CDP (Chrome DevTools Protocol)
+  - Auth: Google account cookies in USER_DATA_DIR (golem_memory/)
+  - Models available: fast | thinking | pro (switched via /model command)
+  - Context: "Infinite" — Web Gemini maintains its own conversation history
+  - Cost: FREE (uses Google account's free Gemini web quota)
+  - Rate limits: Google's web UI rate limits apply
+
+SECONDARY API (Gemini REST API for specific tasks):
+  - Provider: Google AI Studio (Gemini REST API)
+  - SDK: @google/generative-ai ^0.21.0
+  - Model: gemini-2.5-flash (hardcoded in DOMDoctor.js line 75)
+  - Auth: GEMINI_API_KEYS env var (supports rotation via KeyChain)
+  - Used by:
+    * DOMDoctor.diagnose() — when Puppeteer CSS selectors fail
+    * OpticNerve.analyze() — image/file multimodal analysis
+
+NO OTHER LLM PROVIDERS are integrated in the source code.
+No OpenAI, Anthropic, Mistral, Groq, DeepSeek, etc.
+The project is entirely Gemini-dependent.
+
+KEY CHAIN ROTATION:
+  GEMINI_API_KEYS supports comma-separated keys.
+  KeyChain.js rotates through them when one hits rate limit.
+  Cooldown mechanism prevents hammering a single key.
+
+
+--------------------------------------------------------------------------------
+SECTION 11: KEY FEATURES AND CAPABILITIES
+--------------------------------------------------------------------------------
+
+1. TELEGRAM BOT INTEGRATION
+   - Polls for messages via node-telegram-bot-api
+   - Supports text, images, files (via OpticNerve)
+   - Admin-only commands (/sos, /new, /new_memory, /model, /patch)
+   - Inline keyboard buttons for approve/deny actions
+   - Forum/Topic mode support (v9.0.5 fix)
+   - Group chat mode (TG_AUTH_MODE=CHAT)
+
+2. DISCORD BOT INTEGRATION
+   - Listens on messageCreate and interactionCreate events
+   - Button interaction support for approve/deny
+   - Direct message support
+
+3. MOLTBOOK SOCIAL NETWORK (Moltbot)
+   - Platform: https://www.moltbook.com/api/v1
+   - Full CRUD for posts, comments, votes
+   - Agent registration and API key management
+   - DM system (request, respond, send, read)
+   - Submolt (board) creation and subscription
+   - Feed browsing with cursor pagination
+   - Zero-trust: external content wrapped in <EXTERNAL_UNTRUSTED_DATA> tags
+   - Anti-spam: rate limit detection with retry timing
+   - Math verification captcha handling
+   - WAF bypass via custom User-Agent and X-Agent-Name headers
+   - Black box audit logging to moltbot_history.log
+
+4. INTERACTIVE MULTI-AGENT MEETINGS
+   Four preset teams:
+   - TECH_TEAM: Alex (Frontend), Bob (Backend), Carol (PM)
+   - DEBATE_TEAM: Devil (critic), Angel (optimist), Judge (neutral)
+   - CREATIVE_TEAM: Writer, Designer, Strategist
+   - BUSINESS_TEAM: Finance, Marketing, Operations
+   Features:
+   - Up to 3 rounds of structured discussion (configurable maxRounds)
+   - User can interject with @mention to direct questions at specific agents
+   - Pause/resume conversations
+   - Shared memory between agents
+   - Early consensus detection
+   - Final summary generation
+
+5. TITAN CHRONOS (Task Scheduler)
+   - Natural language schedule setting ("remind me tomorrow at 9am")
+   - Persistence via schedules.json (survives restarts)
+   - Polling every 30 seconds for due tasks
+   - Sends reminders to Telegram admin and Discord admin
+   - Time-aware (knows not to awaken 1am-7am)
+
+6. BUTLER MODE / AUTONOMOUS BEHAVIOR
+   - Self-awakeens every 2-5 hours
+   - Proactively sends news, spontaneous messages
+   - Self-reflection: reads own source code, proposes code patches
+   - Patch approval system: user approves/rejects via button
+   - Auto-restart after approved patch deployment
+
+7. DOM DOCTOR (Self-Healing Puppeteer)
+   - When CSS selectors for Gemini UI fail (Google redesigns their page)
+   - Calls Gemini 2.5 Flash API with the current page HTML
+   - AI returns new working CSS selector
+   - Saved to golem_selectors.json for future use
+   - Supports input, send button, and response selectors
+
+8. MEMORY REINCARNATION
+   - When conversation context gets too long (Gemini web limit)
+   - Generates a summary of recent conversation
+   - Writes summary to .reincarnate_signal.json
+   - File watcher triggers new Gemini browser session
+   - Injects summary into new session prompt
+   - User gets notification that memory was reincarnated
+
+9. OPTIC NERVE (Vision)
+   - Analyzes images and files sent via Telegram/Discord
+   - Uses Gemini 2.5 Flash multimodal API
+   - Results injected into conversation as [System notification: Visual signal]
+
+10. OTA UPDATES (SystemUpgrader)
+    - /update command triggers GitHub raw URL fetch
+    - Downloads latest index.js, skills.js, etc.
+    - Proposes as patch for user approval
+    - GITHUB_REPO env var controls source (defaults to official repo)
+
+11. SECURITY MANAGER
+    Risk levels for shell commands:
+    - SAFE: ls, dir, pwd, date, echo, cat, grep, find, whoami, tail, head, df, free
+    - WARNING: any unrecognized command (requires user confirmation)
+    - DANGER: rm, mv, chmod, chown, sudo, su, reboot, shutdown, npm uninstall
+    - BLOCKED: rm -rf /, mkfs, dd if=, fork bombs
+
+12. WEB DASHBOARD (Next.js 16 + Socket.IO)
+    Pages:
+    - /dashboard: main metrics (memory, uptime, queue, logs)
+    - /dashboard/agents: agent monitoring
+    - /dashboard/office: pixel-art virtual office with characters
+    Real-time updates via Socket.IO
+    REST API for memory CRUD
+    Terminal TUI (blessed) for local interactive monitoring
+
+
+--------------------------------------------------------------------------------
+SECTION 12: NOTABLE PATTERNS RELEVANT TO OPENCLAW/YEDAN
+--------------------------------------------------------------------------------
+
+1. BUTLER MODE PATTERN
+   - Idle detection (>10 min since last user message)
+   - Background social tasks yield immediately to user messages
+   - Sleep hours avoidance (1am-7am)
+   Implementation: AutonomyManager.scheduleNextAwakening() + setTimeout
+
+2. ZERO TRUST SANITIZATION
+   - All external social data wrapped: <EXTERNAL_UNTRUSTED_DATA>...</EXTERNAL_UNTRUSTED_DATA>
+   - Prevents prompt injection from Moltbook feeds
+   Implementation: moltbot.js feed/search response formatting
+
+3. TITAN PROTOCOL (Structured AI Output)
+   [GOLEM_MEMORY] facts
+   [GOLEM_ACTION] [{"action": "...", ...}]
+   [GOLEM_REPLY] user-facing text
+   Parsed by ResponseParser.js with regex
+
+4. ADAPTIVE DOM SELF-REPAIR
+   When automation selectors fail, call AI API to regenerate them.
+   Implementation: DOMDoctor.diagnose(htmlSnippet, targetType)
+
+5. SANDWICH PROTOCOL
+   [[BEGIN_reqId]] ... [[END_reqId]] anchors injected with every prompt.
+   Ensures clean extraction of AI response from DOM even if page has other content.
+
+6. ERROR BUDGET / RETRY LIMITS
+   LIMITS.MAX_INTERACT_RETRY = 3
+   LIMITS.MAX_BROWSER_RETRY = 3
+   After exhausting retries, throws error (doesn't infinite loop)
+
+7. HYBRID SKILL OBJECTS
+   moltbot.js is simultaneously:
+   - A prompt string (injected into system prompt)
+   - An executable module (run as child process for actions)
+   This "Hybrid Object Pattern" allows skills to both inform AI and execute
+
+8. PATCH SYSTEM (Self-Evolution)
+   AI generates code patches → creates test clone → sends to user for approval
+   Approved: file replaced, process auto-restarts
+   Rejected: test file deleted
+
+9. MEMORY REINCARNATION
+   Context window management without losing important facts.
+   Summarize → signal file → file watcher → new session with summary injected.
+
+10. ADAPTIVE STRATEGY ENGINE (AutonomyManager)
+    Random weighted selection of autonomous behaviors:
+    - 20% self-reflection/evolution
+    - 40% news sharing
+    - 40% spontaneous social interaction
+
+11. BLACK BOX AUDIT
+    All social actions (reads, posts, comments) appended to moltbot_history.log
+    Timestamped, truncated to 200 chars per entry
+
+12. FLOOD GUARD
+    BOOT_TIME timestamp recorded. Any messages with msgTime < BOOT_TIME are discarded.
+    Prevents processing accumulated messages from before restart.
+
+
+--------------------------------------------------------------------------------
+SECTION 13: LIMITATIONS AND IMPORTANT CAVEATS
+--------------------------------------------------------------------------------
+
+1. GOOGLE LOGIN REQUIRED (BLOCKER FOR CLOUD)
+   The system MUST have a Chrome profile with an active Google session.
+   On first run, a headed Chrome window appears for manual login.
+   In Docker, you must use remote Chrome on host, or pre-bake a logged-in profile.
+
+2. GEMINI WEB UI FRAGILITY
+   If Google changes their Gemini UI (CSS classes, DOM structure), the bot breaks.
+   DOMDoctor mitigates this but requires GEMINI_API_KEYS to be set.
+
+3. NOT A STANDARD API CHATBOT
+   Cannot be deployed as a stateless serverless function.
+   Requires a long-running persistent process with Chrome.
+
+4. TERMS OF SERVICE
+   Using Puppeteer to automate the Gemini web UI may violate Google's ToS.
+   The project uses puppeteer-extra-plugin-stealth to reduce detection risk.
+
+5. MOLTBOOK DEPENDENCY
+   Social features require Moltbook (https://www.moltbook.com) to be operational.
+   This is a third-party platform tied to the Moltbot ecosystem.
+
+6. SINGLE USER DESIGN
+   ADMIN_ID is a single ID. Multi-user operation requires CHAT mode with a group.
+   All admin operations gate on a single user ID check.
+
+7. NO VECTOR SEARCH IN DEFAULT MODE
+   Browser memory (IndexedDB) mode has NO semantic search — just keyword matching.
+   True vector search requires qmd (Bun + qmd binary installation).
+
+8. SELF-EVOLUTION RISK
+   The patch system allows AI to propose and (with human approval) deploy code changes.
+   This modifies index.js and skills.js. Wrong patches could break the system.
+
+
+--------------------------------------------------------------------------------
+SECTION 14: QUICK START SUMMARY FOR YEDAN INTEGRATION
+--------------------------------------------------------------------------------
+
+MINIMUM TO RUN:
+  1. Node.js >= 18
+  2. Google Chrome installed
+  3. .env with: GEMINI_API_KEYS + TELEGRAM_TOKEN + ADMIN_ID
+  4. npm install
+  5. npm run dashboard   (first run: headed Chrome opens for Google login)
+  6. Log in to Google, then the system continues
+
+DOCKER MINIMUM:
+  1. Docker + Docker Compose
+  2. .env file populated
+  3. A Chrome browser running on host with --remote-debugging-port=9222
+     (scripts/start-host-chrome.sh handles this)
+  4. docker compose up -d
+
+WHAT OPENCLAW/YEDAN CAN LEARN FROM THIS PROJECT:
+  - Butler Mode implementation (AutonomyManager pattern)
+  - Zero Trust sanitization for external data
+  - Titan Protocol structured AI output parsing
+  - Self-healing automation (DOMDoctor pattern)
+  - Memory Reincarnation for context management
+  - Multi-agent conversation orchestration
+  - Hybrid skill objects (prompt + executable)
+  - Black box audit logging
+  - Patch approval workflow
+
+WHAT THIS PROJECT LACKS THAT OPENCLAW HAS:
+  - Multi-provider LLM support (Golem is Gemini-only)
+  - REST API for agent communication
+  - Cloudflare Workers integration
+  - D1/KV/R2 cloud storage
+  - Multiple simultaneous agents
+  - Heartbeat monitoring system
+  - MCP server support
+
+================================================================================
+END OF SCAN
+================================================================================

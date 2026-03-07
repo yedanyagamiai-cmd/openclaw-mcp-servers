@@ -1,0 +1,79 @@
+# Koyeb Deployment Config
+# https://www.koyeb.com/docs/reference/koyeb-yaml
+#
+# Koyeb Free Tier: 1 web service, always-on (no sleep), 256MB RAM, 0.1 vCPU
+# This is the PREFERRED platform — no sleep unlike Render free.
+#
+# Deploy via CLI:
+#   npm install -g koyeb-cli
+#   koyeb login
+#   koyeb app init openclaw-golem-agent
+#   koyeb service create golem \
+#     --app openclaw-golem-agent \
+#     --docker <your-dockerhub-or-ghcr-image> \
+#     --ports 3000:http \
+#     --routes /:3000 \
+#     --env TELEGRAM_BOT_TOKEN=... \
+#     --env TELEGRAM_CHAT_ID=7848052227 \
+#     --env CF_BROWSER_URL=https://openclaw-browser.yagami8095.workers.dev \
+#     --env CF_BROWSER_TOKEN=openclaw-browser-2026 \
+#     --env DEEPINFRA_API_KEY=... \
+#     --env GROQ_API_KEY=... \
+#     --env BUNSHIN_URL=https://openclaw-mcp-servers.onrender.com \
+#     --env BUNSHIN_TOKEN=openclaw-bunshin-2026 \
+#     --health-check-path /health \
+#     --instance-type free
+#
+# OR deploy from GitHub (no Docker Hub needed):
+#   koyeb service create golem \
+#     --app openclaw-golem-agent \
+#     --git github.com/<your-user>/golem-agent \
+#     --git-branch main \
+#     --git-build-command "npm install --production" \
+#     --git-run-command "node index.js" \
+#     --ports 3000:http \
+#     --routes /:3000 \
+#     --instance-type free
+#
+# NOTE: Koyeb free allows only 1 app (2 services max).
+# If slots are used, use Render or Railway instead.
+
+name: openclaw-golem-agent
+
+services:
+  - name: golem
+    type: web
+    instance_type: free     # 256MB RAM, 0.1 vCPU, always-on
+
+    ports:
+      - port: 3000
+        protocol: http
+
+    routes:
+      - path: /
+        port: 3000
+
+    health_checks:
+      - path: /health
+        port: 3000
+        protocol: http
+        interval: 30
+        timeout: 10
+
+    env:
+      - name: PORT
+        value: "3000"
+      - name: NODE_ENV
+        value: production
+      - name: TELEGRAM_CHAT_ID
+        value: "7848052227"
+      - name: CF_BROWSER_URL
+        value: https://openclaw-browser.yagami8095.workers.dev
+      - name: CF_BROWSER_TOKEN
+        value: openclaw-browser-2026
+      - name: BUNSHIN_URL
+        value: https://openclaw-mcp-servers.onrender.com
+      - name: BUNSHIN_TOKEN
+        value: openclaw-bunshin-2026
+      # Set these as secrets in Koyeb dashboard:
+      # TELEGRAM_BOT_TOKEN, DEEPINFRA_API_KEY, GROQ_API_KEY

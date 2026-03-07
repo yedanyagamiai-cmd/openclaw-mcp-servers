@@ -1,0 +1,600 @@
+================================================================================
+NOTION WAR ROOM SCAN — OpenClaw 戰情室
+Generated: 2026-03-07
+Source DB: 26f1d163-794b-4bc8-be7d-01a19b24d49e
+Data Source: collection://b6784514-74a5-4ada-b56d-0b7377466fb3
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1: DATABASE SCHEMA (Current State)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Database Name:  OpenClaw 戰情室
+Database URL:   https://www.notion.so/26f1d163794b4bc8be7d01a19b24d49e
+Views:          1 (Default view — table type, shows all columns)
+
+COLUMNS / PROPERTIES:
+┌─────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────┐
+│ Column Name     │ Type            │ Options / Notes                                                      │
+├─────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────┤
+│ Task            │ title           │ Primary title column                                                 │
+│ Status          │ select          │ Pending (yellow), In Progress (blue), Done (green),                  │
+│                 │                 │ Blocked (red), YEDAN (purple)                                        │
+│ Priority        │ select          │ P0 Critical (red), P1 High (orange), P2 Medium (yellow),             │
+│                 │                 │ P3 Low (gray)                                                        │
+│ Category        │ select          │ Revenue (green), Content (blue), Platform (purple),                  │
+│                 │                 │ Health (gray), Agent (orange)                                        │
+│ Owner           │ select          │ Claude Code (blue), YEDAN (purple), Yagami (orange), Auto (green)   │
+│ Platform        │ multi_select    │ 19 options: Smithery, MCPize, Apify, mcp.so, PulseMCP, Dev.to,       │
+│                 │                 │ Reddit, HN, note.com, Product Store, Fiverr, Upwork, Toptal,         │
+│                 │                 │ dotMCP, Gumroad, Twitter, CrowdWorks, Lancers, Coconala              │
+│ Revenue Impact  │ number (dollar) │ Dollar-formatted number                                              │
+│ Due Date        │ date            │ Date field (start/end/is_datetime)                                   │
+│ Notes           │ text            │ Free-form text notes                                                 │
+│ Created         │ created_time    │ Auto-set on page creation                                            │
+└─────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────┘
+
+SCHEMA OBSERVATIONS:
+- 10 total columns — functional but lean
+- Only ONE view (Default table view) — no Kanban, no Calendar, no filtered views
+- No "Effort" or "Time Estimate" column
+- No "Tags" column for free-form tagging
+- No "Sprint" or "Week" grouping column
+- No "Actual Revenue" vs "Projected Revenue" separation
+- No "Completed Date" (only Created auto-field)
+- No "Blockers" structured field (buried in Notes text)
+- "Notes" is plain text — no structured sub-fields
+- Platform is multi-select but Category is single-select (limits cross-category tasks)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2: ALL EXISTING TASKS / ENTRIES (Complete Inventory)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All entries are pages inside the collection (each task = a Notion page).
+Total confirmed entries fetched: 22 tasks
+(Additional entries may exist beyond those surfaced by the 4 search queries.)
+
+FORMAT: [STATUS] [PRIORITY] Task Title | Category | Owner | Revenue Impact | Due Date | Notes summary
+
+────────────────────────────────────────────────────────────────────────────────
+GROUP A: DONE (Completed Tasks)
+────────────────────────────────────────────────────────────────────────────────
+
+1.  [Done] [P0] v1.0.0 World-Class Edition — GitHub Release + ClawHub 全面發佈
+    Category: Revenue | Owner: Claude Code | Platform: Smithery | Revenue Impact: none set
+    Due: none | Created: 2026-03-07
+    Notes: GitHub Release v1.0.0 LIVE. 5/9 ClawHub skills published (4 pending rate limit).
+           README conversion-focused w/ Stripe CTA. 6 Fleet Workers open-sourced.
+           SECURITY.md + Health Check CI. 35 files 3379 lines. publish-remaining.bat ready.
+    URL: https://www.notion.so/31cd9d87d17381208387e491be190304
+
+2.  [Done] [P0] Revenue Reality Check: $0 actual income (all test data)
+    Category: Revenue | Owner: Claude Code | Revenue Impact: $0
+    Due: none | Created: 2026-03-04
+    Notes: D1 orders: 7 paid but all email=null, payment_id=''. Apify: 0 runs.
+           API keys: 5 pro, 3 total calls. Infrastructure ready but ZERO real customers.
+    URL: https://www.notion.so/319d9d87d1738111989bd5e68e78ca9a
+
+3.  [Done] [P0] YEDAN deepseek-reasoner 模型升級
+    Category: Agent | Owner: Claude Code | Revenue Impact: $0
+    Due: none | Created: 2026-03-06
+    Notes: main/moltbook/browser-agent all switched from deepseek-chat to deepseek-reasoner.
+           Reasoning ability greatly improved. Gateway restart confirmed normal.
+    URL: https://www.notion.so/31bd9d87d17381b5a970f4439cef6ff9
+
+4.  [Done] [P0] 三腦統一整合完成 — deepseek-reasoner + Bunshin v4.1.2 + Master Workflow
+    Category: Agent | Owner: Claude Code | Revenue Impact: $0
+    Due: none | Created: 2026-03-06
+    Notes: YEDAN→deepseek-reasoner, Bunshin v4.1.2 (JSONB+parseJsonResponse fix),
+           revenue-action auto-generate, end-to-end verified, Master Integration Workflow built.
+    URL: https://www.notion.so/31bd9d87d173819da564f1c135a66564
+
+5.  [Done] [P0] YEDAN「超越最好」理念注入
+    Category: Agent | Owner: Claude Code | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: SOUL.md permanently injected + Gateway API delivery complete.
+           YEDAN has drafted 9 MCP Server 3-phase improvement plan.
+    URL: https://www.notion.so/319d9d87d173812b817ae72073c9c853
+
+6.  [Done] [P0] YEDAN Session 清理 (134檔/10.7MB)
+    Category: Health | Owner: Claude Code | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: Context overflow: 474 messages/132K tokens exceeded DeepSeek 131K limit.
+           Cleaned 134 files, freed 10.7MB. Truncated bloated sessions.
+    URL: https://www.notion.so/319d9d87d173811586d5d91ca4858cdb
+
+7.  [Done] [P1] Bunshin revenue-action tasks 自動生成確認
+    Category: Revenue | Owner: Auto | Revenue Impact: $100
+    Due: none | Created: 2026-03-06
+    Notes: After v4.1.2 fix, DeepSeek thinks every 15min → auto-creates revenue-action tasks.
+           Confirmed 3 tasks: MCPize guides audit(P8), Smithery monitoring(P5), Apify PPE(P3).
+    URL: https://www.notion.so/31bd9d87d1738115a927e0d06e3348c0
+
+8.  [Done] [P1] PATH B: Fiverr MCP server gig ($100-300/project)
+    Category: Revenue | Owner: Claude Code | Platform: none | Revenue Impact: $300
+    Due: 2026-03-06 | Created: 2026-03-04
+    Notes: Merged into [ULTRA] Fiverr MCP Server Gig x3. Gig content ready in fiverr-gig-content.md.
+           Blocked: Fiverr PerimeterX bot detection — must create gig manually.
+    URL: https://www.notion.so/319d9d87d17381d4ae76d9bb3b51220c
+
+9.  [Done] [P1] YEDAN Upgrade: HEARTBEAT.md fixed to workspace/
+    Category: Agent | Owner: Claude Code | Revenue Impact: $0
+    Due: none | Created: 2026-03-04
+    Notes: workspace/HEARTBEAT.md was only 'HEARTBEAT_OK'. Now 36-line full checklist.
+           YEDAN confirmed reading Revenue section.
+    URL: https://www.notion.so/319d9d87d17381ffbbd4ee5b3b8046ff
+
+10. [Done] [P1] ULTRA Market Intelligence Complete
+    Category: Content | Owner: Claude Code | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: 4 agents + 15 web searches. Key: 18,073 servers (mcp.so), <5% monetized,
+           $10.4B market, MCP Hive March 8, x402 dark horse, JP market huge.
+    URL: https://www.notion.so/319d9d87d1738183a85acea9e1506a00
+
+11. [Done] [P0] PATH A: note.com paid article (MCP server guide)
+    Category: Revenue | Owner: Claude Code | Platform: note.com | Revenue Impact: $20
+    Due: 2026-03-05 | Created: 2026-03-04
+    Notes: PUBLISHED 2026-03-05 01:23 JST.
+           URL: https://note.com/yedanyagami/n/n58a179450c23
+           Price: ¥1,980. Tags: #AI #MCP #副業 #プログラミング
+           Article 2,003 chars. Paid content: 6-step guide.
+    URL: https://www.notion.so/319d9d87d17381fc8980df44b59abb02
+
+12. [Done] [P2] MongoDB Atlas free cluster setup
+    Category: Platform | Owner: Claude Code | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: Cluster0 on AWS Tokyo (M0 Free, 512MB). MongoDB MCP server info added to TOOLS.md.
+    URL: https://www.notion.so/319d9d87d1738131a3c4db40da2af145
+
+13. [Done] [P1] Bunshin brain 準確更新
+    Category: Health | Owner: Claude Code | Revenue Impact: $0
+    Due: none | Created: 2026-03-06
+    Notes: revenue-status updated to $0 with accurate reasons (Stripe webhook/Apify Creator/MCPize KYC).
+           yedan-status → ONLINE+reasoner. ecosystem-map injected with full three-brain architecture.
+    URL: https://www.notion.so/31bd9d87d17381d99c66f38a70ca131c
+
+────────────────────────────────────────────────────────────────────────────────
+GROUP B: PENDING (Not Yet Started)
+────────────────────────────────────────────────────────────────────────────────
+
+14. [Pending] [P0] 🔥 雲端軍團部署 (6 Workers Fleet)
+    Category: Agent | Owner: Yagami | Revenue Impact: none
+    Due: none | Created: 2026-03-06
+    Notes: Code COMPLETE. 6 workers: orchestrator(*/2m), health-commander(*/3m),
+           revenue-sentinel(*/10m), cloud-executor(*/5m), content-engine(*/30m Workers AI),
+           intel-ops(1h). D1: yedan-army-command (5 tables). KV: yedan-army-state.
+           Deploy: python deploy-fleet-api.py --token CF_TOKEN. 147 cron triggers/hour.
+    URL: https://www.notion.so/31bd9d87d1738115bc64dea32ebd0cc2
+
+15. [Pending] [P0] MCP Hive Founding Provider Registration
+    Category: Revenue | Owner: Claude Code | Revenue Impact: $500
+    Due: 2026-03-08 | Created: 2026-03-04
+    Notes: DEADLINE 3/8! LAUNCHES MARCH 8. First 100 providers get ZERO platform fees.
+           Pay-per-request model. Register all 9 servers. Same deadline as CrowdWorks #1.
+    URL: https://www.notion.so/319d9d87d1738163b52ccaaebbd09537
+    *** URGENT: Deadline is 2026-03-08 — TOMORROW ***
+
+16. [Pending] [P1] [ULTRA] Whop 會員制 OpenClaw Pro ($9/mo, daily PayPal)
+    Category: Revenue | Owner: Yagami | Platform: Product Store | Revenue Impact: $300
+    Due: none | Created: 2026-03-05
+    Notes: Whop 3% fee, daily PayPal. OpenClaw Pro membership = Pro API key + community.
+           Register with yedanyagamiai@gmail.com.
+    URL: https://www.notion.so/31ad9d87d17381f4bddacec32c831385
+
+17. [Pending] [P2] [ULTRA] Notion Template x3 製作 (Gumroad/Lemon Squeezy賣)
+    Category: Revenue | Owner: Claude Code | Platform: Gumroad | Revenue Impact: $1000
+    Due: none | Created: 2026-03-05
+    Notes: 3 templates: AI Project Brain $29, MCP Intel Dashboard $39, Revenue Tracker $19.
+           Thomas Frank $1M example. Gumroad 10%+$0.50. Copy already prepared.
+    URL: https://www.notion.so/31ad9d87d17381499dacf0cb5e32be16
+
+18. [Pending] [P2] x402 Micropayment Integration Research
+    Category: Revenue | Owner: Claude Code | Revenue Impact: $300
+    Due: none | Created: 2026-03-04
+    Notes: x402.org — Coinbase+Cloudflare backed. 156K weekly txns, 492% growth.
+           $0.001/request USDC stablecoins. Already in CF Agents SDK.
+    URL: https://www.notion.so/319d9d87d17381edafdae84718d78e49
+
+19. [Pending] [P2] MCPize Tool Discovery 修復
+    Category: Platform | Owner: Claude Code | Platform: MCPize | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: 9/9 servers showing 0 tools. MCPize proxy endpoints may not be correctly
+           forwarding MCP protocol requests to CF Workers.
+    URL: https://www.notion.so/319d9d87d17381819b13e8ecbe7b6adf
+
+────────────────────────────────────────────────────────────────────────────────
+GROUP C: IN PROGRESS
+────────────────────────────────────────────────────────────────────────────────
+
+20. [In Progress] [P0] Fix YEDAN Telegram conflict (getUpdates 409)
+    Category: Agent | Owner: Claude Code | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: Multiple bot instances polling. Health-monitor restarts cause conflict. Need single instance.
+    URL: https://www.notion.so/319d9d87d1738175a195efd5e3408caf
+    *** NOTE: Stale — this was created 2026-03-04, still In Progress as of scan ***
+
+────────────────────────────────────────────────────────────────────────────────
+GROUP D: YEDAN-OWNED (Autonomous)
+────────────────────────────────────────────────────────────────────────────────
+
+21. [YEDAN] [P2] MoltBook auto-engagement (Smithery promotion)
+    Category: Content | Owner: YEDAN | Platform: Smithery | Revenue Impact: none
+    Due: none | Created: 2026-03-04
+    Notes: YEDAN auto-replies with Smithery install commands every 2h. Verify working.
+    URL: https://www.notion.so/319d9d87d17381e080ccf7937093a3ce
+
+────────────────────────────────────────────────────────────────────────────────
+GROUP E: FOUND IN SEARCH — NOT YET IN WAR ROOM DB (Orphan Pages)
+────────────────────────────────────────────────────────────────────────────────
+
+The following pages appeared in search results but are NOT part of the
+OpenClaw 戰情室 database — they appear to be standalone pages or in other
+locations (e.g., Session logs, old notebooks):
+
+22. "蒐集openclaw迭代所有進化的資料" (2026-02-11)
+    URL: https://www.notion.so/304d9d87d1738092a4c5f160d16dad98
+    Type: Standalone page — appears to be an early session log / data collection page
+
+23. "超級情報商系統 - 穩定安全長期經營" (2026-02-17)
+    URL: https://www.notion.so/30ad9d87d173815cb478f79b117c7468
+    Type: Standalone page — mentions "Notion API 連接成功 - 用戶: yedan note (bot)"
+
+24. "[收益計畫] 部署 SOUL-revenue.md 引擎" (2026-02-14)
+    URL: https://www.notion.so/307d9d87d17381f6b62cc8beccd7324b
+    Type: Standalone page — early revenue planning doc
+
+────────────────────────────────────────────────────────────────────────────────
+TASK COUNT SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+
+  Done:         13 tasks
+  Pending:       6 tasks
+  In Progress:   1 task (stale, created 2026-03-04)
+  YEDAN:         1 task
+  Blocked:       0 tasks
+  ─────────────────
+  TOTAL IN DB:  21 confirmed tasks
+  Orphan pages:  3 (not in DB)
+
+REVENUE IMPACT SUMMARY (from tasks with values set):
+  Done tasks total:    $0 (Reality Check task) + $20 (note.com) + $100 (Bunshin confirm) + $300 (Fiverr)
+  Pending tasks total: $500 (MCP Hive) + $300 (Whop) + $1000 (Notion Templates) + $300 (x402)
+  Projected pending:   $2,100
+  Actual confirmed:    $172 (from PayPal per MEMORY.md — but separate source, not in DB)
+  DB Revenue Impact field accuracy: LOW — many tasks have no value or $0 set
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3: RELATED PAGES FOUND (Beyond the DB)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Search query "OpenClaw" returned 10 results:
+  - 1 database (the War Room itself)
+  - 9 task pages (all inside the War Room DB)
+  - Notable: [NEW] OpenClaw Cloud 註冊 (open.claw.cloud) — in DB
+  - Notable: [ULTRA] Whop 會員制 OpenClaw Pro — in DB
+
+Search query "YEDAN" returned 10 results:
+  - All pages are inside the War Room DB
+  - Notable outlier: "超級情報商系統 - 穩定安全長期經營" (2026-02-17) — NOT in DB
+
+Search query "revenue" returned 9 results:
+  - All pages are inside the War Room DB
+  - Notable: "[收益計畫] 部署 SOUL-revenue.md 引擎" (2026-02-14) — NOT in DB
+
+Search query "fleet" returned 2 results:
+  - "🔥 雲端軍團部署 (6 Workers Fleet)" — in DB (Pending/P0)
+  - "v1.0.0 World-Class Edition — GitHub Release + ClawHub 全面發佈" — in DB (Done/P0)
+
+Overall: The War Room DB is the central hub. Very few orphan pages exist.
+The workspace is reasonably consolidated.
+
+NOTABLE OBSERVATIONS FROM PAGE CONTENT:
+  - PATH A (note.com article): Has actual page content — published URL documented
+  - PATH B (Fiverr gig): Has actual page content — content ready, needs manual upload
+  - All other task pages: BLANK (no body content — metadata only in properties)
+  - The "blank page" pattern means tasks carry zero context beyond the Notes property
+  - The Notes field is being used as a substitute for page body content
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4: WHAT'S MISSING FOR A WORLD-CLASS WAR ROOM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────────────────────────────────────
+4.1 SCHEMA GAPS (Missing Columns)
+────────────────────────────────────────────────────────────────────────────────
+
+MISSING FIELD: Effort / Story Points
+  Problem: No way to estimate or balance workload across tasks.
+  Fix: Add "Effort" as SELECT (S=1h, M=4h, L=1d, XL=3d+)
+
+MISSING FIELD: Sprint / Week
+  Problem: All 21 tasks are in one flat list with no time-boxing.
+  Fix: Add "Sprint" as SELECT (Week 1, Week 2, Backlog, Someday)
+
+MISSING FIELD: Blocked By / Dependency
+  Problem: Blockers are buried in Notes text, not queryable.
+  Fix: Add "Blocked By" as RICH_TEXT or RELATION to another task
+
+MISSING FIELD: Actual Revenue (vs Projected)
+  Problem: "Revenue Impact" mixes estimated and actual in same field.
+  Fix: Separate into "Projected Revenue" (number) and "Actual Revenue" (number)
+
+MISSING FIELD: Completed Date
+  Problem: Only "Created" auto-field. No record of when tasks finished.
+  Fix: Add "Completed Date" as DATE (manual or auto via automation)
+
+MISSING FIELD: Environment / System
+  Problem: No tag for which system the task affects (YEDAN / Bunshin / Fleet / Claude Code).
+  Fix: Add "System" as MULTI_SELECT (YEDAN Gateway, Bunshin, Fleet, CF Worker, Product, Content)
+
+MISSING FIELD: Result / Outcome
+  Problem: When Done, there's no structured "what actually happened" field.
+  Fix: Add "Outcome" as TEXT or "Result" RICH_TEXT for post-completion notes
+
+────────────────────────────────────────────────────────────────────────────────
+4.2 VIEWS MISSING
+────────────────────────────────────────────────────────────────────────────────
+
+CURRENT: 1 default table view — shows everything in chronological order.
+
+MISSING:
+  1. Kanban by Status — drag tasks across Pending/In Progress/Done/Blocked/YEDAN
+  2. Kanban by Owner — see what Claude Code, YEDAN, Yagami, Auto each own
+  3. Calendar view by Due Date — surface deadline-driven tasks (e.g., MCP Hive 3/8!)
+  4. Filtered view "Active Tasks" — Status is Pending or In Progress only
+  5. Filtered view "Revenue Opportunities" — Category=Revenue, Status!=Done
+  6. Filtered view "P0 Critical Only" — Priority=P0 Critical
+  7. Filtered view "YEDAN Tasks" — Owner=YEDAN or Status=YEDAN
+  8. Gallery view — visual card layout for high-level overview
+  9. Timeline view — Gantt-style if Due Dates are populated
+
+────────────────────────────────────────────────────────────────────────────────
+4.3 TASK CONTENT GAPS
+────────────────────────────────────────────────────────────────────────────────
+
+  - 19 of 21 task pages are COMPLETELY BLANK (no body content)
+  - Only PATH A (note.com) and PATH B (Fiverr) have actual page body content
+  - All context, steps, commands, and links are crammed into the Notes text field
+  - No structured checklists inside task pages (no actionable sub-steps)
+  - No links between related tasks (e.g., x402 research links to Intel Pro)
+  - No attachments or screenshots for reference
+
+────────────────────────────────────────────────────────────────────────────────
+4.4 CRITICAL TASKS NOT TRACKED IN DB
+────────────────────────────────────────────────────────────────────────────────
+
+The following items exist in MEMORY.md / project state but have NO corresponding
+War Room task:
+
+  a. OpenClaw Intel Pro (LIVE on Render) — no task tracking post-launch health
+  b. Stripe payment fix — mentioned as blocked but no task exists
+  c. Apify Creator KYC — mentioned as blocking revenue but no task
+  d. YEDAN v2026.3.2 → upgrade to current (2026-03-03 upgrade) — no task
+  e. Wrangler OAuth renewal — mentioned as expired, no task
+  f. OpenClaw Cloud registration (open.claw.cloud) — exists as a page but status unclear
+  g. DeepSeek R1-0528 model (upgraded 2026-03-07) — no task to document this
+  h. Golem Memory cleanup (32→23 files) — no task
+  i. Workspace cleanup (171 files archived) — no task
+  j. publish-remaining.bat (4 ClawHub skills pending) — partial completion, no task
+  k. CF Browser Worker v2.0 stealth — deployed, no ongoing monitoring task
+  l. yedan-keepalive Worker — running, no task to verify health
+  m. MongoDB Atlas IP whitelist — may expire, no task to review
+  n. Product Store $172 revenue — confirmed real but no task to convert more
+
+────────────────────────────────────────────────────────────────────────────────
+4.5 DATA QUALITY ISSUES
+────────────────────────────────────────────────────────────────────────────────
+
+  - "Fix YEDAN Telegram conflict" is stuck "In Progress" since 2026-03-04 (3 days)
+    — either stale or needs a Blocked status
+  - MCP Hive deadline is 2026-03-08 but has no Due Date calendar reminder in views
+  - Revenue Impact field is inconsistently populated:
+    * 8 tasks have $0 or no value
+    * Values appear to be rough estimates, not tracked actuals
+  - Priority P0 is overused: 9 of 21 tasks are P0 Critical
+    — "If everything is critical, nothing is"
+  - Status "YEDAN" (purple) is used for only 1 task but could be used much more
+    as a proper "autonomous / delegated" status
+  - "Platform" multi-select has 19 options but most tasks leave it blank
+  - No recurring tasks or health check cadence tasks (e.g., "Weekly YEDAN Health Check")
+
+────────────────────────────────────────────────────────────────────────────────
+4.6 INTEGRATION GAPS
+────────────────────────────────────────────────────────────────────────────────
+
+  - No automation: Bunshin creates tasks in D1 (Cloudflare), NOT in Notion
+    — The two task systems (D1 and Notion) are completely siloed
+  - No webhook: When YEDAN completes something, Notion is not updated automatically
+  - No revenue sync: The $172 actual PayPal revenue is NOT reflected in Notion
+  - No Telegram → Notion bridge: YEDAN's Telegram reports don't update task statuses
+  - No GitHub → Notion bridge: Deployments/releases don't auto-create Done tasks
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5: RECOMMENDATIONS FOR THE ULTIMATE COMMAND CENTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ranked by impact. All are additive — nothing requires removing existing data.
+
+────────────────────────────────────────────────────────────────────────────────
+PRIORITY 1 — IMMEDIATE (Do Today, No Schema Change Needed)
+────────────────────────────────────────────────────────────────────────────────
+
+R1. Fix the MCP Hive deadline task
+    - Set Status = "In Progress" for task #15 (MCP Hive Founding Provider)
+    - Deadline is 2026-03-08 and it is currently sitting Pending with no urgency
+    - This is worth $500 estimated impact and has a hard cutoff
+
+R2. Mark stale "In Progress" task as Blocked
+    - Task #20 "Fix YEDAN Telegram conflict (getUpdates 409)" — created 2026-03-04
+    - Still "In Progress" 3 days later with no updates
+    - Change to "Blocked" or "Done" depending on actual current state
+
+R3. Add 5 missing critical tasks to DB
+    - Stripe payment webhook fix (blocks real revenue)
+    - Apify Creator KYC completion (blocks real revenue)
+    - Wrangler OAuth renewal (blocks Fleet deploy)
+    - publish-remaining.bat — 4 ClawHub skills still pending
+    - Intel Pro health monitoring (ongoing, no tracker)
+
+R4. Populate Due Dates for all time-sensitive Pending tasks
+    - MCP Hive: 2026-03-08 (TOMORROW — critical)
+    - Fleet deploy: set a target date
+    - Stripe/Apify fixes: assign dates to create urgency
+
+────────────────────────────────────────────────────────────────────────────────
+PRIORITY 2 — SCHEMA UPGRADE (Add Columns)
+────────────────────────────────────────────────────────────────────────────────
+
+R5. Add "Effort" column: SELECT (XS, S, M, L, XL)
+    - Enables workload balancing and sprint planning
+    - Lets Yagami see at a glance if the week is realistic
+
+R6. Add "Sprint" column: SELECT (This Week, Next Week, Backlog, Someday)
+    - Creates a simple time-boxing mechanism without a full project management system
+    - Filter to "This Week" for daily focus
+
+R7. Add "System" column: MULTI_SELECT
+    Options: YEDAN Gateway, Bunshin, Fleet Workers, CF Worker, Intel Pro,
+             Product Store, Content, Claude Code, External
+    - Enables filtering by which system is affected
+
+R8. Add "Actual Revenue" column: NUMBER (dollar format)
+    - Keep "Revenue Impact" as projected/estimated
+    - Add "Actual Revenue" to track what has been confirmed received
+    - Roll-up: formula to show delta (projected - actual)
+
+────────────────────────────────────────────────────────────────────────────────
+PRIORITY 3 — ADD VIEWS
+────────────────────────────────────────────────────────────────────────────────
+
+R9. Add Kanban view grouped by Status
+    - Immediate visual overview: Pending → In Progress → Done columns
+    - Drag-to-update workflow
+
+R10. Add "Active Sprint" filtered table view
+     - Filter: Status is Pending OR In Progress
+     - Sort: Priority then Due Date
+     - This becomes the daily "what to work on today" view
+
+R11. Add "Revenue Pipeline" filtered view
+     - Filter: Category = Revenue AND Status != Done
+     - Show: Task, Priority, Revenue Impact, Owner, Due Date
+     - This is the money-tracking view
+
+R12. Add Calendar view by Due Date
+     - Only shows tasks with Due Dates set
+     - Immediately surfaces the MCP Hive 3/8 deadline and others
+
+────────────────────────────────────────────────────────────────────────────────
+PRIORITY 4 — INTEGRATION UPGRADES
+────────────────────────────────────────────────────────────────────────────────
+
+R13. Wire Bunshin → Notion API
+     - When Bunshin creates a revenue-action task in D1, mirror it to Notion DB
+     - Bunshin already has Notion API connected (confirmed: "Notion API 連接成功")
+     - This unifies the two task systems into one source of truth
+
+R14. Wire YEDAN → Notion status updates
+     - When YEDAN completes a task, POST to Notion API to update Status → Done
+     - Use yedan skill or heartbeat hook
+     - Reduces manual status updates from Yagami/Claude
+
+R15. Create a Notion "Revenue Dashboard" page
+     - Separate page (not DB) that shows:
+       * Actual revenue confirmed: $172
+       * Revenue pipeline (Notion Templates $1000, Whop $300, MCP Hive $500, x402 $300)
+       * Weekly target vs actuals
+       * Paywall conversions (note.com article views → purchases)
+     - This is the executive summary that YEDAN can update via heartbeat
+
+R16. Create a "System Health" page
+     - Live status of: YEDAN Gateway, Bunshin, Fleet (6 workers), CF Browser, Intel Pro
+     - Updated by yedan-health-commander worker via Notion API
+     - Replaces manual health check entries in the DB
+
+────────────────────────────────────────────────────────────────────────────────
+PRIORITY 5 — STRUCTURAL ADDITIONS (New Databases)
+────────────────────────────────────────────────────────────────────────────────
+
+R17. Add a "Revenue Ledger" database
+     Schema: Date, Source, Amount, Type (Sale/Subscription/API), Product, Notes
+     - Separate from the task DB
+     - Every confirmed dollar enters here
+     - The $172 PayPal orders should be in here
+     - Bunshin's revenue-sentinel should auto-write to this DB
+
+R18. Add a "Product Catalog" database
+     Schema: Product Name, Price, Platform, Status, Sales Count, Total Revenue, URL
+     Products: note.com article, Notion templates x3, Intel Pro API, Fiverr gig, Whop subscription
+     - Single source of truth for what's for sale and how it's performing
+
+R19. Add a "Fleet Status" database
+     Schema: Worker Name, Cron Schedule, Last Run, Status, Error Count, Endpoint
+     Workers: orchestrator, health-commander, revenue-sentinel, cloud-executor, content-engine, intel-ops
+     - Mirrors the D1 yedan-army-command.fleet_workers table into Notion
+     - Makes fleet health visible without SSH/CLI access
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6: QUICK-WINS CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These can be done RIGHT NOW without schema changes:
+
+[ ] Mark MCP Hive task as "In Progress" — deadline is 2026-03-08
+[ ] Add Due Date to MCP Hive task (already has 2026-03-08 but confirm visible)
+[ ] Resolve "Fix YEDAN Telegram conflict" — update status to Done or Blocked
+[ ] Add task: "Stripe webhook fix" (P0, Revenue, Owner: Yagami)
+[ ] Add task: "Apify Creator KYC" (P0, Revenue, Owner: Yagami)
+[ ] Add task: "Wrangler OAuth renewal → Fleet deploy" (P0, Agent, Owner: Yagami)
+[ ] Add task: "publish-remaining.bat — 4 ClawHub skills" (P1, Platform, Owner: Claude Code)
+[ ] Add task: "Intel Pro ongoing health" (P2, Health, Owner: Auto)
+[ ] Set Sprint week targets on all Pending tasks
+[ ] Add Kanban view to DB (in Notion UI: Add view → Board → Group by Status)
+[ ] Add "Active Sprint" filtered view (in Notion UI: Filter Status = Pending/In Progress)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 7: OVERALL ASSESSMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STRENGTHS:
+  + Well-chosen core columns: Status, Priority, Category, Owner, Revenue Impact all present
+  + 19-option Platform multi-select covers the full distribution landscape
+  + YEDAN as both an Owner and a Status is a clever design choice
+  + Tasks are being consistently created and closed — 13 Done tasks shows velocity
+  + Both human and autonomous owners tracked (Claude Code, YEDAN, Yagami, Auto)
+  + Revenue Impact field creates a money-first mindset on tasks
+
+WEAKNESSES:
+  - Single flat view hides urgency (MCP Hive deadline invisible in default sort)
+  - No sprint/time-boxing creates an unbounded backlog
+  - 19/21 task pages are blank — no actionable checklists inside tasks
+  - P0 overuse (9/21 tasks) dilutes criticality signal
+  - Two parallel task systems (Notion DB + D1 Tasks table) create split attention
+  - Revenue tracking is projected, not actual — no ground truth revenue ledger
+  - No Kanban = no drag-to-update workflow = higher friction for status updates
+  - Missing 14+ critical tasks that exist in memory/state but not in DB
+
+OVERALL SCORE: 5.5 / 10
+  The foundation is solid and the schema is thoughtfully designed for this use case.
+  The main gaps are: no views, no sprint structure, stale/missing tasks, and
+  no integration back from YEDAN/Bunshin into Notion. With 6-8 hours of work,
+  this could easily reach 9/10 — most improvements are configuration, not code.
+
+HIGHEST LEVERAGE SINGLE ACTION:
+  Add a Kanban view grouped by Status. This alone transforms the War Room from
+  a flat log into a live operational dashboard with zero schema changes.
+
+================================================================================
+END OF SCAN
+Scan completed: 2026-03-07
+Method: Notion API (notion-fetch + notion-search x4)
+Pages fetched: 21 task pages + 1 database + 1 data source
+Searches run: OpenClaw, YEDAN, revenue, fleet
+================================================================================
