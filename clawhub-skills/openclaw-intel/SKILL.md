@@ -1,7 +1,7 @@
 ---
 name: openclaw-market-intelligence
 version: 2.0.0
-description: "AI market intelligence MCP server with 6 tools for real-time ecosystem tracking. Use when: (1) 'AI market report' or 'what's happening in AI', (2) 'GitHub stars for Claude' or 'compare AI agents', (3) 'AI ecosystem stats' or 'market size', (4) 'latest AI funding' or 'AI startup landscape', (5) 'competitive analysis' or 'MCP server trends'. DeepSeek R1 analysis, live GitHub metrics, growth tracking. Zero install, sub-100ms on Cloudflare Workers. Free 10/day + Pro $9/mo."
+description: "AI market intelligence MCP server with 6 tools for real-time ecosystem tracking. Use when: (1) 'AI market report' or 'what's happening in AI', (2) 'GitHub stars for Claude' or 'compare AI agents', (3) 'AI ecosystem stats' or 'market size', (4) 'latest AI funding' or 'AI startup landscape', (5) 'competitive analysis' or 'MCP server trends'. DeepSeek R1 analysis, live GitHub metrics, growth tracking. Zero install, sub-100ms on Cloudflare Workers. Free 20/day + Pro $9/mo."
 read_when:
   - User asks about "AI trends", "AI market", "what's new in AI", or "AI landscape"
   - User wants GitHub stats — "stars for Claude", "compare repos", "growth rate"
@@ -180,7 +180,7 @@ For power users and AI agents who need deeper analysis, the Intel Pro API runs o
 
 | Tier | Calls/Day | Price | Includes |
 |------|-----------|-------|----------|
-| **Free** | 10 | $0 | 4 tools (historical deep-dive excluded) |
+| **Free** | 20 | $0 | 4 tools (historical deep-dive excluded) |
 | **Pro** | 1,000 | $9/mo | All 6 tools + all 9 OpenClaw servers (49 tools) |
 | **x402** | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 

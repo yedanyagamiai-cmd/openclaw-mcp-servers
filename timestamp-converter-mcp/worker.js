@@ -9,7 +9,7 @@
  *   - time_diff           : difference between two datetimes in multiple units
  *   - format_duration     : seconds ↔ "2h 30m 15s" ↔ ISO 8601 duration (PT2H30M15S)
  *
- * Rate limit: 30 free / day (KV)
+ * Rate limit: 20 free / day (KV)
  * MCP protocol: 2025-03-26, JSON-RPC 2.0, Batch support
  * Vendor: OpenClaw Intelligence
  */
@@ -1148,7 +1148,7 @@ async function checkRateLimit(env, clientId) {
   if (!env || !env.KV) return memoryRateLimit(clientId || 'no-kv');
   const today = new Date().toISOString().slice(0, 10);
   const key = `ts-converter:rate:${clientId}:${today}`;
-  const limit = 30;
+  const limit = 20;
   try {
     const current = parseInt((await env.KV.get(key)) || '0');
     if (current >= limit) return { allowed: false, remaining: 0, limit };
@@ -1639,7 +1639,7 @@ export default {
         version: SERVER_INFO.version,
         vendor: SERVER_INFO.vendor,
         tools: TOOLS.length,
-        rate_limit: '30 requests/day (free)',
+        rate_limit: '20 requests/day (free)',
         timestamp: new Date().toISOString(),
         ecosystem: ECOSYSTEM,
       }, { headers: cors });

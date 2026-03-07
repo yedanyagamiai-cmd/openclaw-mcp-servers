@@ -202,7 +202,7 @@ Extract dominant colors from an image URL or base64 data using k-means clusterin
 
 | Tier | Calls/Day | Price | What You Get |
 |------|-----------|-------|--------------|
-| Free | 25 | $0 | All 5 color tools, no signup |
+| Free | 20 | $0 | All 5 color tools, no signup |
 | Pro | 1,000 | $9/mo | All 9 OpenClaw servers (49 tools), priority routing |
 | x402 | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 

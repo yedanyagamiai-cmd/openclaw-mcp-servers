@@ -1,7 +1,7 @@
 ---
 name: openclaw-fortune
 version: 2.0.0
-description: "Fortune-telling MCP server with daily horoscope, tarot readings, and I Ching divination. Use when: (1) user says 'what's my horoscope' or 'daily fortune for Aries', (2) user asks 'pull a tarot card' or 'do a Celtic Cross spread', (3) user wants 'I Ching reading' or 'consult the Book of Changes', (4) you need engagement features for a chatbot or daily greeting, (5) user says 'lucky numbers today' or 'what do the stars say'. 78-card tarot deck with reversals, 64 I Ching hexagrams with changing lines, deterministic daily fortunes. Zero install, sub-100ms on Cloudflare Workers. Free + Pro $9/mo."
+description: "Fortune-telling MCP server with daily horoscope, tarot readings, and I Ching divination. Use when: (1) user says 'what's my horoscope' or 'daily fortune for Aries', (2) user asks 'pull a tarot card' or 'do a Celtic Cross spread', (3) user wants 'I Ching reading' or 'consult the Book of Changes', (4) you need engagement features for a chatbot or daily greeting, (5) user says 'lucky numbers today' or 'what do the stars say'. 78-card tarot deck with reversals, 64 I Ching hexagrams with changing lines, deterministic daily fortunes. Zero install, sub-100ms on Cloudflare Workers. Free 20/day + Pro $9/mo."
 read_when:
   - user asks about horoscope, zodiac, or daily fortune for any sign
   - user wants a tarot card reading, tarot spread, or card pull
@@ -173,7 +173,7 @@ Agent: "I can pull your daily fortune for fun, but major life decisions should b
 |---------|------------------|
 | **User Data** | No personal data stored. Birth dates used for sign detection are not logged. |
 | **Determinism** | Fortunes are seeded by date, not by user identity -- no tracking possible. |
-| **Rate Limiting** | Per-IP rate limits prevent abuse. Free tier: 50/day. |
+| **Rate Limiting** | Per-IP rate limits prevent abuse. Free tier: 20/day. |
 | **No PII** | No names, emails, or identifiers are collected or transmitted. |
 | **Edge Computing** | All processing on Cloudflare Workers -- data never leaves the edge node closest to you. |
 | **Entertainment Only** | Responses include appropriate disclaimers. Not medical, financial, or legal advice. |
@@ -182,7 +182,7 @@ Agent: "I can pull your daily fortune for fun, but major life decisions should b
 
 | Tier | Calls/Day | Price | What You Get |
 |------|-----------|-------|--------------|
-| **Free** | 50 | $0/mo | All 3 tools, all spreads, all hexagrams |
+| **Free** | 20 | $0/mo | All 3 tools, all spreads, all hexagrams |
 | **Pro** | 1,000 | $9/mo | All 9 OpenClaw servers (49 tools total) |
 | **x402** | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 

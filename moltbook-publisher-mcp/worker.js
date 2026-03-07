@@ -31,9 +31,9 @@ const ECOSYSTEM = {
   smithery_fortune: 'https://smithery.ai/servers/openclaw-ai/fortune',
 };
 
-const FREE_DAILY_LIMIT = 5;
-const PRO_DAILY_LIMIT = 100;
-const PRO_PRICE_USD = 12;
+const FREE_DAILY_LIMIT = 20;
+const PRO_DAILY_LIMIT = 1000;
+const PRO_PRICE_USD = 9;
 
 // ============================================================
 // TOOL DEFINITIONS
@@ -135,7 +135,7 @@ const TOOLS = [
   },
   {
     name: 'purchase_pro_key',
-    description: 'Get a MoltBook Publisher Pro API key. Pro unlocks: trending topics, cross-post formatting, performance analysis, and 100 uses/day (vs 5 free). $12/month via PayPal.',
+    description: 'Get a MoltBook Publisher Pro API key. Pro unlocks: trending topics, cross-post formatting, performance analysis, and 1000 uses/day (vs 20 free). $9/month via PayPal.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -857,7 +857,7 @@ function landingPage() {
           <li>\u2705 EN\u2192JP Translation Guide</li>
           <li>\u2705 Article Outline Generator</li>
         </ul>
-        <p class="text-sm text-purple-400 mt-3">5 uses/day free</p>
+        <p class="text-sm text-purple-400 mt-3">20 uses/day free</p>
       </div>
       <div class="bg-purple-500/20 backdrop-blur rounded-xl p-6 border border-purple-400/30">
         <h3 class="text-lg font-bold mb-3">\u{1F451} Pro Tools ($${PRO_PRICE_USD}/mo)</h3>
@@ -865,7 +865,7 @@ function landingPage() {
           <li>\uD83D\uDD25 Trending Topics + Gap Analysis</li>
           <li>\uD83D\uDD04 Cross-Post Formatter (3 platforms)</li>
           <li>\uD83D\uDCC8 Performance Predictor</li>
-          <li>\uD83D\uDE80 100 uses/day</li>
+          <li>\uD83D\uDE80 1000 uses/day</li>
         </ul>
         <a href="https://product-store.yagami8095.workers.dev" class="inline-block mt-3 bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg font-bold transition">Get Pro \u2192</a>
       </div>

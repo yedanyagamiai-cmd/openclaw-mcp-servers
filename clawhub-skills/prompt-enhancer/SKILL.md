@@ -1,7 +1,7 @@
 ---
 name: openclaw-prompt-enhancer
 version: 2.0.0
-description: "Remote prompt engineering MCP server with 6 tools that turn weak prompts into powerful ones. Use when: (1) 'improve this prompt' or 'make my prompt better', (2) 'score this prompt' or 'rate prompt quality', (3) 'convert prompt to Claude format' or 'translate for Gemini', (4) 'generate system prompt' or 'create instructions', (5) 'prompt templates' or 'show me examples'. 10-dimension scoring, cross-model conversion, 100+ templates. Zero install, sub-100ms on Cloudflare Workers. Free 10/day + Pro $9/mo."
+description: "Remote prompt engineering MCP server with 6 tools that turn weak prompts into powerful ones. Use when: (1) 'improve this prompt' or 'make my prompt better', (2) 'score this prompt' or 'rate prompt quality', (3) 'convert prompt to Claude format' or 'translate for Gemini', (4) 'generate system prompt' or 'create instructions', (5) 'prompt templates' or 'show me examples'. 10-dimension scoring, cross-model conversion, 100+ templates. Zero install, sub-100ms on Cloudflare Workers. Free 20/day + Pro $9/mo."
 read_when:
   - User says "improve this prompt", "make this prompt better", or "enhance prompt"
   - User asks to "score prompt", "rate my prompt", or "analyze prompt quality"
@@ -201,7 +201,7 @@ Get a Pro API key for full TemplateVault access and 1,000 calls/day across all 9
 
 | Tier | Calls/Day | Price | Includes |
 |------|-----------|-------|----------|
-| **Free** | 10 | $0 | 5 tools (TemplateVault excluded) |
+| **Free** | 20 | $0 | 5 tools (TemplateVault excluded) |
 | **Pro** | 1,000 | $9/mo | All 6 tools + all 9 OpenClaw servers (49 tools) |
 | **x402** | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 

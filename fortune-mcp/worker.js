@@ -11,7 +11,7 @@
 
 const SERVER_INFO = { name: 'openclaw-fortune', version: '2.0.1' };
 const CAPABILITIES = { tools: {} };
-const FORTUNE_RATE_LIMIT = 50; // 50 requests/day free
+const FORTUNE_RATE_LIMIT = 20; // 20 requests/day free
 
 // ============================================================
 // In-Memory Fallback Rate Limiter (KV Safe Mode)

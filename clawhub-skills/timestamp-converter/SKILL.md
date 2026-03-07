@@ -1,7 +1,7 @@
 ---
 name: openclaw-timestamp-converter
 version: 2.0.0
-description: "Remote timestamp & timezone MCP server with 5 precision tools. Use when: (1) 'convert this timestamp' or 'epoch to date', (2) 'what time is it in Tokyo' or 'convert PST to JST', (3) 'how many days between' or 'calculate duration', (4) 'list timezones' or 'UTC offset for Sydney', (5) 'how long ago' or 'time ago'. Full IANA database (400+ zones), DST-aware, business-day math, leap-year correct. Zero install, sub-100ms on Cloudflare Workers. Free 30/day + Pro $9/mo."
+description: "Remote timestamp & timezone MCP server with 5 precision tools. Use when: (1) 'convert this timestamp' or 'epoch to date', (2) 'what time is it in Tokyo' or 'convert PST to JST', (3) 'how many days between' or 'calculate duration', (4) 'list timezones' or 'UTC offset for Sydney', (5) 'how long ago' or 'time ago'. Full IANA database (400+ zones), DST-aware, business-day math, leap-year correct. Zero install, sub-100ms on Cloudflare Workers. Free 20/day + Pro $9/mo."
 read_when:
   - User mentions "timestamp", "epoch", "Unix time", or "convert time"
   - User asks "what time is it in [city]" or "timezone convert"
@@ -151,7 +151,7 @@ Convert any timestamp to natural language relative time expressions.
 
 | Tier | Calls/Day | Price | Includes |
 |------|-----------|-------|----------|
-| **Free** | 30 | $0 | All 5 tools, no signup required |
+| **Free** | 20 | $0 | All 5 tools, no signup required |
 | **Pro** | 1,000 | $9/mo | All 9 OpenClaw servers (49 tools) |
 | **x402** | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 

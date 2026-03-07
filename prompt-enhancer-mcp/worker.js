@@ -108,7 +108,7 @@ const TOOLS = [
   },
   {
     name: 'purchase_pro_key',
-    description: 'Get purchase instructions for a Pro API key ($9 one-time). Unlocks prompt_template_library and higher rate limits (100 req/day). FREE tool.',
+    description: 'Get purchase instructions for a Pro API key ($9 one-time). Unlocks prompt_template_library and higher rate limits (1000 req/day). FREE tool.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -1313,7 +1313,7 @@ function memoryRateLimit(ip) {
 async function checkRateLimit(env, identifier, isPro) {
   if (!env.KV) return memoryRateLimit(identifier);
 
-  const limit     = isPro ? 100 : 10;
+  const limit     = isPro ? 1000 : 20;
   const today     = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const key       = `rl:prompt:${identifier}:${today}`;
 
@@ -1424,7 +1424,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (20/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1447,7 +1447,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (20/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: {
           upgradeSignal: true,
           upgrade_url:   ECOSYSTEM.pro_page,
@@ -1472,7 +1472,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (20/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }
@@ -1489,7 +1489,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: `Rate limit exceeded (10/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
+        message: `Rate limit exceeded (20/day). FREE 7-day trial (100 calls/day): https://product-store.yagami8095.workers.dev/auth/login\n\nPro ($9 one-time, 1000/day): https://paypal.me/Yagami8095/9 | x402: $0.05/call USDC on Base`,
         data: { upgradeSignal: true, upgrade_url: ECOSYSTEM.pro_page, paypal: ECOSYSTEM.paypal },
       };
     }
@@ -1538,7 +1538,7 @@ async function dispatchTool(toolName, params, env, request) {
     if (!rl.allowed) {
       throw {
         code: RATE_LIMITED,
-        message: 'Rate limit exceeded (100/day Pro). Resets at midnight UTC. x402: $0.05/call USDC on Base for unlimited.',
+        message: 'Rate limit exceeded (1000/day Pro). Resets at midnight UTC. x402: $0.05/call USDC on Base for unlimited.',
         data: { upgradeSignal: true, daily_limit: 100, tier: 'pro' },
       };
     }
@@ -1566,7 +1566,7 @@ async function dispatchTool(toolName, params, env, request) {
       price:          '$9 USD (one-time payment)',
       what_you_get: [
         'Unlock prompt_template_library (30+ professional templates across 6 categories)',
-        'Increased rate limit: 100 requests/day (vs 10 free)',
+        'Increased rate limit: 1000 requests/day (vs 20 free)',
         'Priority access to new templates as they are added',
         'Access to all future Pro tools in this MCP',
       ],
@@ -1645,7 +1645,7 @@ async function handleMCPMethod(method, params, id, env, request) {
     try {
       const result = await dispatchTool(toolName, toolArgs, env, request);
       const rateLimitInfo = result?._meta
-        ? { remaining: result._meta.remaining_today, used: (result._meta.tier === 'pro' ? 100 : 10) - (result._meta.remaining_today ?? 0) }
+        ? { remaining: result._meta.remaining_today, used: (result._meta.tier === 'pro' ? 1000 : 20) - (result._meta.remaining_today ?? 0) }
         : null;
       const response = rpcSuccess(id, {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
@@ -1907,7 +1907,7 @@ function landingPageHTML() {
           <span class="tool-name">purchase_pro_key</span>
           <span class="tier-badge tier-free">FREE</span>
         </div>
-        <p class="tool-desc">Get instructions to purchase a Pro API key. One-time $9 payment unlocks template library and 100 req/day rate limit.</p>
+        <p class="tool-desc">Get instructions to purchase a Pro API key. One-time $9 payment unlocks template library and 1000 req/day rate limit.</p>
       </div>
     </div>
   </section>
@@ -1919,7 +1919,7 @@ function landingPageHTML() {
       <div class="price-sub">One-time payment — no subscription</div>
       <ul class="features-list">
         <li>prompt_template_library (30+ templates)</li>
-        <li>100 requests/day (vs 10 free)</li>
+        <li>1000 requests/day (vs 20 free)</li>
         <li>All future Pro tools in this MCP</li>
         <li>Templates across 6 professional categories</li>
         <li>New templates added regularly</li>

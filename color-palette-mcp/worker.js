@@ -8,7 +8,7 @@
  *   - css_gradient: Generate CSS gradient code (linear/radial/conic)
  *   - tailwind_colors: Lookup Tailwind CSS v3 color shades or find nearest match
  *
- * Architecture: JSON-RPC 2.0, MCP 2025-03-26, CORS, KV rate limiting (25/day free)
+ * Architecture: JSON-RPC 2.0, MCP 2025-03-26, CORS, KV rate limiting (20/day free)
  * Vendor: OpenClaw Intelligence
  */
 
@@ -958,7 +958,7 @@ async function proKeyRateLimit(kv, apiKey, limit) {
 async function checkRateLimit(env, clientId) {
   const today = new Date().toISOString().slice(0, 10);
   const key = `color-palette:rate:${clientId}:${today}`;
-  const limit = 25;
+  const limit = 20;
   try {
     const current = parseInt(await env.KV.get(key) || '0');
     if (current >= limit) return { allowed: false, remaining: 0, limit };
@@ -1470,7 +1470,7 @@ export default {
         server: SERVER_INFO,
         tools: TOOLS.length,
         features: ['generate_palette', 'contrast_check', 'color_convert', 'css_gradient', 'tailwind_colors'],
-        rate_limit: '25 free/day',
+        rate_limit: '20 free/day',
         timestamp: new Date().toISOString(),
       });
     }
@@ -1484,7 +1484,7 @@ export default {
         description: 'Color Palette MCP — design utility for AI agents building UIs, websites, and visual content.',
         endpoint: '/mcp (POST)',
         tools: TOOLS.map(t => ({ name: t.name, description: t.description.split('.')[0] + '.' })),
-        rate_limit: '25 free/day',
+        rate_limit: '20 free/day',
         ecosystem: ECOSYSTEM,
       });
     }

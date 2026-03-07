@@ -319,7 +319,7 @@ async function proKeyRateLimit(kv, apiKey, limit) {
 async function checkRateLimit(env, clientId, isPro) {
   const today = new Date().toISOString().slice(0, 10);
   const key = `agentforge:rate:${clientId}:${today}`;
-  const limit = isPro ? 100 : 10;
+  const limit = isPro ? 1000 : 20;
   try {
     const current = parseInt(await env.KV.get(key) || '0');
     if (current >= limit) return { allowed: false, remaining: 0, limit };
@@ -656,7 +656,7 @@ function landingPage() {
           <li>&#x2705; Side-by-side tool comparisons (summary)</li>
           <li>&#x2705; Detailed tool profiles</li>
           <li>&#x2705; Full pricing comparison table</li>
-          <li>&#x2705; 10 requests/day</li>
+          <li>&#x2705; 20 requests/day</li>
         </ul>
       </div>
       <div class="bg-blue-900/30 rounded-xl p-6 border border-blue-500/30">
@@ -665,7 +665,7 @@ function landingPage() {
           <li>&#x2B50; Full detailed analysis + head-to-head scoring</li>
           <li>&#x2B50; AI-powered personalized recommendations</li>
           <li>&#x2B50; Growth trends + projections</li>
-          <li>&#x2B50; 100 requests/day</li>
+          <li>&#x2B50; 1000 requests/day</li>
           <li>&#x2B50; Works across ALL OpenClaw tools</li>
         </ul>
         <a href="${ENDPOINTS.pro_page}" class="inline-block mt-4 bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition">Get Pro &rarr;</a>
@@ -980,7 +980,7 @@ async function handleMCPRequest(body, env, request) {
           reset: 'Daily at 00:00 UTC',
           upgradeSignal: isPro ? null : {
             action: 'purchase_pro_key',
-            reason: 'Pro users get 100 requests/day (10x free tier). One-time $9.',
+            reason: 'Pro users get 1000 requests/day (50x free tier). One-time $9.',
             url: ENDPOINTS.pro_page,
           },
           ecosystem: getEcosystem(),

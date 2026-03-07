@@ -1,7 +1,7 @@
 ---
 name: agentforge-compare
 version: 2.0.0
-description: "AI coding tool comparison MCP server -- compare Claude Code vs Cursor vs Windsurf vs Devin vs Copilot side-by-side with feature matrices, pricing breakdowns, and AI-powered recommendations. Use when: (1) user asks 'compare Cursor and Windsurf' or 'which AI coding tool is best', (2) user says 'tell me about Devin' or 'Copilot features', (3) user needs 'recommend an AI tool for my team of 5', (4) user asks 'how much does Cursor cost' or 'calculate AI tool costs', (5) user says 'list AI coding tools' or 'browse by category'. 15+ tools tracked, 7 comparison dimensions. Zero install, sub-100ms on Cloudflare Workers. Free + Pro $9/mo."
+description: "AI coding tool comparison MCP server -- compare Claude Code vs Cursor vs Windsurf vs Devin vs Copilot side-by-side with feature matrices, pricing breakdowns, and AI-powered recommendations. Use when: (1) user asks 'compare Cursor and Windsurf' or 'which AI coding tool is best', (2) user says 'tell me about Devin' or 'Copilot features', (3) user needs 'recommend an AI tool for my team of 5', (4) user asks 'how much does Cursor cost' or 'calculate AI tool costs', (5) user says 'list AI coding tools' or 'browse by category'. 15+ tools tracked, 7 comparison dimensions. Zero install, sub-100ms on Cloudflare Workers. Free 20/day + Pro $9/mo."
 read_when:
   - user wants to compare AI coding tools like Cursor, Windsurf, Copilot, Devin, or Claude Code
   - user asks which AI coding assistant is best for their use case or team
@@ -224,7 +224,7 @@ Agent: "To give you a good recommendation, I need a few details:
 | **No Tool Telemetry** | We don't track which tools you compare or recommend. |
 | **No Team Data Stored** | Team size, budget, and use case inputs are processed and discarded -- never logged. |
 | **Pricing Source** | All pricing data sourced from official public pages. No scraping of private accounts. |
-| **Rate Limiting** | Per-IP limits prevent abuse. Free: 10/day, Pro: 1000/day. |
+| **Rate Limiting** | Per-IP limits prevent abuse. Free: 20/day, Pro: 1000/day. |
 | **Edge Processing** | All computation on Cloudflare Workers -- no centralized database of user queries. |
 | **Unbiased Results** | No affiliate deals or sponsored rankings. Comparisons are data-driven. |
 
@@ -232,7 +232,7 @@ Agent: "To give you a good recommendation, I need a few details:
 
 | Tier | Calls/Day | Price | What You Get |
 |------|-----------|-------|--------------|
-| **Free** | 10 | $0/mo | 3 tools: compare, profile, categories |
+| **Free** | 20 | $0/mo | 3 tools: compare, profile, categories |
 | **Pro** | 1,000 | $9/mo | All 5 tools + recommendations + calculator + all 9 OpenClaw servers |
 | **x402** | Pay-per-call | $0.05 USDC | No account needed, crypto-native |
 
