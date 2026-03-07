@@ -1,0 +1,10 @@
+name = "content-autopilot-mcp"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "412eb1678043499eb34f0e7f211176b9"
+
+[vars]
+# DEEPINFRA_API_KEY = "your-key-here"  # Set via wrangler secret put DEEPINFRA_API_KEY

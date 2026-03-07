@@ -1,0 +1,7 @@
+name = "health-monitor-mcp"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "412eb1678043499eb34f0e7f211176b9"
