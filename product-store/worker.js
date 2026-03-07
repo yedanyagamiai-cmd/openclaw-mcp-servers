@@ -162,6 +162,113 @@ const PRODUCTS = {
     badge: 'BEST VALUE',
     emoji: '🏆',
   },
+  'enterprise-bundle': {
+    id: 'enterprise-bundle',
+    name: 'OpenClaw Enterprise Bundle',
+    tagline: 'Enterprise-grade MCP access. 10x the Pro limit. Priority routing. Dedicated support.',
+    description: 'Enterprise-grade MCP access. 10x the Pro limit. Priority routing. Dedicated support. All 49 MCP tools with custom API endpoint prefix, 10,000 calls/day, and quarterly market intelligence reports.',
+    features: [
+      '🔓 All 49 MCP tools unlocked across 9 Cloudflare edge servers',
+      '⚡ Priority routing — your requests jump the queue',
+      '🔑 10,000 API calls/day (10x Pro limit)',
+      '🌐 Custom API endpoint prefix for your organization',
+      '📧 Email support within 24h — dedicated response lane',
+      '📊 Quarterly market intelligence report (deep-dive, exclusive)',
+    ],
+    price_usd: 99,
+    price_jpy: 14800,
+    currency: 'USD',
+    format: 'API_KEY',
+    type: 'subscription',
+    billing: 'monthly',
+    badge: 'ENTERPRISE',
+    emoji: '🏢',
+  },
+  'agent-builder-kit': {
+    id: 'agent-builder-kit',
+    name: 'AI Agent Builder Kit',
+    tagline: 'Build and deploy your own MCP server in 2 hours. Production-ready template with auth, rate limiting, and Smithery publishing.',
+    description: 'Complete template and code for building MCP servers on Cloudflare Workers. Includes Cloudflare Worker boilerplate with auth, rate limiting, a landing page, and a step-by-step guide from zero to deployed and listed on Smithery.',
+    features: [
+      '📦 Complete Cloudflare Worker MCP boilerplate (JSON-RPC 2.0, MCP 2025-03-26)',
+      '🔐 Auth built-in — API key validation, rate limiting, Pro tier logic',
+      '🌐 Landing page template — conversion-optimized, dark mode, mobile-ready',
+      '🚀 Smithery publishing guide — get listed and discovered in 30 minutes',
+      '💰 Monetization flow — PayPal + Stripe checkout out of the box',
+      '📖 Step-by-step guide: zero to deployed in under 2 hours',
+    ],
+    price_usd: 49,
+    price_jpy: 7480,
+    currency: 'USD',
+    format: 'ZIP',
+    file_key: 'products/agent-builder-kit',
+    badge: 'HOT',
+    emoji: '🤖',
+  },
+  'mcp-audit-report': {
+    id: 'mcp-audit-report',
+    name: 'MCP Server Audit Report',
+    tagline: 'Professional code audit for your MCP server. Security analysis, performance recommendations, and best practices report.',
+    description: 'Deep analysis of any MCP server\'s code quality, security, and performance. Powered by DeepSeek R1 chain-of-thought reasoning. Delivered as a structured PDF report within 24 hours of submission.',
+    features: [
+      '🔍 Full security audit — auth flaws, injection risks, secrets exposure',
+      '⚡ Performance analysis — latency hotspots, cold start optimization',
+      '📋 Code quality report — structure, error handling, edge cases',
+      '🛡️ Best practices checklist — MCP 2025-03-26 compliance',
+      '🤖 Powered by DeepSeek R1 chain-of-thought (700B reasoning model)',
+      '📄 Delivered as structured PDF report within 24 hours',
+    ],
+    price_usd: 79,
+    price_jpy: 11800,
+    currency: 'USD',
+    format: 'SERVICE',
+    type: 'service',
+    badge: 'NEW',
+    emoji: '🔎',
+  },
+  'api-gateway-pro': {
+    id: 'api-gateway-pro',
+    name: 'OpenClaw API Gateway Pro',
+    tagline: 'REST API access to all 49 OpenClaw tools. No MCP client needed. Simple JSON in/out.',
+    description: 'Single API key to access all 49 OpenClaw tools via clean REST endpoints — no MCP client required. Supports webhook notifications and works with any language or framework.',
+    features: [
+      '🌐 REST endpoints for all 49 tools — simple JSON in, JSON out',
+      '🔑 One API key, one endpoint pattern, zero MCP config needed',
+      '🔔 Webhook notifications — push results to your URL on completion',
+      '⚡ Edge-deployed on Cloudflare Workers (<50ms global latency)',
+      '📊 Usage dashboard — calls/day, errors, top tools',
+      '🤖 Works with Python, Node.js, curl, or any HTTP client',
+    ],
+    price_usd: 29,
+    price_jpy: 4480,
+    currency: 'USD',
+    format: 'API_KEY',
+    type: 'subscription',
+    billing: 'monthly',
+    badge: 'NEW',
+    emoji: '🌐',
+  },
+  'revenue-automation-masterclass': {
+    id: 'revenue-automation-masterclass',
+    name: 'Revenue Automation Masterclass',
+    tagline: 'The complete playbook for building autonomous AI revenue systems. From zero to $10K/month.',
+    description: 'Complete video course and playbook on building automated revenue with AI agents. Covers MCP servers, Cloudflare Workers, autonomous agents, and Telegram bots. Includes all source code from the OpenClaw ecosystem.',
+    features: [
+      '🎬 Full video course — 8 modules, 4+ hours of hands-on content',
+      '📖 Playbook PDF — step-by-step from zero to $10K/month revenue',
+      '💻 All source code included — OpenClaw Workers, agent configs, Telegram bots',
+      '🤖 Autonomous agent setup — YEDAN-style 24/7 revenue systems',
+      '☁️ Cloudflare Workers monetization — MCP servers that earn while you sleep',
+      '📱 Telegram bot integration — alerts, commands, revenue tracking',
+    ],
+    price_usd: 149,
+    price_jpy: 22000,
+    currency: 'USD',
+    format: 'ZIP',
+    file_key: 'products/revenue-automation-masterclass',
+    badge: 'FLAGSHIP',
+    emoji: '💎',
+  },
 };
 
 // ============================================================
@@ -327,7 +434,7 @@ function catalogPage(env) {
       <div class="stats">
         <div class="stat"><div class="stat-num">9</div><div class="stat-label">MCP Servers</div></div>
         <div class="stat"><div class="stat-num">49</div><div class="stat-label">AI Tools</div></div>
-        <div class="stat"><div class="stat-num">7</div><div class="stat-label">Products</div></div>
+        <div class="stat"><div class="stat-num">12</div><div class="stat-label">Products</div></div>
         <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always On</div></div>
       </div>
       <div style="background:linear-gradient(135deg,#ff6b35,#ff4500);border-radius:12px;padding:24px;margin:24px 0;text-align:center;">
@@ -1382,7 +1489,7 @@ export default {
           const body = await request.json();
           const { product_id, payment_method, payment_id, email } = body;
 
-          const provisionableProducts = ['intel-api-pro', 'ecosystem-pro'];
+          const provisionableProducts = ['intel-api-pro', 'ecosystem-pro', 'enterprise-bundle', 'api-gateway-pro'];
           if (!provisionableProducts.includes(product_id)) {
             return jsonResponse({ error: `Only these products support API provisioning: ${provisionableProducts.join(', ')}`, available: provisionableProducts }, 400);
           }

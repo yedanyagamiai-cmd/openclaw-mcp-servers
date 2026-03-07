@@ -1,0 +1,695 @@
+================================================================================
+CLAWHUB COMPETITIVE SYNTHESIS REPORT
+Generated: 2026-03-07
+Source: MASTER-ANALYSIS.md + top10/top10b skill content + batch1-5 scans
+Purpose: Actionable playbook to surpass #1 ranked skill on ClawHub
+================================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+We scanned 30 ClawHub skills (top 20 analyzed in depth, 10 additional inspected).
+The #1 ranked skill (self-improving-agent, 647 lines) and #2 (proactive-agent, 632 lines)
+dominate because of DESCRIPTION ENGINEERING and STRUCTURAL SOPHISTICATION — not because
+their underlying ideas are hard to replicate. We can beat them by:
+  A) Applying their techniques to our existing superior infrastructure
+  B) Filling 10 completely unclaimed market niches they ignore entirely
+
+================================================================================
+PART 1: DESCRIPTION ENGINEERING FORMULA
+================================================================================
+
+THE WINNING FORMULA (from analysis of all 20 skills):
+
+  [ONE-LINE WHAT] + [Use when: (1)...(2)...(3)... with EXACT USER PHRASES in quotes]
+  + [KEY FEATURE KEYWORDS packed densely]
+
+Optimal length: 250-400 characters. #1 uses 471 chars and every char is a trigger.
+
+LENGTH PERFORMANCE TABLE:
+  <80 chars  → BAD  (desktop-control 64, gog 69, summarize 77) — no triggers
+  80-160     → WEAK (tavily 84, memory 99, github 133) — what but not when
+  160-300    → GOOD (auto-updater 168, proactive-agent 219, free-ride 269)
+  300-400    → EXCELLENT (humanizer 330, stock-analysis 355, api-gateway 380)
+  400+       → #1 RANKED (self-improving-agent 471) — exhaustive trigger coverage
+
+THE #1 DESCRIPTION (exact, for reference):
+  "Captures learnings, errors, and corrections to enable continuous improvement.
+  Use when: (1) A command or operation fails unexpectedly, (2) User corrects Claude
+  ('No, that's wrong...', 'Actually...'), (3) User requests a capability that doesn't
+  exist, (4) An external API or tool fails, (5) Claude realizes its knowledge is
+  outdated or incorrect, (6) A better approach is discovered for a recurring task.
+  Also review learnings before major tasks."
+
+WHY IT WINS: The numbered list turns the description into a decision tree. The AI
+agent reading the description can match any of 6 distinct user situations to this
+skill. Including exact user phrases in quotes ("No, that's wrong...", "Actually...")
+creates near-literal string matching against real user input.
+
+KEYWORD STACKING PATTERNS (from top performers):
+  - humanize-ai-text: names competitors + their detectors (GPTZero, Turnitin,
+    Originality.ai, ChatGPT, Claude, GPT) — pure SEO targeting
+  - stock-analysis: stacks synonyms (stocks, crypto, portfolio, watchlists, alerts,
+    dividends, trending, rumors) — catches every search variant
+  - api-gateway: lists brand names (Google Workspace, Microsoft 365, GitHub, Notion,
+    Slack, Airtable, HubSpot) — names = high-intent search terms
+  - multi-search-engine: quantifies (17 engines, 8 CN, 9 Global) — specificity = trust
+
+APPLY TO OUR SKILLS — TEMPLATE:
+  "[What it does in 1 sentence]. Use when: (1) [exact user phrase], (2) [failure
+  state], (3) [alternative phrasing], (4) [related concept], (5) [edge case].
+  Supports [keyword1], [keyword2], [keyword3], [platform names]."
+
+================================================================================
+PART 2: TOP 10 TECHNIQUES TO STEAL AND APPLY
+================================================================================
+
+TECHNIQUE 1: NUMBERED TRIGGER LISTS IN DESCRIPTION
+Source: self-improving-agent (#1)
+What: Pack 5-7 numbered activation scenarios into YAML description with quoted phrases.
+Why: This IS what makes #1 rank #1. Every numbered item is a separate match signal.
+Apply: ALL 9 of our skills need "Use when: (1)...(6)..." with actual user phrases quoted.
+
+TECHNIQUE 2: NAMED PROTOCOLS WITH ACRONYMS
+Source: proactive-agent (#2)
+What: Give every technique a branded name — WAL Protocol, VBR, ADL, VFM, Working Buffer.
+Why: Named protocols are STICKY and MEMORABLE. "Use the WAL Protocol" is a concept
+users internalize and reference. Creates vocabulary ownership around your skill.
+Our examples: RSE (Revenue Signal Engine), FMC (Fleet Management Coordinator),
+DCR (Dynamic Context Recovery), AEL (Autonomous Error Loop).
+Apply: Every key behavior in our skills gets a 2-4 letter acronym with a memorable name.
+
+TECHNIQUE 3: QUICK REFERENCE TABLE AS FIRST CONTENT
+Source: self-improving-agent (#1)
+What: A | Situation | Action | table within first 20 lines after the title.
+Why: Instant value. AI agent doesn't need to parse paragraphs — scans table, done.
+self-improving-agent's table has 12 rows mapping every scenario to exact file paths.
+Apply: Every skill starts with a 6-12 row situation/action table. No exceptions.
+
+TECHNIQUE 4: BEFORE/AFTER + WRONG/RIGHT EXAMPLES
+Source: proactive-agent (#2), humanizer (#7)
+What: Show the wrong approach labeled explicitly, then the right approach.
+Why: Contrast learning — the wrong example anchors what to avoid. Much more memorable
+than showing only the correct approach. proactive-agent's WAL example:
+  WRONG: "Got it, blue!" (seems obvious)
+  RIGHT: Write to SESSION-STATE.md: "Theme: blue (not red)" → THEN respond
+Apply: At minimum 2-3 Wrong/Right pairs per skill, especially for config and usage.
+
+TECHNIQUE 5: EXHAUSTIVE COMMAND REFERENCE
+Source: agent-browser (#14), api-gateway (#4)
+What: Document EVERY command, parameter, option inside SKILL.md itself.
+Why: Agent loads skill = agent has complete reference in context. No external docs needed.
+agent-browser documents 40+ commands across navigation, snapshots, clicks, waits,
+cookies, network, tabs, frames, dialogs, JS eval, screenshots, and recordings.
+Apply: For tool-based skills, the SKILL.md IS the manual. Nothing lives outside it.
+
+TECHNIQUE 6: VERSIONED CHANGELOG SECTIONS
+Source: proactive-agent (#2), stock-analysis (#3)
+What: YAML version field + "What's New in vX.Y" section with emoji-marked features.
+Why: Shows active development. Users see the skill evolves. "v3.1.0" signals maturity.
+proactive-agent has What's New in v3.1.0 and What's in v3.0.0 at the TOP.
+Apply: semantic version in YAML frontmatter + "What's New" section for every update.
+Format: "- **Feature Name** — One-line description"
+
+TECHNIQUE 7: WORKSPACE ARCHITECTURE DIAGRAMS
+Source: self-improving-agent (#1), proactive-agent (#2)
+What: ASCII directory tree showing where skill files live relative to workspace.
+Why: Immediately shows integration model. No confusion about file paths.
+self-improving-agent shows the full ~/.openclaw/workspace/ tree.
+proactive-agent shows SESSION-STATE.md, HEARTBEAT.md, working-buffer.md.
+Apply: Include a tree diagram for any skill that reads/writes files.
+
+TECHNIQUE 8: "COMPLETE STACK" CROSS-SELL TABLES
+Source: proactive-agent (#2)
+What: Table at bottom listing complementary skills with what each adds.
+proactive-agent's: "Complete Agent Stack" — Proactive Agent | Bulletproof Memory |
+PARA Second Brain | Agent Orchestration, each with single-line purpose.
+Why: Users install 3-4 related skills instead of 1. Creates ecosystem lock-in.
+Also signals broader vision — you have a suite, not a single skill.
+Apply: Every skill includes "OpenClaw Intelligence Stack" table listing our other 8.
+Name the stack. "Part of the OpenClaw Intelligence Stack" in the description.
+
+TECHNIQUE 9: MULTI-PLATFORM COMPATIBILITY SECTIONS
+Source: self-improving-agent (#1)
+What: Separate setup sections for Claude Code, Codex CLI, GitHub Copilot, OpenClaw.
+self-improving-agent has: OpenClaw Setup | Generic Setup | Claude Code | Codex |
+GitHub Copilot | Agent-Agnostic sections — covers EVERY AI agent platform.
+Why: Dramatically expands addressable market. "Works with Claude Code" means
+Claude Code users find it when searching for Claude Code skills.
+Apply: Add "Works with:" header + platform-specific setup for top 4 platforms.
+
+TECHNIQUE 10: SECURITY / TRUST SIGNAL SECTIONS
+Source: proactive-agent (#2), skill-vetter (#19)
+What: Explicit security rules, permission scope documentation, what the skill does NOT do.
+proactive-agent states: "26% of community skills contain vulnerabilities."
+It documents: what it reads, what it writes, what it won't do, anti-exfiltration rules.
+skill-vetter has a visual RED FLAGS box with bordered formatting.
+Why: Trust differentiator in a marketplace where safety is unknown. When users run
+skill-vetter on our skills, they get GREEN. That itself is a ranking signal.
+Apply: Every skill gets a "Security & Privacy" section: reads X, writes Y, NEVER does Z.
+
+================================================================================
+PART 3: STRUCTURAL PATTERNS OF #1 AND #2 RANKED SKILLS
+================================================================================
+
+SELF-IMPROVING-AGENT (#1) — STRUCTURAL ANATOMY:
+  Line 1-7:   YAML frontmatter (name + description with 6 triggers)
+  Line 8-11:  Title + one-liner value proposition
+  Line 12-28: QUICK REFERENCE TABLE (situation -> action, 12 rows) ← UNIQUE DIFFERENTIATOR
+  Line 29+:   OpenClaw Setup (platform-first, then generic)
+  Mid:        Logging Format (complete markdown templates for 3 entry types)
+  Mid:        ID Generation system (TYPE-YYYYMMDD-XXX format)
+  Mid:        Resolving Entries + status lifecycle
+  Mid:        Promoting to Project Memory (when + how + targets table)
+  Mid:        Simplify & Harden Feed (integration with companion skill)
+  Mid:        Periodic Review workflow
+  Mid:        DETECTION TRIGGERS SECTION (exact user phrases that trigger logging)
+  Mid:        Priority Guidelines table
+  Mid:        Area Tags table
+  Mid:        Best Practices (8 numbered rules)
+  Mid:        Gitignore Options (3 strategies)
+  Mid:        HOOK INTEGRATION (JSON config blocks for Claude Code + Codex)
+  Mid:        Automatic Skill Extraction (criteria + workflow + quality gates)
+  End:        MULTI-AGENT SUPPORT (Claude Code | Codex | Copilot | OpenClaw)
+
+KEY PATTERNS:
+  - Quick Reference TABLE is FIRST thing after title (not intro text)
+  - Detection Triggers has EXACT user phrases ("No, that's not right...", "Can you also...")
+  - Promotion system: learning -> CLAUDE.md / AGENTS.md / SOUL.md / TOOLS.md
+  - Hook integration is complete (JSON configs, not just descriptions)
+  - Multi-agent section expands reach to ALL AI platforms
+  - Skill Extraction criteria codified (when a learning becomes a skill)
+
+PROACTIVE-AGENT (#2) — STRUCTURAL ANATOMY:
+  Line 1-6:   YAML frontmatter (name, version, description with stack mention, author)
+  Line 7-15:  Title + brand identity ("By Hal Labs — Part of the Hal Stack")
+  Line 16-25: What's New in v3.1.0 (3 features)
+  Line 26-35: What's in v3.0.0 (7 features)
+  Line 36-50: TABLE OF CONTENTS (17 sections with anchor links + ⭐ NEW markers)
+  Line 51:    QUICK START (5-step numbered process)
+  Line 52:    CORE PHILOSOPHY ("mindset shift" framing)
+  Line 53:    ARCHITECTURE OVERVIEW (ASCII workspace tree)
+  Line 54:    MEMORY ARCHITECTURE (3-tier table: SESSION-STATE | daily | MEMORY.md)
+  Line 55:    THE WAL PROTOCOL (complete trigger list + protocol steps + example)
+  Line 56:    WORKING BUFFER PROTOCOL (danger zone capture at 60% context)
+  Line 57:    COMPACTION RECOVERY (auto-trigger conditions + 6-step recovery)
+  Line 58:    SECURITY HARDENING (core rules + skill vetting + agent network warnings)
+  Line 59:    RELENTLESS RESOURCEFULNESS (10-try rule before "can't")
+  Line 60:    SELF-IMPROVEMENT GUARDRAILS (ADL + VFM protocols with scoring table)
+  Line 61:    AUTONOMOUS vs PROMPTED CRONS (systemEvent vs isolated agentTurn)
+  Line 62:    VERIFY IMPLEMENTATION NOT INTENT (mechanism check, not text change)
+  Line 63:    TOOL MIGRATION CHECKLIST
+  Line 64+:   SIX PILLARS, HEARTBEAT SYSTEM, REVERSE PROMPTING, GROWTH LOOPS
+
+KEY DIFFERENTIATORS:
+  - Every major feature has a NAMED PROTOCOL (WAL, VBR, ADL, VFM, Working Buffer)
+  - "Three Pillars" architecture framing (Proactive | Persistent | Self-improving)
+  - VERSION HISTORY at the TOP (newest features first, shows active development)
+  - TABLE OF CONTENTS with emoji markers for new sections
+  - VFM scoring table (weighted score threshold = 50 to implement a change)
+  - "Forbidden Evolution" ADL rules with ❌ markers
+  - Wrong/Right examples throughout (not just in one section)
+  - Compaction Recovery: auto-triggers listed explicitly (session starts with <summary>)
+  - "Relentless Resourcefulness": 5-10 methods before asking for help = identity statement
+  - Cross-sell: "Complete Agent Stack" table at the bottom
+
+================================================================================
+PART 4: NAMED PROTOCOL PATTERNS (complete list)
+================================================================================
+
+From proactive-agent (#2):
+  WAL Protocol (Write-Ahead Log): Write SESSION-STATE.md BEFORE responding
+    Trigger: Corrections, proper nouns, preferences, decisions, specific values
+    Rule: Write → Then Respond (urge to respond is the enemy)
+
+  Working Buffer Protocol: Capture every exchange at >60% context
+    Trigger: session_status shows 60%+ context used
+    Format: timestamp + Human message + Agent summary per exchange
+
+  Compaction Recovery: Recover after context truncation
+    Auto-triggers: <summary> tag, "truncated", "where were we?", "continue"
+    Steps: Read buffer → Read SESSION-STATE → daily notes → search → extract
+
+  VBR Protocol (Verify Before Reporting): Test mechanism, not text
+    Rule: Text change ≠ behavior change. Verify by observing, not by reading config.
+    Anti-pattern: Changing prompt text while keeping systemEvent/isolated unchanged
+
+  ADL Protocol (Anti-Drift Limits): Forbidden evolution rules
+    ❌ No complexity to "look smart"
+    ❌ No unverifiable changes
+    ❌ No vague justifications ("intuition", "feeling")
+    ❌ No stability sacrifice for novelty
+    Priority: Stability > Explainability > Reusability > Scalability > Novelty
+
+  VFM Protocol (Value-First Modification): Score before implementing
+    Dimensions: High Frequency (3x), Failure Reduction (3x), User Burden (2x), Self Cost (2x)
+    Threshold: Weighted score < 50 = skip it
+    Golden Rule: "Does this let future-me solve more problems with less cost?"
+
+From self-improving-agent (#1):
+  Simplify & Harden Feed: Ingest patterns from simplify-and-harden skill
+    Uses Pattern-Key for deduplication, tracks Recurrence-Count
+    Promote when: Count >= 3 AND seen in 2+ tasks AND within 30 days
+
+  Promotion System: Learning -> permanent workspace files
+    Targets: CLAUDE.md (facts) | AGENTS.md (workflows) | SOUL.md (behavior) | TOOLS.md (tools)
+
+OUR PROTOCOLS TO NAME (apply this pattern to our infrastructure):
+  RSE Protocol (Revenue Signal Engine): Detect revenue events from all sources
+  FMC Protocol (Fleet Management Coordinator): Orchestrate across 6+ workers
+  AEL Protocol (Autonomous Error Loop): Self-heal without human intervention
+  DCR Protocol (Dynamic Context Recovery): Recover from gateway/agent failures
+  IBT Protocol (Intel Briefing Timer): Schedule and deliver market intel reports
+  CPL Protocol (Content Publishing Loop): Generate → humanize → publish → track
+
+================================================================================
+PART 5: 10 GAPS WE CAN EXPLOIT (unclaimed niches)
+================================================================================
+
+GAP 1: REVENUE / BUSINESS INTELLIGENCE
+Status: ZERO skills in top 20 for this.
+What's missing: Revenue tracking, KPI dashboards, sales pipeline, A/B test analysis,
+pricing optimization, subscription metrics, churn detection.
+Our advantage: revenue-tracker agent + intel-pro already does this.
+Skill to build: "revenue-intel" or "business-kpi"
+Description formula: "Track revenue, monitor business KPIs, and detect sales signals.
+Use when: (1) user mentions revenue or sales, (2) checking MRR or ARR,
+(3) analyzing pricing or conversions, (4) tracking product performance..."
+
+GAP 2: MULTI-AGENT ORCHESTRATION
+Status: proactive-agent mentions sub-agents conceptually. No DEDICATED orchestration skill.
+What's missing: fleet management, task delegation, agent health monitoring, coordination.
+Our advantage: clawops agent + 6-worker fleet architecture already running.
+Skill to build: "fleet-commander" or "agent-orchestrator"
+Description formula: "Coordinate multiple AI agents, delegate tasks across a fleet,
+and monitor agent health. Use when: (1) spawning sub-agents for parallel work,
+(2) a task exceeds single-agent capacity, (3) monitoring agent status..."
+
+GAP 3: TELEGRAM / MESSAGING INTEGRATION
+Status: ZERO skills for Telegram despite it being a major Clawdbot channel.
+What's missing: Smart alerts, report formatting, chat-based commands, notification routing.
+Our advantage: We have @yedanyagami_moltbot already deployed and working.
+Skill to build: "smart-telegram" or "telegram-alerts"
+Description formula: "Send structured Telegram alerts, daily reports, and
+interactive commands. Use when: (1) task completes and needs notification,
+(2) error occurs requiring human attention, (3) daily report should be sent..."
+
+GAP 4: CLOUDFLARE / INFRASTRUCTURE AS CODE
+Status: Only github skill for DevOps. Zero for Cloudflare, Render, Vercel, D1, KV.
+What's missing: CF Workers deploy, D1 queries, KV operations, CI/CD management.
+Our advantage: Our entire fleet runs on Cloudflare. We know every edge case.
+Skill to build: "cloudflare-ops" or "infra-deploy"
+Description formula: "Deploy and manage Cloudflare Workers, D1 databases, and KV stores.
+Use when: (1) deploying a Worker, (2) querying D1, (3) updating KV values,
+(4) checking worker health or logs, (5) rotating secrets..."
+
+GAP 5: AI MODEL MANAGEMENT (beyond free-ride)
+Status: free-ride handles only OpenRouter free models. Nothing for multi-provider optimization.
+What's missing: Provider cost comparison, failover logic, token budget tracking,
+model quality scoring, automatic downgrade under load.
+Our advantage: Our gateway manages 9 providers with automatic failover.
+Skill to build: "model-optimizer" or "provider-manager"
+Description formula: "Optimize AI model selection across providers for cost and quality.
+Use when: (1) API returns rate limit error, (2) provider costs too much,
+(3) comparing model quality, (4) budget alert triggered..."
+
+GAP 6: CONTENT CREATION / PUBLISHING PIPELINE
+Status: humanizer/humanize-ai-text only FIX existing text. Nothing for creation + publishing.
+What's missing: MoltBook publishing, social scheduling, newsletter generation,
+blog-from-knowledge-base pipeline.
+Our advantage: content-engine worker already does automated publishing.
+Skill to build: "content-publisher" or "moltbook-publisher"
+Description formula: "Generate and publish AI-written content to MoltBook, social media,
+and newsletters. Use when: (1) user asks to publish a post, (2) content needs
+to be scheduled, (3) generating from existing knowledge base..."
+
+GAP 7: SKILL BUILDER / CLAWHUB PUBLISHING
+Status: self-improving-agent has "skill extraction" as a sub-feature. No DEDICATED skill.
+What's missing: Skill creation from scratch, SKILL.md templating, ClawHub publish workflow,
+skill analytics, download tracking.
+Our advantage: We are building skills right now — we know the full workflow.
+Skill to build: "skill-factory" or "clawhub-publisher"
+Description formula: "Create, test, and publish ClawHub skills. Use when: (1) user wants
+to build a new skill, (2) publishing to ClawHub, (3) updating an existing skill,
+(4) checking skill download stats or ranking..."
+
+GAP 8: COMPETITIVE INTELLIGENCE / MARKET RESEARCH
+Status: multi-search-engine is generic. Zero skills for systematic competitor monitoring.
+What's missing: Competitor tracking, trend detection, market opportunity scoring,
+GitHub trending, npm stats, Smithery rankings.
+Our advantage: intel-ops worker + intel-pro service already operational.
+Skill to build: "market-intel" or "competitive-radar"
+Description formula: "Monitor competitors, detect market trends, and score opportunities.
+Use when: (1) researching a competitor, (2) finding trending GitHub repos,
+(3) analyzing market gaps, (4) generating weekly intel reports..."
+
+GAP 9: SELF-HEALING / AUTO-RECOVERY
+Status: proactive-agent describes the concept. No dedicated skill for system self-repair.
+What's missing: Automatic error detection and fix, service health monitoring,
+self-restarting broken services, error pattern recognition, recovery playbooks.
+Our advantage: health-commander + Golem patterns (self-repair skill from archived skills).
+Skill to build: "self-healer" or "auto-recovery"
+Description formula: "Automatically detect and fix system failures. Use when: (1) a
+service stops responding, (2) error rate exceeds threshold, (3) Gateway
+returns unexpected errors, (4) health check fails, (5) service needs restart..."
+
+GAP 10: PERSONAL CRM / RELATIONSHIP MANAGEMENT
+Status: memory skill handles storage. Nothing for contact context, follow-ups, relationship scores.
+What's missing: Contact management with context, meeting follow-ups, relationship scoring,
+communication history, interaction reminders.
+Our advantage: Could be built on top of our MongoDB Atlas + D1 infrastructure.
+Skill to build: "relationship-crm" or "contact-manager"
+Description formula: "Manage contacts, track relationships, and schedule follow-ups.
+Use when: (1) user mentions a person's name for the second time, (2) follow-up
+is due, (3) preparing for a meeting, (4) logging interaction outcome..."
+
+================================================================================
+PART 6: CROSS-SELL STRATEGIES
+================================================================================
+
+BEST PATTERN (proactive-agent's "Complete Agent Stack"):
+  Name your ecosystem → List exact skills → Show what EACH adds → Make it a table.
+
+WHAT PROACTIVE-AGENT DOES:
+  | Skill             | Purpose                      |
+  | Proactive Agent   | Act without being asked       |
+  | Bulletproof Memory| SESSION-STATE.md patterns     |
+  | PARA Second Brain | Organize and find knowledge   |
+  | Agent Orchestration | Spawn and manage sub-agents |
+
+OUR CROSS-SELL TEMPLATE ("OpenClaw Intelligence Stack"):
+  Every one of our 9 skills includes this table at the bottom:
+
+  ## OpenClaw Intelligence Stack
+  | Skill             | Purpose                                    |
+  |-------------------|--------------------------------------------|
+  | revenue-intel     | Track revenue, KPIs, sales signals         |
+  | fleet-commander   | Coordinate multiple agents                 |
+  | smart-telegram    | Structured alerts and daily reports        |
+  | cloudflare-ops    | Deploy and manage CF Workers + D1 + KV     |
+  | model-optimizer   | Cost-optimize AI provider selection        |
+  | content-publisher | Generate and publish content to MoltBook   |
+  | skill-factory     | Create and publish ClawHub skills          |
+  | market-intel      | Monitor competitors and detect trends      |
+  | self-healer       | Automatic failure detection and recovery   |
+  Install any with: clawhub install <skill-name>
+
+ADDITIONAL CROSS-SELL TACTICS:
+  1. Put "Part of the OpenClaw Intelligence Stack" in EVERY description field.
+     This is searchable. Users looking for the stack find all 9 skills.
+  2. Reference each other in detection triggers. "If you also use fleet-commander..."
+  3. "Works best with:" subsection in Quick Start pointing to 2-3 related skills.
+  4. In body text, link to companion skills: "For autonomous execution, pair with
+     self-healer for automatic error recovery."
+
+================================================================================
+PART 7: PRICING PATTERNS (and what to steal)
+================================================================================
+
+CURRENT TOP 20 MONETIZATION (all essentially free):
+  Free/Open Source:    self-improving, proactive-agent, humanizer, memory, multi-search,
+                       github, skill-vetter, free-ride, humanize-ai-text
+  Free + paid API key: tavily-search, sequential-thinking (Tavily, OpenRouter)
+  SaaS-backed free:    api-gateway (free skill, Maton.ai backend monetizes calls)
+  Lead gen CTA:        sequential-thinking ("Book a free consultation" link)
+  Commercial CLI:      gog, summarize, agent-browser (CLIs may have paid tiers)
+
+KEY INSIGHT: Top 20 is 100% free skills. Monetization happens OUTSIDE the skill.
+The skill is MARKETING. The service/API/consultation is the revenue.
+
+STRATEGIES TO ADOPT:
+  1. FREE SKILL + PAID SERVICE (api-gateway model):
+     Our intel-pro is already $19/mo Pro + $0.05/query Agent.
+     Build "market-intel" skill as free wrapper → directs users to intel-pro API.
+     Skill CTA: "For unlimited queries, upgrade at openclaw-intel-pro.onrender.com"
+
+  2. FREE SKILL + CONSULTATION CTA (sequential-thinking model):
+     At bottom of each skill: "Need a custom OpenClaw setup? Contact @yedanyagami_moltbot"
+     Telegram bot as lead capture → consulting revenue.
+
+  3. FREE SKILL + CONTENT UPSELL:
+     Our automation-guide ($15) + prompt-collection-50 ($19) + side-income-roadmap ($12)
+     can be referenced at the bottom of relevant skills as "learn more" resources.
+     Users who love the skill → buy the guide.
+
+  4. EARLY MOVER ON PAID SKILLS:
+     If ClawHub ever supports paid skills, we have the infrastructure to be first.
+     Premium versions with more features, priority support, custom integrations.
+
+================================================================================
+PART 8: DETECTION TRIGGER PATTERNS (complete reference)
+================================================================================
+
+METHOD 1: YAML description field (PRIMARY — ALL skills must have this)
+  Pattern: "Use when: (1)..., (2)..., (3)..., (4)..., (5)..."
+  Include: exact user phrases in quotes, both positive and failure triggers
+
+METHOD 2: read_when YAML field (agent-browser only — use if relevant)
+  Format:
+    read_when:
+      - Automating web interactions
+      - Extracting structured data from pages
+      - Filling forms programmatically
+  When to use: For browser/tool skills where activation scenarios are distinct.
+
+METHOD 3: commands YAML field (stock-analysis only — POWERFUL, underused)
+  Format:
+    commands:
+      - /skill-name - Main command description
+      - /skill-name-compare - Comparison variant
+      - /skill-name-report - Report generation
+  When to use: Any skill with distinct operations. Gives SLASH COMMANDS.
+  Only 1 of 20 skills uses this. We should add to all tool-based skills.
+
+METHOD 4: Explicit "Detection Triggers" section (self-improving-agent — in body)
+  Format: Section with exact user phrases organized by trigger type:
+    Corrections: "No, that's not right...", "Actually, it should be..."
+    Feature Requests: "Can you also...", "I wish you could..."
+    Knowledge Gaps: User provides info you didn't know
+    Errors: Non-zero exit code, exception, timeout
+  Add this section to every skill for clarity.
+
+METHOD 5: "When to Use" section (memory, skill-vetter)
+  Plain language list of activation scenarios. Weaker than numbered description triggers
+  but useful as a secondary signal inside the body.
+
+TRIGGER WORD EFFECTIVENESS RANKING:
+  1. EXACT user quotes      "No, that's wrong..." — matches literal input, highest
+  2. Situation descriptions "A command fails"    — broad catch, high
+  3. Verb + noun phrases    "Use for revenue tracking" — clear intent, high
+  4. Negative triggers      "before saying I don't know" — catches failure, medium-high
+  5. Platform names         "OpenRouter", "Cloudflare" — only if user mentions, medium
+
+CONDITIONAL ACTIVATION (auto-triggers, no user needed):
+  proactive-agent WAL: fires on corrections, proper nouns, preferences, decisions
+  self-improving-agent: fires on non-zero exit codes, user correction phrases
+  proactive-agent Compaction Recovery: fires on <summary> tag, "truncated" in session
+  free-ride: fires on keywords "free AI", "OpenRouter", "rate limits"
+
+  OUR SKILLS SHOULD HAVE: explicit auto-trigger conditions in a "Detection Triggers"
+  section so the AI knows when to invoke the skill without being explicitly told.
+
+================================================================================
+PART 9: WHAT MAKES SELF-IMPROVING-AGENT #1 (647 lines)
+================================================================================
+
+NOT just the description — it's the SYSTEM it teaches:
+
+1. COMPLETE LOGGING SYSTEM with 3 file types (LEARNINGS.md, ERRORS.md, FEATURE_REQUESTS.md)
+   Each has a rigorous ID format (TYPE-YYYYMMDD-XXX), status lifecycle, and metadata fields.
+   This creates a COMPOUNDING VALUE LOOP: errors logged → fixes applied → fewer future errors.
+
+2. PROMOTION SYSTEM: Learning becomes permanent knowledge
+   pending → promoted_to_skill → appears in CLAUDE.md/AGENTS.md/SOUL.md/TOOLS.md
+   This is the key insight: the skill teaches you how to make lessons permanent.
+   4 distinct promotion targets: CLAUDE.md (facts), AGENTS.md (workflows),
+   SOUL.md (behavior), TOOLS.md (tool gotchas)
+
+3. HOOK INTEGRATION: Fully automatic activation
+   UserPromptSubmit hook fires the skill after EVERY prompt.
+   PostToolUse hook fires error-detector.sh after EVERY bash command.
+   Complete JSON config blocks for Claude Code + Codex. Copy-paste-ready.
+
+4. SKILL EXTRACTION SYSTEM: Meta-capability
+   A learning can become a NEW SKILL via extract-skill.sh script.
+   Criteria: Recurring + Verified + Non-obvious + Broadly applicable + User-flagged
+   This creates a self-expanding ecosystem from the skill itself.
+
+5. MULTI-AGENT SUPPORT: Reaches every platform
+   Claude Code | Codex CLI | GitHub Copilot | OpenClaw
+   Platform-specific activation, setup, and detection for each.
+   Every AI agent user finds this skill relevant to their platform.
+
+6. RECURRENCE DETECTION: Pattern-Key deduplication system
+   Similar entries are linked. Recurrence-Count tracks how often something happens.
+   Promotion when: Count >= 3, seen in 2+ tasks, within 30 days.
+   This makes the skill "smarter" as it's used — genuine compound improvement.
+
+7. QUICK REFERENCE TABLE FIRST: 12-row situation/action table before any prose.
+   AI loads skill → immediately knows what to do in every situation.
+   No scanning needed. Pure decision tree in table form.
+
+THE COMPOUNDING VALUE INSIGHT:
+  Most skills are stateless tools. self-improving-agent creates a STATEFUL SYSTEM.
+  Each use makes future uses better. This is why it dominates — it's not a one-shot
+  tool, it's an infrastructure for continuous improvement.
+  WE SHOULD BUILD OUR SKILLS THE SAME WAY: create data loops, not one-shot actions.
+
+================================================================================
+PART 10: WHAT MAKES PROACTIVE-AGENT #2 (632 lines)
+================================================================================
+
+THE "MINDSET SHIFT" FRAMING:
+  "Don't ask 'what should I do?' Ask 'what would genuinely delight my human that
+  they haven't thought to ask for?'"
+  This is not a tool description — it's a PHILOSOPHICAL TRANSFORMATION.
+  The skill doesn't just add features; it changes HOW the agent thinks.
+  This is far stickier than a utility skill.
+
+THREE PILLARS ARCHITECTURE (memorable, scannable, comprehensive):
+  Proactive → Persistent → Self-improving
+  Each pillar has 3 bullet points with ✅ marks. 9 bullets total = complete system.
+  The pillar framing means users can explain the skill to others easily.
+
+NAMED PROTOCOLS = VOCABULARY OWNERSHIP:
+  WAL, VBR, ADL, VFM, Working Buffer, Compaction Recovery — 6 named protocols.
+  Users who internalize these names think in the skill's vocabulary.
+  "Use WAL" is shorter and more powerful than "write details before responding."
+  Creating named concepts is brand-building at the skill level.
+
+VERSION HISTORY AS FEATURE SHOWCASE:
+  What's New in v3.1.0 (3 features) + What's in v3.0.0 (7 features) at the TOP.
+  Users see: "this skill launched with 7 features and added 3 more — it's alive."
+  The ⭐ NEW markers in the TOC are visual anchors to the newest value.
+
+TABLE OF CONTENTS WITH ANCHOR LINKS:
+  17 sections listed with emoji markers. Immediately shows scope and professionalism.
+  New sections marked ⭐ NEW. Users know what to read first.
+
+VFM SCORING SYSTEM (weighted decision table):
+  High Frequency (3x), Failure Reduction (3x), User Burden (2x), Self Cost (2x)
+  Threshold: < 50 = skip it.
+  This is OPERATIONAL SPECIFICITY. Not vague advice — a quantified decision framework.
+  Makes the skill feel like professional engineering, not casual documentation.
+
+THE "RELENTLESS RESOURCEFULNESS" IDENTITY STATEMENT:
+  "5-10 methods before considering asking for help."
+  "Your human should never have to tell you to try harder."
+  This creates BEHAVIORAL IDENTITY, not just instructions.
+  The skill shapes who the agent IS, not just what it does.
+
+"VERIFY IMPLEMENTATION, NOT INTENT" (VBR):
+  Wrong/Right example showing text-change vs mechanism-change failure mode.
+  This is a REAL FAILURE the author experienced. Authenticity of lived mistakes
+  makes documentation more credible than theoretical "best practices."
+
+KEY DIFFERENTIATOR: BRANDED ECOSYSTEM
+  "Part of the Hal Stack 🦞" — the emoji is part of the brand identity.
+  The Complete Agent Stack table cross-sells 4 companion skills.
+  "Hal Labs" as author brand creates perceived institutional credibility.
+
+================================================================================
+PART 11: ACTIONABLE IMPLEMENTATION CHECKLIST
+================================================================================
+
+For EACH of our 9 skills, apply in this order:
+
+IMMEDIATE (description only — 30 min per skill):
+  [ ] Rewrite description to 300-400 chars
+  [ ] Add "Use when: (1)...(2)...(3)...(4)...(5)..." with exact user phrases quoted
+  [ ] Pack relevant brand names and synonyms in description
+  [ ] Add "Part of the OpenClaw Intelligence Stack" to description
+
+SHORT TERM (structure update — 2-4 hours per skill):
+  [ ] Add YAML version field + semantic version
+  [ ] Add "What's New in vX.Y" section at the top
+  [ ] Add Quick Reference TABLE as first content after title (6-12 rows)
+  [ ] Add Detection Triggers section with exact user phrases by category
+  [ ] Add 2-3 Wrong/Right examples for most common mistakes
+  [ ] Add Security & Privacy section (reads X, writes Y, NEVER does Z)
+  [ ] Add OpenClaw Intelligence Stack cross-sell table at the bottom
+  [ ] Add commands: field in YAML for slash commands where applicable
+  [ ] Add read_when: field in YAML for tool-based skills
+
+MEDIUM TERM (content depth — full skill rewrites):
+  [ ] Name every key technique with a branded protocol (2-4 letter acronym)
+  [ ] Add workspace architecture diagram (ASCII tree)
+  [ ] Add multi-platform setup (OpenClaw | Claude Code | Codex | Copilot)
+  [ ] Make SKILL.md the complete reference (zero external docs needed)
+  [ ] Add "What's this skill's compounding value loop?" — build data loops
+
+NEW SKILLS TO BUILD (fill the 10 gaps):
+  Priority 1 (leverage existing infra):
+    [ ] revenue-intel  (revenue-tracker agent → skill)
+    [ ] fleet-commander (clawops + orchestrator → skill)
+    [ ] market-intel   (intel-ops worker + intel-pro → skill)
+    [ ] self-healer    (health-commander + Golem patterns → skill)
+  Priority 2 (leverage existing integrations):
+    [ ] smart-telegram (existing bot → skill)
+    [ ] cloudflare-ops (fleet knowledge → skill)
+    [ ] content-publisher (content-engine → skill)
+  Priority 3 (new builds):
+    [ ] skill-factory  (meta-skill, builds on current knowledge)
+    [ ] model-optimizer (gateway 9-provider knowledge → skill)
+    [ ] relationship-crm (MongoDB Atlas + new build)
+
+================================================================================
+PART 12: KEY COMPETITIVE INSIGHTS (synthesis)
+================================================================================
+
+1. DESCRIPTION QUALITY > DOCUMENT LENGTH
+   No correlation between length and ranking. gog (#11) is 35 lines, api-gateway (#4)
+   is 2200 lines. self-improving-agent (#1) is 650 lines. What matters: description
+   triggers and structural sophistication.
+
+2. THE ENTIRE TOP 20 MISSES 10 MAJOR NICHES
+   Revenue intelligence, fleet management, Telegram integration, Cloudflare ops,
+   multi-provider AI management, content publishing, skill building, competitive intel,
+   self-healing, and personal CRM — NONE are in the top 20. We own all 10 with existing
+   infrastructure. This is not competing in crowded space; it's claiming open territory.
+
+3. NAMED PROTOCOLS ARE BRAND ASSETS
+   WAL, VBR, ADL, VFM — proactive-agent owns this vocabulary. Users who use the skill
+   speak in these terms. To dominate, we create our own vocabulary: RSE, FMC, AEL, DCR.
+   The first skill to NAME a concept owns it.
+
+4. THE SKILL IS THE MARKETING
+   api-gateway's free skill funnels to Maton.ai. sequential-thinking books consultations.
+   Our skills should funnel to: intel-pro ($19/mo), Telegram bot consulting,
+   content-engine publishing, automation guides ($15-$79).
+
+5. STATEFUL SKILLS BEAT STATELESS TOOLS
+   self-improving-agent creates a compounding improvement loop (logs → promotes → learns).
+   Most skills are one-shot utilities. Skills that create data loops and improve over
+   time create lasting advantage. Build our skills with persistent state and compounding loops.
+
+6. SECURITY POSITIONING IS UNDEREXPLOITED
+   Only 2-3 skills mention security. proactive-agent's claim that "26% of skills have
+   vulnerabilities" creates fear. Our skills being explicitly security-documented = trust
+   differentiator. When users run skill-vetter on ours, GREEN rating = competitive signal.
+
+7. MULTI-PLATFORM REACH MULTIPLIES INSTALLS
+   self-improving-agent covers Claude Code, Codex, Copilot, and OpenClaw. That's 4x
+   the addressable market vs. OpenClaw-only skills. Adding platform sections costs 1
+   hour of writing and multiplies potential users by 4x.
+
+8. CROSS-SELL TABLE = ECOSYSTEM LOCK-IN
+   Users who install one skill in a well-cross-sold ecosystem install 3-4.
+   The "OpenClaw Intelligence Stack" brand + cross-sell table in every skill means
+   installing our revenue-intel leads to fleet-commander leads to market-intel, etc.
+   Each skill pulls installs for all others.
+
+================================================================================
+END OF SYNTHESIS REPORT
+================================================================================
+Files analyzed:
+  MASTER-ANALYSIS.md     (649 lines) — primary analysis source
+  top10-skills-content.txt (3330 lines) — skill SKILL.md content for #1-10
+  top10b-skills-content.txt (1721 lines) — skill SKILL.md content for #11-20
+  batch1-scan.txt        — clawhub explore --sort stars + inspect #1,2,3,5,6,7
+  batch2-scan.txt        — agent-browser, humanizer, github, clawddocs, weather, free-ride
+  batch3-scan.txt        — auto-updater, youtube-watcher, frontend-design, api-gateway,
+                           openai-whisper, caldav-calendar
+  batch4-scan.txt        — nano-banana-pro, notion, obsidian, clawdhub, multi-search, desktop-control
+  batch5-scan.txt        — stock-analysis, brave-search, skill-vetter, humanize-ai-text, memory,
+                           sequential-thinking
+================================================================================

@@ -1,0 +1,869 @@
+================================================================================
+MCP WORKERS SOURCE CODE SCAN
+Date: 2026-03-07
+Scan Type: Research Only (No Modifications)
+Target: 9 MCP Server Workers on Cloudflare
+================================================================================
+
+SCAN SUMMARY
+------------
+Total workers scanned: 9
+Total tools exposed across all workers: 49
+MCP Protocol Version used: 2025-03-26 (all workers)
+Shared vendor namespace: yagami8095.workers.dev
+
+Workers:
+  1. json-toolkit-mcp           -> 6 tools,  ~1583 lines
+  2. regex-engine-mcp           -> 5 tools,  ~1339 lines
+  3. color-palette-mcp          -> 5 tools,  ~1770 lines
+  4. timestamp-converter-mcp    -> 5 tools,  ~1602 lines
+  5. prompt-enhancer-mcp        -> 6 tools,  ~2114 lines
+  6. openclaw-intel-mcp         -> 6 tools,  ~490 lines (inline, not bundled separately)
+  7. openclaw-fortune-mcp       -> 3 tools,  ~490 lines (inline, not bundled separately)
+  8. moltbook-publisher-mcp     -> 8 tools,  ~1054 lines
+  9. agentforge-compare-mcp     -> 5 tools,  ~490 lines (inline, not bundled separately)
+
+Note: Lines counted from bundled/minified worker.js. Original source is shorter.
+
+================================================================================
+WORKER 1: json-toolkit-mcp
+URL: https://json-toolkit-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    json-toolkit
+  Version: 1.0.0
+  Vendor:  OpenClaw Intelligence
+
+TOTAL LINES OF CODE: ~1583 (bundled worker.js)
+SOURCE SIZE: ~58,729 chars
+
+TOOLS EXPOSED (6):
+  1. json_format          - Format/pretty-print JSON with configurable indent
+  2. json_validate        - Validate JSON structure and report errors
+  3. json_diff            - Diff two JSON objects, highlighting added/removed/changed keys
+  4. json_query           - Query JSON with dot-notation or JSONPath-style expressions
+  5. json_transform       - Transform JSON structure (rename keys, filter fields, map values)
+  6. json_schema_generate - Generate JSON Schema from a JSON example
+
+KEY FEATURES / CAPABILITIES:
+  - Full JSON utility suite: format, validate, diff, query, transform, schema gen
+  - Supports JSON, YAML, CSV, XML format conversions (via json_transform)
+  - JSONPath-style querying with dot notation
+  - JSON Schema (draft-07) generation from examples
+  - All tools are free-tier accessible (no pro-gating on any tool)
+
+AUTHENTICATION:
+  - Free tier: all 6 tools available without API key
+  - Pro key support present (validateProKey) but no tools gated behind it
+  - Pro key extends rate limit (1000/day vs 20/day free)
+  - Pro key stored in KV: prokey:{apiKey} JSON object
+  - No DB (D1) used - stateless operation
+
+RATE LIMITING:
+  - Free tier: 20 requests/day per IP (RATE_LIMIT_MAX = 20, window = 86400s)
+  - In-memory fallback: MEM_RL_LIMIT = 5 per 60s window (when KV unavailable)
+  - Pro tier: 1000 requests/day (proKeyRateLimit via KV)
+  - KV key pattern: not present (no KV env binding - uses in-memory only)
+  - Note: KV not used (env.KV = false), rate limiting falls back to in-memory Map
+
+ERROR HANDLING:
+  - Standard JSON-RPC 2.0 error codes (-32700 parse, -32600 invalid, -32601 not found)
+  - try/catch on all tool handlers, returns isError:true content on failure
+  - Input sanitization via sanitizeInput() on all string args (strips HTML/script tags, max 2000 chars)
+  - Payload size limit: 102400 bytes (100KB)
+
+SECURITY:
+  - Honeypot paths: /admin, /wp-login.php, /.env, /config.json, /.git/config, /wp-admin, /phpinfo.php
+  - edgeDefense() function present
+  - finopsTrack() daily capacity tracking (warn=50000, slow=80000, stop=95000 total requests/day)
+  - CORS: Allow-Origin: * on all responses
+
+SHARED CODE PATTERNS:
+  - memoryRateLimit() - in-memory rate limit fallback Map
+  - jsonRpcResponse() / jsonRpcError() helpers
+  - sanitizeInput() - HTML tag stripping
+  - ECOSYSTEM object - links to all 9 sibling MCP servers
+  - /health endpoint
+  - /llms.txt and /.well-known/llms.txt endpoints
+  - Landing page HTML with Tailwind CSS (from CDN)
+  - addUpgradePrompt() - appends upgrade CTA to responses near rate limit
+  - trackRef() - referral source tracking via KV
+
+================================================================================
+WORKER 2: regex-engine-mcp
+URL: https://regex-engine-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:     regex-engine
+  Version:  1.0.0
+  Vendor:   OpenClaw Intelligence
+  Protocol: 2025-03-26
+
+TOTAL LINES OF CODE: ~1339 (bundled worker.js)
+SOURCE SIZE: ~54,879 chars
+
+TOOLS EXPOSED (5):
+  1. regex_test    - Test a regex pattern against input text, return all matches with positions
+  2. regex_explain - Explain a regex pattern in plain English (token-by-token breakdown)
+  3. regex_build   - Build a regex from a natural language description
+  4. regex_replace - Replace matches in text using regex with substitution pattern
+  5. regex_extract - Extract named capture groups or all matches from text
+
+KEY FEATURES / CAPABILITIES:
+  - JavaScript RegExp engine (native runtime)
+  - Supports flags: g, i, m, s, u, y
+  - Named capture group extraction
+  - Natural language to regex generation (built-in pattern library, not AI)
+  - Match positions (index, line, column) returned for each match
+  - All 5 tools free-tier accessible
+
+AUTHENTICATION:
+  - Free tier: all 5 tools available without API key
+  - Pro key support present (validateProKey via KV) for rate limit extension
+  - Pro = 1000/day, Free = 20/day
+  - KV bound (env.KV present)
+
+RATE LIMITING:
+  - Free tier: 20 requests/day per IP (var RATE_LIMIT = 20)
+  - In-memory fallback: MEM_RL_LIMIT = 5 per 60s
+  - Pro tier: 1000/day via proKeyRateLimit
+  - KV key pattern: checkRateLimit uses KV when available
+  - 402 Payment Required returned when rate limit exceeded, with x402 headers
+
+ERROR HANDLING:
+  - JSON-RPC 2.0 standard error codes
+  - try/catch on RegExp construction (catches invalid regex syntax)
+  - sanitizeInput() on all string args
+  - Payload limit: 51200 bytes (50KB)
+
+SECURITY:
+  - edgeDefense() with score-based IP reputation system
+  - Honeypot paths tracked in KV (score -= 30 per hit)
+  - Request fingerprinting: suspicious UA detection (curl/wget/python/etc with Accept-Language)
+  - finopsTrack() daily capacity guard
+  - CORS: Allow-Origin: *
+
+SHARED CODE PATTERNS:
+  - Same memoryRateLimit, validateProKey, proKeyRateLimit pattern as all others
+  - ECOSYSTEM cross-links to all 9 siblings
+  - /health, /llms.txt, landing page
+  - addUpgradePrompt() appended to responses
+  - trackRef() referral tracking
+  - sha256Short() for IP hashing (Web Crypto API)
+
+================================================================================
+WORKER 3: color-palette-mcp
+URL: https://color-palette-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    color-palette
+  Version: 1.0.0
+
+TOTAL LINES OF CODE: ~1770 (bundled worker.js)
+SOURCE SIZE: ~59,236 chars
+
+TOOLS EXPOSED (5):
+  1. generate_palette  - Generate harmonious color palette from base color or mood
+                         Harmony modes: complementary, analogous, triadic, split-complementary,
+                         tetradic, monochromatic. Moods: warm, cool, vibrant, pastel, dark, earth, neon
+  2. contrast_check    - Check WCAG contrast ratio between foreground/background colors
+                         Returns AA/AAA pass/fail for normal and large text
+  3. color_convert     - Convert colors between HEX, RGB, HSL, HSV, CMYK formats
+  4. css_gradient      - Generate CSS gradient code (linear/radial/conic) from color list
+  5. tailwind_colors   - Return Tailwind CSS color palette for a given color name/family
+
+KEY FEATURES / CAPABILITIES:
+  - Full color theory implementation in JS (HSL rotation for harmony)
+  - WCAG 2.1 accessibility contrast checking (relative luminance formula)
+  - Multi-format color conversion (6 formats)
+  - CSS gradient generation ready to paste
+  - Tailwind color scale lookup (50-950)
+  - Returns hex, rgb, hsl, named color, CSS variable for each palette color
+
+AUTHENTICATION:
+  - Free tier: all 5 tools available without API key
+  - Pro key extends limit: 1000/day (PRO_DAILY_LIMIT = 1000)
+  - Free limit: 25 requests/day per IP (hardcoded in checkRateLimit: limit = 25)
+  - KV bound for rate limiting and pro key validation
+
+RATE LIMITING:
+  - Free: 25/day per IP, KV key: color-palette:rate:{clientId}:{today}
+  - Pro: 1000/day via proKeyRateLimit
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+  - 402 returned on exceeded with x402 payment headers
+
+ERROR HANDLING:
+  - JSON-RPC 2.0 compliant
+  - try/catch on color parsing (invalid hex, out-of-range values)
+  - sanitizeInput() on all string args
+  - edgeDefense() KV-based IP reputation scoring
+
+SECURITY:
+  - edgeDefense() with honeypot, score system, throttle, block
+  - finopsTrack() with warn/slow/stop thresholds
+  - sanitizeInput() strips HTML/script
+  - sha256Short() for IP hashing
+
+SHARED CODE PATTERNS:
+  - Identical to other workers: memoryRateLimit, validateProKey, proKeyRateLimit
+  - ECOSYSTEM object, /health, /llms.txt, landing HTML
+  - addUpgradePrompt() and trackRef()
+
+================================================================================
+WORKER 4: timestamp-converter-mcp
+URL: https://timestamp-converter-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    timestamp-converter
+  Version: 1.0.0
+  Vendor:  OpenClaw Intelligence
+
+TOTAL LINES OF CODE: ~1602 (bundled worker.js)
+SOURCE SIZE: ~62,826 chars
+
+TOOLS EXPOSED (5):
+  1. convert_timestamp  - Convert Unix timestamp to human-readable date in any timezone
+                          Supports ms/s auto-detection, custom format strings
+  2. timezone_convert   - Convert a datetime from one timezone to another
+                          TZ alias map: JST, EST, PST, CET, IST, SGT, AEST, etc. (22+ aliases)
+  3. parse_cron         - Parse a cron expression and return next N execution times
+  4. time_diff          - Calculate difference between two timestamps/dates in multiple units
+  5. format_duration    - Convert seconds/ms to human-readable duration (e.g., "2h 34m 12s")
+
+KEY FEATURES / CAPABILITIES:
+  - Unix timestamp to ISO 8601 / RFC 2822 / custom format
+  - Timezone alias resolution (TZ_ALIASES map with 22+ common abbreviations)
+  - Cron expression parser (5-field standard cron)
+  - Duration formatting in multiple units simultaneously
+  - Time arithmetic (diff in seconds, minutes, hours, days, weeks, months, years)
+  - Auto-detects ms vs seconds timestamps (threshold: 1e10)
+
+AUTHENTICATION:
+  - Free tier: all 5 tools available without API key
+  - Free limit: 30 requests/day per IP (hardcoded: limit = 30)
+  - Pro: 1000/day (PRO_DAILY_LIMIT = 1000)
+  - KV bound for pro key validation and rate limiting
+
+RATE LIMITING:
+  - Free: 30/day, KV key: ts-converter:rate:{clientId}:{today}
+  - Pro: 1000/day
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+
+ERROR HANDLING:
+  - JSON-RPC 2.0
+  - try/catch on Date parsing (invalid date strings return descriptive error)
+  - Invalid cron expressions caught and reported
+  - sanitizeInput() on all args (implied from pattern)
+
+SECURITY:
+  - edgeDefense() with score-based system
+  - finopsTrack()
+  - sha256Short() IP hashing
+  - Honeypot detection
+
+SHARED CODE PATTERNS:
+  - Same pattern: memoryRateLimit, validateProKey, proKeyRateLimit
+  - ECOSYSTEM, /health, /llms.txt, landing HTML, addUpgradePrompt, trackRef
+
+================================================================================
+WORKER 5: prompt-enhancer-mcp
+URL: https://prompt-enhancer-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    prompt-enhancer
+  Version: 1.0.0
+
+TOTAL LINES OF CODE: ~2114 (bundled worker.js) - LARGEST worker
+SOURCE SIZE: ~82,640 chars
+
+TOOLS EXPOSED (6):
+  1. enhance_prompt          - Enhance/rewrite a prompt for clarity, specificity, structure
+                               Styles: structured, chain-of-thought, few-shot, concise, detailed
+                               [PRO ONLY - requires api_key]
+  2. analyze_prompt          - Analyze a prompt for quality metrics: clarity, specificity,
+                               context, actionability scores (0-10 each)
+                               [PRO ONLY - requires api_key]
+  3. convert_prompt_format   - Convert a prompt between formats: plain, xml, markdown, json
+                               [FREE tool]
+  4. generate_system_prompt  - Generate a high-quality system prompt for a given role and task
+                               [FREE tool]
+  5. prompt_template_library - Browse categorized prompt templates library
+                               [PRO ONLY - requires api_key for full library]
+  6. purchase_pro_key        - Get instructions to purchase Pro key ($9 one-time)
+                               [FREE - always accessible]
+
+KEY FEATURES / CAPABILITIES:
+  - Most sophisticated prompt-engineering toolkit in the ecosystem
+  - Rule-based prompt enhancement (no external AI API calls - pure JS logic)
+  - Prompt quality scoring on 4 dimensions (clarity, specificity, context, actionability)
+  - Format conversion between plain/XML/markdown/JSON prompt formats
+  - System prompt generator for common roles (developer, analyst, writer, etc.)
+  - Template library with categories (coding, writing, analysis, etc.)
+  - Uses D1 database (env.DB) - most likely for template storage and API key management
+  - Also uses KV (env.KV) for rate limiting
+
+AUTHENTICATION:
+  - Freemium model with hard tool gating:
+    - FREE: convert_prompt_format, generate_system_prompt, purchase_pro_key
+    - PRO ($9 one-time): enhance_prompt, analyze_prompt, prompt_template_library
+  - Pro key validated via both KV (validateProKey) and D1 DB
+  - Free limit: 10 requests/day per IP
+  - Pro limit: 100 requests/day
+
+RATE LIMITING:
+  - checkRateLimit(env, identifier, isPro): limit = isPro ? 100 : 10
+  - KV key: rl:prompt:{identifier}:{today}
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+  - Uses RPC error constants: RATE_LIMITED = -32000, AUTH_ERROR = -32001
+
+ERROR HANDLING:
+  - Named RPC error constants: PARSE_ERROR=-32700, INVALID_REQUEST=-32600,
+    METHOD_NOT_FOUND=-32601, INVALID_PARAMS=-32602, RATE_LIMITED=-32000, AUTH_ERROR=-32001
+  - More sophisticated than other workers (named constants vs magic numbers)
+  - edgeDefense() with full KV-based score system
+  - finopsTrack() capacity tracking
+  - D1 used for persistent storage (templates, keys)
+  - sanitizeInput() on all string args
+
+SECURITY:
+  - Most security-aware worker (has D1 + KV + edgeDefense + finops)
+  - Uses DB for API key validation (persistent, not just KV)
+  - Named error codes for cleaner error taxonomy
+  - Payload limit: implied (has PAYLOAD_MAX_BYTES check from edgeDefense)
+
+SHARED CODE PATTERNS:
+  - memoryRateLimit, validateProKey, proKeyRateLimit (same as all others)
+  - edgeDefense, finopsTrack, trackRef, addUpgradePrompt
+  - ECOSYSTEM links, /health, /llms.txt, landing HTML
+
+================================================================================
+WORKER 6: openclaw-intel-mcp
+URL: https://openclaw-intel-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    openclaw-intel
+  Version: 3.0.0  (highest version of all 9 workers)
+
+TOTAL LINES OF CODE: Full inline (not persisted as large file - fits in response)
+SOURCE SIZE: ~86,542 chars (largest raw source)
+
+TOOLS EXPOSED (6):
+  1. get_ai_market_report - Latest AI agent market intelligence report
+                            FREE: summary + 3 data points
+                            PRO: full report + 15 data points
+  2. get_report_by_id     - Fetch specific report by ID
+                            FREE: summary only
+                            PRO: full content
+  3. list_reports         - Browse all available reports (count, titles, dates)
+                            FREE: accessible
+  4. get_market_stats     - Platform ecosystem stats (pro users, report count, data freshness)
+                            FREE: always accessible
+  5. purchase_api_key     - Payment instructions for Pro key ($9 one-time via PayPal)
+                            FREE: always accessible
+  6. validate_api_key     - Check API key validity and remaining quota
+                            FREE: always accessible
+
+KEY FEATURES / CAPABILITIES:
+  - AI market intelligence: tracks Claude Code, Cursor, Devin, OpenHands, Windsurf, Aider, etc.
+  - Reports collected every 6 hours by intel-collector agent
+  - Tiered data access: free (3 data points) vs pro (15+ data points with growth projections)
+  - D1 database (env.DB) for persistent report storage and API key management
+  - KV for pro key validation and rate limiting (dual storage)
+  - x402 micro-payment support: $0.05/call USDC on Base blockchain
+  - Upgrade prompt injection into responses near rate limit
+  - SHA-256 IP hashing for anonymous rate limit tracking
+  - Honeypot path detection with DB logging
+
+AUTHENTICATION:
+  - Two-tier validation:
+    1. KV-based pro key: validateProKey() checks prokey:{apiKey} in KV
+    2. D1-based: validateKey() checks api_keys table with daily reset
+  - X-API-Key header for pro authentication
+  - Free: 20 calls/day per IP (INTEL_RATE_LIMIT = 20)
+  - Pro (KV-based): 1000/day (PRO_DAILY_LIMIT = 1000)
+  - Pro (D1-based): custom daily_limit from api_keys table
+
+RATE LIMITING:
+  - Primary: D1-based with SHA-256 IP hash, table: rate_limits
+  - Fallback: in-memory Map (memoryRateLimit)
+  - Pro override: proKeyRateLimit via KV (rl:pro:{apiKey[:16]}:{date})
+  - 402 HTTP + x402 payment headers when exceeded
+  - x402 Payment: $0.05 USDC on Base, address: 0x72aa56DAe3819c75C545c57778cc404092d60731
+
+ERROR HANDLING:
+  - JSON-RPC 2.0 batch request support (Array.isArray check)
+  - jsonRpcResponse() / jsonRpcError() helpers
+  - upgradeSignal() function returns structured upsell object in JSON
+  - addUpgradePrompt() appends CTA text to responses
+  - Input sanitization with HTML/script stripping
+  - Payload limit: 102400 bytes (100KB) - largest limit of all workers
+
+SECURITY:
+  - edgeDefenseHoneypot(): traps /admin, /.env, etc. and records in D1
+  - sha256Short() via Web Crypto API for IP anonymization
+  - sanitizeInput() on all tool args
+  - PAYLOAD_MAX_BYTES = 102400
+
+STORAGE:
+  - D1 tables: intel_reports, api_keys, rate_limits, subscribers
+  - KV: pro key store + rate limiting
+
+================================================================================
+WORKER 7: openclaw-fortune-mcp
+URL: https://openclaw-fortune-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    openclaw-fortune
+  Version: 2.0.1
+
+TOTAL LINES OF CODE: Full inline (not persisted)
+SOURCE SIZE: ~large (full inline response)
+
+TOOLS EXPOSED (3):  (fewest tools of all 9 workers)
+  1. get_daily_fortune    - Daily horoscope + tarot for a zodiac sign
+                            Returns: overall score, tarot card (name + position + keywords),
+                            love/work/money/health scores (1-5 stars), lucky item/color/number/direction,
+                            personalized message tier (excellent/good/average/challenging)
+  2. get_fortune_ranking  - Today's zodiac ranking from 1st to 12th with scores and tiers
+  3. get_all_fortunes     - Complete fortune data for all 12 zodiac signs
+
+KEY FEATURES / CAPABILITIES:
+  - 100% deterministic fortune generation (no randomness per request - seeded by date)
+  - Seeded RNG: seededRandom(seed) using date hash -> same results all day
+  - Fortune seed: getDateSeed(dateStr) LCG hash of JST date string
+  - 12 zodiac signs with JP names, emoji, element, date ranges
+  - 22 Major Arcana tarot cards with upright/reversed keywords (all in Japanese)
+  - 32 lucky items, 12 lucky colors, 8 lucky directions
+  - All content in Japanese (luck messages, tarot keywords)
+  - Fortune ranking shuffled daily via seeded Fisher-Yates
+  - ecosystem() helper adds cross-promotion to intel_mcp and store
+  - Completely serverless - no DB, computation only
+
+AUTHENTICATION:
+  - All 3 tools are FREE with no pro gating
+  - Pro key supported only for rate limit extension
+  - Free: 50 requests/day per IP (FORTUNE_RATE_LIMIT = 50) - highest free limit
+  - Pro: 1000/day
+  - KV used for rate limiting (rl:fortune:{ip}:{today})
+
+RATE LIMITING:
+  - Free: 50/day (most generous free limit of all workers)
+  - KV-based with daily TTL (86400s)
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+  - 402 + x402 headers on exceeded (same address as intel-mcp)
+
+ERROR HANDLING:
+  - JSON-RPC 2.0 compliant
+  - resolveSign() handles English names, Japanese names, emoji, prefix matching
+  - Returns structured error with "available" list on unknown sign
+  - sanitizeInput() strips HTML/< > characters (simpler version vs others)
+  - Payload: 51200 bytes (50KB)
+
+SECURITY:
+  - edgeDefense() with full score system (most complete implementation among fortune-type workers)
+  - getRequestFingerprint() - suspicious UA detection
+  - finopsTrack() with warn/slow/stop thresholds
+  - sha256Short() for IP hashing
+  - KV-backed defense scores (daily TTL)
+
+STORAGE:
+  - KV only (no D1) - stateless computation with KV rate limiting
+
+================================================================================
+WORKER 8: moltbook-publisher-mcp
+URL: https://moltbook-publisher-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:        moltbook-publisher
+  Version:     1.0.0
+  Vendor:      MoltBook Labs  (different vendor name from other workers)
+  Description: Japanese content publishing toolkit
+
+TOTAL LINES OF CODE: ~1054 (shortest bundled worker)
+SOURCE SIZE: ~48,805 chars
+
+TOOLS EXPOSED (8):  (most tools of all 9 workers)
+  1. convert_markdown_to_html   - Convert Markdown to platform-compatible HTML
+                                  Targets: note.com, Zenn, Qiita
+                                  Handles: headings, bold, italic, tables, lists, blockquotes,
+                                  code blocks, horizontal rules
+                                  [FREE]
+  2. optimize_for_seo           - SEO optimization for Japanese content
+                                  Returns: title, meta description, keywords, H1/H2 suggestions
+                                  [FREE]
+  3. translate_en_to_jp         - English to Japanese translation (rule-based/template)
+                                  [FREE - but rate limited]
+  4. generate_article_outline   - Generate structured article outline for a topic
+                                  [FREE]
+  5. get_trending_topics        - Get trending topics on note.com / Zenn / Qiita
+                                  [PRO ONLY - requires api_key]
+  6. cross_post_format          - Format content for cross-posting across multiple platforms
+                                  Returns platform-specific versions simultaneously
+                                  [PRO ONLY - requires api_key]
+  7. analyze_article_performance - Analyze article structure for performance prediction
+                                   Returns readability, SEO score, engagement estimate
+                                   [PRO ONLY - requires api_key]
+  8. purchase_pro_key           - Get Pro key ($12 one-time - different price from ecosystem)
+                                  [FREE]
+
+KEY FEATURES / CAPABILITIES:
+  - Specialized for Japanese content publishing ecosystem (note.com, Zenn, Qiita)
+  - Platform-specific HTML output (each platform has different formatting rules)
+  - SEO optimization tailored for Japanese search (different keyword density norms)
+  - Trending topics from multiple JP platforms
+  - Cross-posting formatter saves time for multi-platform publishers
+  - Uses D1 for persistent data (trending topics cache, API keys)
+  - Uses KV for rate limiting and caching
+
+AUTHENTICATION:
+  - Freemium with tool-level gating:
+    FREE tools:  convert_markdown_to_html, optimize_for_seo, translate_en_to_jp,
+                 generate_article_outline, purchase_pro_key
+    PRO tools:   get_trending_topics, cross_post_format, analyze_article_performance
+  - Pro price: $12 USD one-time (PRO_PRICE_USD = 12) - HIGHER than ecosystem standard ($9)
+  - Free limit: 5 requests/day (FREE_DAILY_LIMIT = 5) - LOWEST of all workers
+  - Pro limit: 100 requests/day (PRO_DAILY_LIMIT = 100)
+  - Also references $9 paypal.me link (ecosystem Pro key also works)
+  - Smithery listings referenced: smithery.ai/servers/openclaw-ai/intel, /fortune
+
+RATE LIMITING:
+  - Free: 5/day (most restrictive - by design to push Pro conversion)
+  - Pro: 100/day
+  - Both KV and D1 bound
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+
+ERROR HANDLING:
+  - JSON-RPC 2.0
+  - try/catch on all tool handlers
+  - sanitizeInput() on all args
+  - D1 errors caught silently (fallback responses)
+  - Payload: 51200 bytes (50KB)
+
+SECURITY:
+  - Full edgeDefense() with KV score system
+  - finopsTrack() capacity guard
+  - D1 + KV dual storage
+  - sha256Short() IP hashing
+
+NOTABLE DIFFERENCE:
+  - Vendor is "MoltBook Labs" not "OpenClaw Intelligence"
+  - Smithery marketplace links included in ECOSYSTEM
+  - Pro price is $12 not $9 (unique in the ecosystem)
+  - Shortest line count (most efficient code)
+
+================================================================================
+WORKER 9: agentforge-compare-mcp
+URL: https://agentforge-compare-mcp.yagami8095.workers.dev/mcp
+================================================================================
+
+SERVER INFO:
+  Name:    agentforge-compare
+  Version: 1.0.0
+
+TOTAL LINES OF CODE: Full inline (not persisted as large file)
+SOURCE SIZE: ~large (full inline response)
+
+TOOLS EXPOSED (5):
+  1. compare_ai_tools      - Side-by-side comparison of 2-8 AI coding tools
+                             FREE: summary table (stars, price, license, platforms)
+                             PRO: detailed analysis + head-to-head scoring + recommendations
+                             Available tools: claude-code, cursor, windsurf, devin, openhands,
+                             github-copilot, aider, cline
+  2. get_tool_profile      - Detailed profile of a single tool
+                             FREE: full profile (description, strengths, weaknesses, use cases,
+                             pricing, GitHub, release)
+  3. recommend_tool        - AI-powered tool recommendation based on use_case, budget,
+                             experience, preferences
+                             [PRO ONLY]
+  4. get_pricing_comparison - Full pricing table for all 8 tracked tools
+                              Sortable by price_asc, price_desc, popularity, name
+                              FREE: always accessible
+  5. purchase_pro_key      - Pro key purchase instructions ($9 one-time)
+                             FREE: always accessible
+
+KEY FEATURES / CAPABILITIES:
+  - Static AI_TOOLS database: 8 tools with full profiles (as of 2026-02-28):
+    claude-code (70700 stars), cursor (32300), windsurf (12500), devin (18900),
+    openhands (68200), github-copilot (N/A), aider (28400), cline (35800)
+  - Head-to-head scoring on 6 aspects: Autonomy, IDE Integration, Open Source,
+    Cost Efficiency, Community, Enterprise Ready
+  - generateHeadToHead() with per-tool scoring functions
+  - Recommendation algorithm: weighted scoring by budget, preferences, experience, popularity
+  - generateWhyText() produces human-readable recommendation rationale
+  - D1 database for persistent API key validation
+  - KV for rate limiting
+
+AUTHENTICATION:
+  - Dual API key validation:
+    1. D1: validateApiKey() - checks api_keys table (expires_at supported)
+    2. KV: validateProKey() - checks prokey:{apiKey} in KV (same as other workers)
+  - X-API-Key header OR args.api_key in tool arguments
+  - x-client-id header supported for client identification
+  - Free: 10 requests/day (limit = isPro ? 100 : 10)
+  - Pro: 100 requests/day
+
+RATE LIMITING:
+  - Key: agentforge:rate:{clientId}:{today} in KV
+  - Free: 10/day, Pro: 100/day
+  - Memory fallback: MEM_RL_LIMIT = 5 per 60s
+  - Rate limit response is returned as tool result content (not HTTP 429/402 at MCP level)
+    - Unlike other workers which return HTTP 402, agentforge returns JSON-RPC success
+    - with error info embedded in content (different approach)
+
+ERROR HANDLING:
+  - JSON-RPC 2.0 batch support (Promise.all for batch requests)
+  - Separate handleMCPRequest() function (cleaner than other workers)
+  - sanitizeInput() on all args
+  - Payload: 51200 bytes (50KB)
+  - error() helper function returning { error: msg, ecosystem: getEcosystem() }
+
+SECURITY:
+  - edgeDefense() with full KV score system
+  - finopsTrack() capacity guard
+  - sha256Short() IP hashing
+  - Honeypot detection
+
+NOTABLE DIFFERENCES FROM OTHER WORKERS:
+  - Uses separate handleMCPRequest() function (cleaner architecture)
+  - Rate limit response embedded in content[] not HTTP 402 (inconsistent with siblings)
+  - Dual API key validation (both D1 and KV)
+  - x-client-id header support for client tracking
+  - addUpgradePrompt() called differently (after handleMCPRequest returns)
+  - Vendor description includes "AgentForge" branding separate from "OpenClaw"
+
+================================================================================
+SHARED CODE PATTERNS ACROSS ALL 9 WORKERS
+================================================================================
+
+UNIVERSAL PATTERNS (present in all 9):
+---------------------------------------
+1. MCP Protocol: JSON-RPC 2.0, protocolVersion "2025-03-26"
+   - Methods: initialize, notifications/initialized, tools/list, tools/call, ping
+   - Batch request support (Array.isArray check)
+   - Standard response: { jsonrpc: "2.0", id, result/error }
+
+2. memoryRateLimit(ip):
+   - In-memory Map fallback when KV unavailable
+   - 5 requests per 60 second window (MEM_RL_LIMIT=5, MEM_RL_WINDOW=60000)
+   - Returns { allowed, remaining, safeMode: true }
+
+3. validateProKey(kv, apiKey):
+   - KV lookup: prokey:{apiKey} -> JSON { tier, expires, daily_limit }
+   - Checks tier === "pro" or "pro_trial"
+   - Expiry check on expires field
+
+4. proKeyRateLimit(kv, apiKey, limit):
+   - KV key: rl:pro:{apiKey.slice(0,16)}:{today}
+   - Daily counter with 86400s TTL
+   - Returns { allowed, remaining, total, used, pro: true }
+
+5. ECOSYSTEM object:
+   - All 9 server URLs listed by name
+   - Store, fortune_api, intel_api also included
+   - Used for cross-promotion in every tool response
+
+6. addUpgradePrompt(response, rateLimitInfo):
+   - Appends text to response content when remaining <= 2 calls
+   - Text: "X calls left today. Pro: $9 -> 1000/day -> paypal.me/Yagami8095/9"
+   - Also appends "— powered by OpenClaw (openclaw.dev)" on first 3 uses
+
+7. trackRef(request, env, serverName):
+   - Reads ?ref= query param
+   - KV key: ref:{source}:{serverName}:{today} with 30-day TTL
+   - Referral attribution tracking
+
+8. Landing page HTML (GET /):
+   - Tailwind CSS via CDN (cdn.tailwindcss.com)
+   - MCP connection snippet (JSON config block)
+   - Tool list with free/pro badges
+   - Links to all ecosystem servers
+
+9. /llms.txt and /.well-known/llms.txt:
+   - Standard LLM discoverability format
+   - Lists all 9 MCP servers with URLs
+   - "9 free remote MCP servers with 49 tools for AI agents"
+
+10. /health endpoint:
+    - Returns { status: "ok", server: name, version }
+    - Used by monitoring
+
+11. sanitizeInput(str, maxLen=2000):
+    - Strips <script> tags and HTML tags
+    - Truncates to maxLen
+
+12. sha256Short(str):
+    - Web Crypto API: crypto.subtle.digest("SHA-256", ...)
+    - Returns 8-byte hex prefix (16 chars)
+    - Used for IP anonymization
+
+13. Honeypot paths (all workers):
+    ["/admin", "/wp-login.php", "/.env", "/config.json", "/.git/config", "/wp-admin", "/phpinfo.php"]
+
+14. x402 Payment headers (on rate limit 402 responses):
+    X-Payment-Required: true
+    X-Payment-Network: base
+    X-Payment-Currency: USDC
+    X-Payment-Amount: 0.05
+    X-Payment-Address: 0x72aa56DAe3819c75C545c57778cc404092d60731
+
+15. CORS headers (all endpoints):
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE
+    Access-Control-Allow-Headers: Content-Type, Authorization, Mcp-Session-Id
+
+16. finopsTrack(env, serverName):
+    - Daily request counter in KV (finops:{today})
+    - warn threshold: 50000, slow threshold: 80000, stop: 95000
+    - Adds 500ms delay when slow, returns 503 when stop reached
+
+VARIATION PATTERNS:
+-------------------
+- edgeDefense() implementation: simple (intel uses honeypot-only) vs full (fortune uses
+  score system with fingerprinting, throttle, block)
+- Rate limit storage: in-memory only (json-toolkit) vs KV vs D1 vs dual
+- Tool gating: no gating (json-toolkit, regex, color, timestamp, fortune) vs partial gating
+  (prompt-enhancer: 3/6 free) vs (moltbook: 5/8 free, intel: summarized free)
+- Vendor name: "OpenClaw Intelligence" (most) vs "MoltBook Labs" (moltbook) vs
+  "AgentForge (OpenClaw Intelligence)" (agentforge)
+- Pro price: $9 one-time (7/9 workers) vs $12 (moltbook, unique)
+- Free daily limits: 5 (moltbook) / 10 (prompt-enhancer, agentforge) / 20 (json-toolkit, regex, intel) /
+  25 (color-palette) / 30 (timestamp) / 50 (fortune)
+
+================================================================================
+RATE LIMIT & AUTHENTICATION SUMMARY TABLE
+================================================================================
+
+Worker                  | Free Limit | Pro Limit | Pro Price | Tool Gating | DB  | KV
+------------------------|------------|-----------|-----------|-------------|-----|----
+json-toolkit-mcp        |  20/day    | 1000/day  | $9        | None        | No  | No (mem only)
+regex-engine-mcp        |  20/day    | 1000/day  | $9        | None        | No  | Yes
+color-palette-mcp       |  25/day    | 1000/day  | $9        | None        | No  | Yes
+timestamp-converter-mcp |  30/day    | 1000/day  | $9        | None        | No  | Yes
+prompt-enhancer-mcp     |  10/day    | 100/day   | $9        | 3/6 free    | Yes | Yes
+openclaw-intel-mcp      |  20/day    | 1000/day  | $9        | Summarized  | Yes | Yes
+openclaw-fortune-mcp    |  50/day    | 1000/day  | $9        | None (free) | No  | Yes
+moltbook-publisher-mcp  |   5/day    | 100/day   | $12       | 5/8 free    | Yes | Yes
+agentforge-compare-mcp  |  10/day    | 100/day   | $9        | 2/5 free    | Yes | Yes
+
+================================================================================
+ERROR HANDLING APPROACHES
+================================================================================
+
+All workers implement these error levels:
+
+1. HTTP-level errors:
+   - 400: Invalid Content-Type or malformed JSON
+   - 402: Rate limit exceeded (with x402 payment headers)
+   - 404: Unknown path (+ honeypot paths)
+   - 413: Payload too large (51200-102400 bytes limit)
+   - 503: Daily capacity reached (finopsTrack stop threshold)
+
+2. JSON-RPC errors:
+   - -32700: Parse error (malformed JSON body)
+   - -32600: Invalid JSON-RPC request (missing jsonrpc/method)
+   - -32601: Method not found
+   - -32029: Rate limit exceeded (in JSON-RPC error response)
+   - -32000: Rate limited (prompt-enhancer named constant RATE_LIMITED)
+   - -32001: Auth error (prompt-enhancer named constant AUTH_ERROR)
+
+3. Tool-level errors:
+   - isError: true in content[] with descriptive message
+   - Available tools listed in error for unknown tool name
+   - Structured { error: msg, available: [...] } JSON responses
+
+4. Fallback behavior:
+   - KV unavailable -> memoryRateLimit (5 req/60s in-memory Map)
+   - DB unavailable -> memoryRateLimit fallback
+   - All try/catch blocks have silent fallback to allow (fail-open for availability)
+
+================================================================================
+TOOL COUNT VERIFICATION
+================================================================================
+
+Worker                   | Tool Count | Tools
+-------------------------|------------|-----------------------------------------------
+json-toolkit-mcp         |     6      | json_format, json_validate, json_diff,
+                         |            | json_query, json_transform, json_schema_generate
+regex-engine-mcp         |     5      | regex_test, regex_explain, regex_build,
+                         |            | regex_replace, regex_extract
+color-palette-mcp        |     5      | generate_palette, contrast_check, color_convert,
+                         |            | css_gradient, tailwind_colors
+timestamp-converter-mcp  |     5      | convert_timestamp, timezone_convert, parse_cron,
+                         |            | time_diff, format_duration
+prompt-enhancer-mcp      |     6      | enhance_prompt, analyze_prompt, convert_prompt_format,
+                         |            | generate_system_prompt, prompt_template_library,
+                         |            | purchase_pro_key
+openclaw-intel-mcp       |     6      | get_ai_market_report, get_report_by_id, list_reports,
+                         |            | get_market_stats, purchase_api_key, validate_api_key
+openclaw-fortune-mcp     |     3      | get_daily_fortune, get_fortune_ranking, get_all_fortunes
+moltbook-publisher-mcp   |     8      | convert_markdown_to_html, optimize_for_seo,
+                         |            | translate_en_to_jp, generate_article_outline,
+                         |            | get_trending_topics, cross_post_format,
+                         |            | analyze_article_performance, purchase_pro_key
+agentforge-compare-mcp   |     5      | compare_ai_tools, get_tool_profile, recommend_tool,
+                         |            | get_pricing_comparison, purchase_pro_key
+                         |            |
+TOTAL                    |    49      |
+
+Advertised in /llms.txt: "49 tools for AI agents" -- CONFIRMED ACCURATE
+
+================================================================================
+KEY OBSERVATIONS & NOTES
+================================================================================
+
+1. HIGH CODE REUSE: ~40-50% of each worker is identical boilerplate (shared utility
+   functions: memoryRateLimit, validateProKey, proKeyRateLimit, edgeDefense,
+   finopsTrack, trackRef, addUpgradePrompt, sanitizeInput, sha256Short, ECOSYSTEM,
+   landing HTML, /llms.txt handler). This suggests a shared template/generator.
+
+2. MONETIZATION ARCHITECTURE: The ecosystem uses a freemium model where:
+   - "Utility" workers (json, regex, color, timestamp) are fully free with generous limits
+   - "Intelligence" workers (intel, fortune, agentforge, moltbook) have pro-gated features
+   - All workers share the same Pro key infrastructure (prokey:{key} in KV)
+   - A single $9 Pro key works across the entire ecosystem
+
+3. x402 PROTOCOL: All workers implement x402 micro-payment headers on rate limit
+   responses, enabling machine-to-machine payment for API access at $0.05/call USDC.
+   The payment address (0x72aa56...) is the same across all workers.
+
+4. DETERMINISTIC FORTUNE: The fortune worker's seeded RNG ensures all users get
+   identical fortunes for a given date (no per-request randomness), making it
+   cacheable and reproducible - useful for testing and consistent UX.
+
+5. STATIC DATA RISK: agentforge-compare stores AI tool data (star counts, versions)
+   as static JavaScript objects with a "last_updated: 2026-02-28" timestamp.
+   This data will become stale over time without code updates.
+
+6. INTEL WORKER UNIQUENESS: openclaw-intel-mcp is the only worker at version 3.0.0
+   (all others are 1.0.0 or 2.0.1 for fortune). It is also the most complex,
+   with D1 database reports collected by an external agent.
+
+7. MOLTBOOK PRICING DISCREPANCY: moltbook charges $12 vs $9 for other workers,
+   but also accepts the ecosystem $9 Pro key. The $12 appears to be a moltbook-
+   specific standalone price for users who only want that tool.
+
+8. JSON-TOOLKIT NO KV: json-toolkit-mcp does not use KV or D1 - it is the only
+   fully stateless worker relying entirely on in-memory rate limiting. This means
+   rate limits reset on worker restart/cold start.
+
+9. SECURITY CONSISTENCY: All workers implement the same honeypot path list and
+   sha256Short IP hashing. The edgeDefense score system (100 starting score,
+   -30 for honeypot, -10 for suspicious UA, block at <10, throttle at <30)
+   is shared across workers that have KV bound.
+
+10. LLM DISCOVERABILITY: All workers expose /llms.txt and /.well-known/llms.txt
+    with standardized discovery format, making them easy to index by LLM directories.
+
+================================================================================
+END OF SCAN
+Generated: 2026-03-07
+Purpose: Research only - no modifications made to any worker
+================================================================================

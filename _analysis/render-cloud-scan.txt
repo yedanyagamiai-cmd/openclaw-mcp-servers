@@ -1,0 +1,584 @@
+================================================================================
+RENDER / CLOUD SERVICE SOURCE CODE SCAN
+Generated: 2026-03-07 (Claude Code Research-Only Scan)
+Scope: Intel Pro (Render), Bunshin (Render), Product Store (CF Worker),
+       Browser Worker (CF Worker)
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1 — OPENCLAW INTEL PRO (Render-hosted Next.js 14)
+--------------------------------------------------------------------------------
+
+SOURCE LOCATION: C:\Users\yagam\openclaw-intel-pro\
+LIVE URL: https://openclaw-intel-pro.onrender.com
+GITHUB: https://github.com/yedanyagamiai-cmd/openclaw-intel-pro
+STACK: Next.js 14.2.x + Edge Runtime + TypeScript + Tailwind CSS 3.4
+RUNTIME: All API routes use `export const runtime = 'edge'` (Edge Functions)
+
+--- 1.1 ENDPOINTS ---
+
+GET  /api/health
+  - Public, no auth required
+  - Returns service name, version (1.0.0), endpoint list, powered_by string
+  - Source: C:\Users\yagam\openclaw-intel-pro\app\api\health\route.ts
+
+GET  /api/v1/trending
+  - Public (free tier, no auth needed)
+  - Returns static/cached data: ecosystem stats, top-10 trending MCP servers,
+    hot categories, agent economy projections
+  - Cache-Control: public, max-age=300 (5 min browser cache)
+  - Data is HARDCODED in lib/r1.ts getTrendingData() — NOT live scraped
+  - Source: C:\Users\yagam\openclaw-intel-pro\app\api\v1\trending\route.ts
+
+POST /api/v1/query
+  - Auth: optional Bearer token (no token = free tier, 5 req/day)
+  - Tiers: free (5/day, no R1), pro (10000/day, R1), agent (50000/day, R1)
+  - Body: { query: string (max 2000 chars), context?: string }
+  - Free tier: returns static getTrendingData() wrapped as queryBasic()
+  - Pro/Agent tier: calls DeepSeek R1 via DeepInfra
+  - Rate limiting: in-memory Map (resets on deploy/restart — NOT persistent)
+  - CORS: Access-Control-Allow-Origin: * on all responses
+  - Source: C:\Users\yagam\openclaw-intel-pro\app\api\v1\query\route.ts
+
+POST /api/v1/analyze
+  - Auth: REQUIRED — pro or agent tier only (free gets 403)
+  - Body: { target: string, aspect?: string, context?: string }
+  - Generates a structured competitive analysis prompt, sends to R1
+  - 6-point analysis: market position, strengths, weaknesses, competitors,
+    revenue potential, growth trajectory
+  - Source: C:\Users\yagam\openclaw-intel-pro\app\api\v1\analyze\route.ts
+
+--- 1.2 DEEPSEEK R1 INTEGRATION (lib/r1.ts) ---
+
+Model:    deepseek-ai/DeepSeek-R1-0528
+Endpoint: https://api.deepinfra.com/v1/openai/chat/completions
+Auth:     DEEPINFRA_API_KEY env var
+Params:   temperature=0.7, max_tokens=4096
+
+System prompt identity: "OpenClaw Intel Pro, elite AI developer intelligence
+analyst — specializing in MCP ecosystem, AI agent economy, developer tools."
+
+Response parsing:
+  - Extracts <think>...</think> blocks as reasoning field (truncated to 500 chars)
+  - Attempts to parse JSON from response (```json``` blocks or bare {})
+  - Fallback: wraps raw text in { raw_analysis: ... }
+
+Static trending data (hardcoded in getTrendingData()):
+  - total_servers: 11000, monetized_pct: 4.8%, market_size_b: $2.7B, cagr: 34%
+  - Top trending: Context7 (11k views), Playwright MCP (6k), Sequential Thinking (5.5k)
+  - Hot categories: AI Code Review, DevOps Automation, Security Analysis (all "excellent")
+  - Agent economy: $7.84B 2025 → $52.62B 2030, CAGR 46.3%
+
+--- 1.3 AUTH / API KEY SYSTEM (lib/auth.ts) ---
+
+Tiers:
+  free:  dailyLimit=5,     hasR1=false  (no auth header = free)
+  pro:   dailyLimit=10000, hasR1=true   (key in PRO_API_KEYS env)
+  agent: dailyLimit=50000, hasR1=true   (key in AGENT_API_KEYS env)
+
+Key storage: env vars PRO_API_KEYS (comma-separated), AGENT_API_KEYS
+  - MEMORY.md states: 3 Pro keys (oc_pro_*) + 3 Agent keys (oc_agent_*)
+  - Stored in Render environment variables
+
+Rate limit storage: in-memory Map<string, {count, resetAt}>
+  CRITICAL: Rate limits reset on every Render deployment or service restart.
+  Persistent rate limiting is NOT implemented.
+
+Unknown/invalid keys: fall through to free tier (graceful degradation, no 401)
+
+--- 1.4 ENVIRONMENT VARIABLES ---
+
+Required (from .env.example):
+  DEEPINFRA_API_KEY   - DeepInfra API key for R1 model calls
+  PRO_API_KEYS        - Comma-separated list of pro API keys
+  AGENT_API_KEYS      - Comma-separated list of agent API keys
+
+--- 1.5 BUILD/DEPLOY ---
+
+package.json scripts: dev / build / start (next build + next start)
+No render.yaml or Dockerfile found in directory — likely configured via
+Render dashboard as a Node.js web service.
+No persistent database — all state is in-memory or static.
+
+
+--------------------------------------------------------------------------------
+SECTION 2 — YEDAN BUNSHIN v4.1.2 (Render-hosted Node.js)
+--------------------------------------------------------------------------------
+
+SOURCE LOCATION (authoritative): C:\Users\yagam\openclaw-mcp-servers\render-health-api\server.js
+ALSO PRESENT AT: C:\Users\yagam\openclaw-mcp-servers\server.js (identical file)
+LIVE URL: https://openclaw-mcp-servers.onrender.com
+PACKAGE: C:\Users\yagam\openclaw-mcp-servers\render-health-api\package.json
+  name: "yedan-bunshin", version: "2.0.0"
+  dependencies: express ^4.21.0, pg ^8.13.0
+  engines: node >=20.0.0
+STACK: Express.js + PostgreSQL (pg pool) — plain Node.js, no framework magic
+PORT: process.env.PORT || 3000
+
+IDENTITY BLOCK:
+  name: 'YEDAN-Bunshin'
+  version: '4.1.2'
+  role: 'Autonomous Continuity Engine — YEDAN\'s Cloud Twin'
+  parent: 'YEDAN Alpha Gateway (WSL2)'
+  operator: 'Yagami'
+
+--- 2.1 MONITORED SERVICES (13 total) ---
+
+Type MCP (9):
+  json-toolkit          https://json-toolkit-mcp.yagami8095.workers.dev
+  regex-engine          https://regex-engine-mcp.yagami8095.workers.dev
+  color-palette         https://color-palette-mcp.yagami8095.workers.dev
+  timestamp-converter   https://timestamp-converter-mcp.yagami8095.workers.dev
+  prompt-enhancer       https://prompt-enhancer-mcp.yagami8095.workers.dev
+  agentforge-compare    https://agentforge-compare-mcp.yagami8095.workers.dev
+  moltbook-publisher    https://moltbook-publisher-mcp.yagami8095.workers.dev
+  fortune               https://openclaw-fortune-mcp.yagami8095.workers.dev
+  intel                 https://openclaw-intel-mcp.yagami8095.workers.dev
+
+Type API (2):
+  fortune-api           https://fortune-api.yagami8095.workers.dev
+  intel-api             https://openclaw-intel-api.yagami8095.workers.dev
+
+Type store (1):
+  product-store         https://product-store.yagami8095.workers.dev
+
+Type tool (1):
+  cf-browser            https://openclaw-browser.yagami8095.workers.dev
+
+--- 2.2 POSTGRESQL SCHEMA (9 tables) ---
+
+health_checks    id, timestamp, healthy, total, servers (JSONB), latency_avg
+tasks            id, created_at, updated_at, type, status, priority, payload (JSONB),
+                 result (JSONB), error, retry_count, max_retries
+events           id, timestamp, type, source, data (JSONB)
+kv_store         key (PK), value (JSONB), updated_at
+alerts           id, timestamp, severity, target, message, notified, resolved, resolved_at
+brain            key (PK), category, value (JSONB), summary, updated_at, updated_by
+learnings        id, timestamp, category, pattern, evidence (JSONB), confidence,
+                 applied_count, last_applied
+handoffs         id, timestamp, direction, source, work_state (JSONB),
+                 pending_tasks (JSONB), notes, acknowledged, acknowledged_at
+think_log        id, timestamp, prompt, context (JSONB), response, model,
+                 tokens_used, action_taken
+
+Indexes: timestamp DESC on health_checks, (status, priority DESC) on tasks,
+         (type, timestamp DESC) on events, (resolved, timestamp DESC) on alerts,
+         category on brain, (category, confidence DESC) on learnings,
+         (direction, timestamp DESC) on handoffs, timestamp DESC on think_log
+
+Connection: process.env.DATABASE_URL, SSL enabled for render.com hosts
+Pool: max=5, idleTimeoutMillis=30000
+
+--- 2.3 DEEPSEEK LLM INTEGRATION ---
+
+Endpoint: https://api.deepseek.com/chat/completions
+Model:    deepseek-chat
+Auth:     DEEPSEEK_API_KEY env var
+Params:   max_tokens=500 (default), temperature=0.3
+Logs:     Every think() call inserted into think_log table
+
+System prompt context: identity as YEDAN Bunshin, role description,
+  current state JSON (truncated to 1000 chars), autonomous 24/7 framing
+
+JSON parsing helper: parseJsonResponse() strips ```json ... ``` fences before
+JSON.parse — this was the v4.1.2 JSONB fix noted in MEMORY.md.
+
+--- 2.4 TELEGRAM INTEGRATION ---
+
+Bot API: https://api.telegram.org/bot{TOKEN}/sendMessage
+Chat ID: 7848052227 (from TELEGRAM_CHAT_ID env, hardcoded default)
+Message limit: 4000 chars (Telegram max), parse_mode=HTML
+Alert cooldown: 15 minutes per (target, severity) pair
+Severity indicators: 🚨 critical, ⚠️ warning, ℹ️ info
+
+Boot notification sent on startup with health summary.
+Daily report sent every 12h via setInterval.
+
+--- 2.5 AUTONOMOUS CYCLES (setInterval) ---
+
+Every  5 minutes:  checkAllServers() + updateHealthSummary() → brain
+Every  2 minutes:  processNextTask() — pull one pending task from queue
+Every 15 minutes:  autonomousThink()
+  - If servers down/slow: incident analysis prompt → R1, alert if shouldAlert
+  - If all healthy: revenue mode prompt → R1, auto-creates revenue-action tasks
+Every  6 hours:    createRevenueTasks() — R1 generates 3 specific revenue tasks
+Every  6 hours:    runCleanup() — purge old DB rows
+Every 12 hours:    generateReport() → sendTelegram()
+
+Boot sequence (on startup):
+  1. initDatabase() — CREATE TABLE IF NOT EXISTS for all 9 tables
+  2. After 3s: checkAllServers() + logEvent('boot') + sendTelegram boot msg
+  3. After 30s: createRevenueTasks() — first revenue task generation
+
+--- 2.6 TASK SYSTEM ---
+
+Task types supported in executeTask():
+  health-check       Run checkAllServers()
+  check-server       Check single server by name
+  telegram-notify    Send Telegram message
+  think              Run LLM prompt (optionally log action_taken)
+  learn              Store new learning pattern
+  brain-set          Store key/value in brain table
+  fetch-url          HTTP GET, return first 2000 chars of body
+  daily-report       Generate + send Telegram report
+  analyze            LLM analysis of payload.data with learnings context
+  cleanup            Run DB cleanup
+  handoff-task       Execute sub-task from handoff pending_tasks
+
+Task priority: higher int = higher priority (fetched ORDER BY priority DESC)
+Max retries: 3 (hardcoded in processNextTask, configurable per task)
+Status flow: pending → running → completed | failed
+
+--- 2.7 BRAIN (Shared Memory) ---
+
+brainSet(key, value, category, summary, updatedBy):
+  Upsert into brain table. category defaults to 'general'.
+  updatedBy tracks source ('bunshin', 'task', 'api')
+
+Known brain keys (from MEMORY.md and code):
+  revenue-status, yedan-status, health-summary, ecosystem-map,
+  identity, mission, mcp-servers, alert-rules, last-boot,
+  last-analysis, last-revenue-analysis, revenue-plan
+
+--- 2.8 HANDOFF SYSTEM ---
+
+POST /api/handoff/offline (auth required):
+  Receives workState + pendingTasks from Claude Code before going offline.
+  Creates task rows from pendingTasks. Sends Telegram notification.
+
+GET /api/handoff/resume (auth required):
+  Returns full resume package: last handoff, events/tasks/alerts/thoughts
+  since last handoff, brain state, current health. Marks handoff acknowledged.
+
+--- 2.9 PUBLIC ENDPOINTS ---
+
+GET  /         — Identity + capabilities + uptime (no auth)
+GET  /ping     — Health check: db connectivity, TG enabled, think enabled
+GET  /health   — Full health check of all 13 services (no auth)
+GET  /health/history — Last 50 health records from memory cache
+GET  /health/:name   — Single service health check
+GET  /status   — Quick summary: healthy/total, latency, active alerts, down list
+
+--- 2.10 PROTECTED ENDPOINTS (Bearer AUTH_TOKEN = 'openclaw-bunshin-2026') ---
+
+Tasks:
+  GET  /api/tasks            — list tasks (filter by ?status=, ?limit=)
+  POST /api/tasks            — create task {type, payload, priority, maxRetries}
+  PATCH /api/tasks/:id       — update task status/result/error
+
+Alerts:
+  GET  /api/alerts           — list unresolved alerts + downServers Set
+
+Events:
+  GET  /api/events           — list events (filter by ?type=, ?limit=)
+
+KV Store:
+  GET  /api/kv/:key          — read key
+  PUT  /api/kv/:key          — write/update key {value}
+
+Brain:
+  GET  /api/brain            — list brain entries (filter by ?category=)
+  GET  /api/brain/:key       — read single key
+  PUT  /api/brain/:key       — write {value, category, summary, updatedBy}
+
+Think / LLM:
+  POST /api/think            — run LLM prompt {prompt, context, maxTokens}
+  GET  /api/think/log        — last 20 think_log entries
+
+Learn:
+  GET  /api/learnings        — list learnings (filter by ?category=)
+  POST /api/learn            — add learning {category, pattern, evidence, confidence}
+
+Handoff:
+  POST /api/handoff/offline  — receive offline handoff {workState, pendingTasks, notes}
+  GET  /api/handoff/resume   — get resume package
+  GET  /api/handoff/history  — last 20 handoffs
+
+DB Stats:
+  GET  /api/db/stats         — row counts for all 9 tables + pool stats
+
+Report:
+  GET  /api/report           — generate report text (?send=true posts to Telegram)
+
+Command (multi-function):
+  POST /api/command          — {command, args}
+    Supported commands: health-check, get-status, think, send-telegram,
+    daily-report, process-tasks, cleanup, brain-dump
+
+--- 2.11 LEARNING SYSTEM ---
+
+learn(category, pattern, evidence, confidence):
+  - Checks if exact (category, pattern) pair exists
+  - If exists: confidence += 0.1 (max 1.0), applied_count++, merge evidence
+  - If new: INSERT with initial confidence
+  - Automatically called on: server outage, recovery, high latency,
+    task success, task failure events
+
+getRelevantLearnings(category, limit=5):
+  SELECT by category ORDER BY confidence DESC, applied_count DESC
+
+--- 2.12 ENVIRONMENT VARIABLES ---
+
+AUTH_TOKEN          — API bearer token (default: 'openclaw-bunshin-2026')
+DATABASE_URL        — PostgreSQL connection string
+TELEGRAM_BOT_TOKEN  — Telegram bot token
+TELEGRAM_CHAT_ID    — Chat ID (default: '7848052227')
+DEEPSEEK_API_KEY    — DeepSeek API key for autonomous thinking
+
+
+--------------------------------------------------------------------------------
+SECTION 3 — PRODUCT STORE (Cloudflare Worker)
+--------------------------------------------------------------------------------
+
+SOURCE LOCATION: C:\Users\yagam\openclaw-mcp-servers\product-store\worker.js
+                 C:\Users\yagam\openclaw-mcp-servers\product-store\wrangler.toml
+LIVE URL: https://product-store.yagami8095.workers.dev
+WORKER NAME: product-store
+STACK: Cloudflare Workers (no framework), D1 + KV
+BINDINGS:
+  DB  — D1 database "gumroad-sales" (id: 1353b53e-000c-4646-ac24-d15cd3fd29ad)
+  KV  — namespace id: 412eb1678043499eb34f0e7f211176b9
+VAR: STORE_NAME = "OpenClaw Digital Store"
+
+--- 3.1 PRODUCT CATALOG (7 products) ---
+
+ID                    Name (JP/EN)                               Price USD  Badge
+--------------------  ------------------------------------------ ---------  -----------
+prompt-collection-50  実戦で使えるAIプロンプト50選               $19        BEST SELLER
+automation-guide      24時間稼働AIシステムの作り方               $15        NEW
+side-income-roadmap   AIで月10万円稼ぐ副業ロードマップ           $12        HOT
+intel-api-pro         OpenClaw Intel Pro API Key                 $9         PRO
+mcp-starter-kit       MCP Server 開発スターターキット            $29        NEW
+ecosystem-pro         OpenClaw Ecosystem Pro (all 9 MCP servers) $9         MOST POPULAR
+intel-annual-pass     OpenClaw Intel Pro 年間パス (12 months)    $79        BEST VALUE
+
+Product types:
+  HTML/PDF downloads: prompt-collection-50, automation-guide, side-income-roadmap,
+                      mcp-starter-kit (format: ZIP)
+  API key delivery:   intel-api-pro, ecosystem-pro (type: api_key)
+  Subscription:       intel-annual-pass (type: subscription, format: API_KEY)
+
+File delivery (non-API products): stored under file_key in KV/D1
+
+--- 3.2 PAYMENT INTEGRATION ---
+
+PayPal:
+  - Via PAYPAL_BUSINESS_EMAIL env var
+  - Generates PayPal "Buy Now" button links directly in HTML
+  - No server-side verification visible in catalog page
+
+Stripe:
+  - Via STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET env vars
+  - Stripe Checkout Session approach
+  - MEMORY.md notes: "Payment CTA: mailto: (Stripe 暫停中)" → Stripe paused
+
+GitHub OAuth:
+  - Via GITHUB_CLIENT_ID + GITHUB_CLIENT_SECRET env vars
+  - OAuth Flow:
+      GET /auth/login    → redirect to GitHub OAuth
+      GET /auth/callback → exchange code → issue Pro API key
+      GET /auth/status   → check if user has Pro key (via KV)
+
+--- 3.3 KEY GENERATION ---
+
+generateToken(length=32): cryptographically random, alphanumeric chars
+generateOrderId():        "ORD-{YYYYMMDDHHMMSS}-{6-char-random}"
+generateApiKey():         "oc_pro_{40-char-random}"
+
+--- 3.4 ORDER TRACKING ---
+
+D1 database "gumroad-sales" — orders table (schema inferred from code)
+Orders stored with: orderId, productId, amount, paymentMethod, apiKey (if applicable)
+
+Verified revenue from MEMORY.md (as of 2026-03-06):
+  Total: $172 from 7 paid orders via PayPal
+  Products sold: intel-api-pro x2($18), intel-annual-pass($79),
+                 automation-guide($15), prompt-collection-50($19),
+                 mcp-starter-kit($29), side-income-roadmap($12)
+
+--- 3.5 HTML / FRONTEND ---
+
+Server-side rendered HTML (dark theme, Japanese-first UI)
+Fonts: Hiragino Kaku Gothic ProN, Noto Sans JP, -apple-system
+Color scheme: background #0a0a0a, accent #ff6b35, text #e0e0e0
+Payment buttons: PayPal (#0070ba), Stripe (#635bff)
+Responsive: CSS media query at 600px breakpoint
+
+Footer links: Intel MCP, Fortune MCP, Intel API, note.com/yedanyagami
+Contact: Yagami8095@gmail.com, Taichung, Taiwan
+
+--- 3.6 API ENDPOINT ---
+
+GET /api/orders — returns order list (referenced in MEMORY.md for verification)
+  curl https://product-store.yagami8095.workers.dev/api/orders
+
+
+--------------------------------------------------------------------------------
+SECTION 4 — OPENCLAW BROWSER WORKER (Cloudflare Worker, CF Browser)
+--------------------------------------------------------------------------------
+
+SOURCE LOCATION: C:\Users\yagam\.openclaw\browser-stealth\src\index.js
+                 C:\Users\yagam\.openclaw\browser-stealth\wrangler.toml
+LIVE URL: https://openclaw-browser.yagami8095.workers.dev
+WORKER NAME: openclaw-browser
+STACK: Cloudflare Workers + @cloudflare/puppeteer (CDP browser binding)
+VERSION: 2.0.0 (noted as "2.0 stealth" in MEMORY.md)
+BINDING: BROWSER (Cloudflare Browser Rendering API)
+AUTH TOKEN: "openclaw-browser-2026" (hardcoded in source)
+  Accepted via: ?token= query param OR X-Token header
+
+Also found an older v1 at:
+  C:\Users\yagam\.openclaw\browser-worker.js
+  — same endpoint set but no stealth, uses MYBROWSER binding
+
+--- 4.1 STEALTH FEATURES (v2.0) ---
+
+On every new page (evaluateOnNewDocument):
+  - navigator.webdriver overridden to false
+  - window.chrome.runtime = {} (Chrome fingerprint)
+  - navigator.permissions.query: special-cases 'notifications' permission
+  - navigator.plugins: returns [1,2,3,4,5] (5 fake plugins)
+  - navigator.languages: returns ['en-US', 'en', 'ja']
+
+User-Agent: Windows Chrome 131 (realistic UA, configurable per request)
+Viewport: 1920x1080 (desktop)
+Browser keep_alive: 60000ms
+
+--- 4.2 ENDPOINTS (8 total) ---
+
+GET  /           — Service info + endpoint list (no auth required)
+GET  /text       — Extract body.innerText from page (text/plain)
+GET  /markdown   — Convert page to Markdown (HTML→MD converter inline)
+GET  /screenshot — PNG screenshot (?full=true for full page)
+GET  /scrape     — CSS selector scrape: returns [{tag, text, html}] (top 50 els)
+GET  /links      — Extract all a[href] links [{text, href}]
+GET  /pdf        — A4 PDF of page
+GET  /content    — Raw page HTML (page.content())
+
+POST /interact   — NEW in v2.0: multi-step interactive browser automation
+
+--- 4.3 POST /interact DETAIL ---
+
+Body: { actions: Action[], userAgent?: string }
+
+Action types:
+  goto       { url, waitUntil?, timeout? }      — navigate to URL
+  click      { selector, timeout? }              — click element
+  type       { selector, text, delay? }          — select-all then type
+  fill       { selector, value }                 — direct .value set + events
+  select     { selector, value }                 — <select> dropdown
+  wait       { selector? | ms? }                 — wait for selector/ms/nav
+  screenshot { fullPage? }                       — returns dataUrl (base64 PNG)
+  text       { maxLength? }                      — return body.innerText
+  html       { maxLength? }                      — return page HTML
+  eval       { script }                          — page.evaluate(script)
+  keyboard   { key }                             — keyboard.press(key)
+  scroll     { y? }                              — window.scrollBy(0, y)
+
+Error handling:
+  - breakOnFail defaults to true (stop on first error)
+  - Set breakOnFail: false on action to continue despite error
+  - Returns { ok: true, results: [...] } with per-action results
+  - Browser always closed in finally block
+
+--- 4.4 LEGACY v1 WORKER ---
+
+Source: C:\Users\yagam\.openclaw\browser-worker.js
+  - Uses MYBROWSER binding (old API)
+  - No stealth overrides
+  - No POST /interact endpoint
+  - 7 endpoints: /, /screenshot, /markdown, /scrape, /pdf, /content, /links, /text
+  - Token via ?token= or Authorization header
+  - Likely superseded by browser-stealth v2.0
+
+
+--------------------------------------------------------------------------------
+SECTION 5 — SUMMARY TABLE
+--------------------------------------------------------------------------------
+
+Service            Platform   URL                                          Auth
+-----------------  ---------  -------------------------------------------  -------------------------
+Intel Pro          Render     https://openclaw-intel-pro.onrender.com      None/Bearer oc_pro_*/oc_agent_*
+Bunshin v4.1.2     Render     https://openclaw-mcp-servers.onrender.com    Bearer openclaw-bunshin-2026
+Product Store      CF Worker  https://product-store.yagami8095.workers.dev N/A (public storefront)
+Browser v2.0       CF Worker  https://openclaw-browser.yagami8095.workers.dev  token=openclaw-browser-2026
+
+
+--------------------------------------------------------------------------------
+SECTION 6 — NOTABLE OBSERVATIONS / RISKS
+--------------------------------------------------------------------------------
+
+1. RATE LIMIT NOT PERSISTENT (Intel Pro)
+   lib/auth.ts uses in-memory Map for rate limiting. A Render service restart
+   or new deployment resets all rate limit counters. Free users get unlimited
+   requests across restarts.
+
+2. DEFAULT TOKENS HARDCODED IN SOURCE
+   Bunshin: AUTH_TOKEN default 'openclaw-bunshin-2026' in process.env fallback
+   Browser: TOKEN = "openclaw-browser-2026" hardcoded at line 3 of index.js
+   These are visible in the source repo. If the repo is public, tokens are
+   exposed.
+
+3. BROWSER WORKER AUTH CHECK BYPASS ON /
+   browser-stealth/src/index.js: auth() is only called AFTER the path check.
+   The / route (service info) is publicly accessible without token — confirmed
+   by the code flow (auth check at line 144, after path=/ check at line 189).
+   Actually re-checking: auth(request) is called at line 144 before any path
+   routing, so / IS protected. Correction: the old browser-worker.js has
+   "if (path !== '/' && token !== env.AUTH_TOKEN)" — that one allows unauthenticated
+   access to /. The v2.0 stealth version correctly gates all paths (returns 401
+   before path routing if !auth(request)).
+
+4. DEEPSEEK API KEY IN BUNSHIN
+   Bunshin uses api.deepseek.com (native DeepSeek endpoint, not DeepInfra).
+   Intel Pro uses DeepInfra. These are different accounts/keys.
+
+5. STRIPE IS PAUSED
+   MEMORY.md confirms: "Payment CTA: mailto: (Stripe 暫停中)" — Stripe checkout
+   is currently non-functional. Only PayPal and GitHub OAuth flows are active.
+
+6. NO RENDER.YAML FOUND
+   Neither service directory contains a render.yaml. Deployments are configured
+   manually through the Render dashboard.
+
+7. INTEL PRO TRENDING DATA IS STATIC
+   The /api/v1/trending endpoint returns hardcoded data from getTrendingData()
+   in lib/r1.ts. It is NOT live-scraped from Smithery/npm/GitHub. Values like
+   "total_servers: 11000" are static constants.
+
+8. BUNSHIN DATABASE IS RENDER POSTGRESQL FREE TIER
+   MEMORY.md: "PostgreSQL: openclaw-db (Free, expires 2026-04-05)"
+   The free PostgreSQL tier on Render expires. If not upgraded, the service
+   loses persistent storage after 2026-04-05.
+
+9. PRODUCT STORE D1 DATABASE
+   D1 database "gumroad-sales" (id: 1353b53e-000c-4646-ac24-d15cd3fd29ad)
+   Orders table presumably stores purchase records.
+   GET /api/orders is the verification endpoint per MEMORY.md.
+
+
+--------------------------------------------------------------------------------
+FILES READ DURING THIS SCAN
+--------------------------------------------------------------------------------
+
+C:\Users\yagam\openclaw-intel-pro\package.json
+C:\Users\yagam\openclaw-intel-pro\lib\r1.ts
+C:\Users\yagam\openclaw-intel-pro\lib\auth.ts
+C:\Users\yagam\openclaw-intel-pro\app\api\health\route.ts
+C:\Users\yagam\openclaw-intel-pro\app\api\v1\trending\route.ts
+C:\Users\yagam\openclaw-intel-pro\app\api\v1\query\route.ts
+C:\Users\yagam\openclaw-intel-pro\app\api\v1\analyze\route.ts
+C:\Users\yagam\openclaw-intel-pro\.env.example
+C:\Users\yagam\openclaw-mcp-servers\render-health-api\server.js  (Bunshin source)
+C:\Users\yagam\openclaw-mcp-servers\render-health-api\package.json
+C:\Users\yagam\openclaw-mcp-servers\server.js  (identical to render-health-api/server.js)
+C:\Users\yagam\openclaw-mcp-servers\product-store\worker.js
+C:\Users\yagam\openclaw-mcp-servers\product-store\wrangler.toml
+C:\Users\yagam\.openclaw\browser-stealth\src\index.js  (Browser v2.0 stealth)
+C:\Users\yagam\.openclaw\browser-stealth\wrangler.toml
+C:\Users\yagam\.openclaw\browser-worker.js  (Browser v1 legacy)
+C:\Users\yagam\openclaw-mcp-servers\memory\system-architecture.md
+
+================================================================================
+END OF SCAN
+================================================================================

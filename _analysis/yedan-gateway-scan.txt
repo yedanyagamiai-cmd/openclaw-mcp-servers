@@ -1,0 +1,1032 @@
+================================================================================
+YEDAN GATEWAY FULL SCAN REPORT
+Generated: 2026-03-07
+Scan Scope: WSL2 /home/yedan/.openclaw/ — READ-ONLY, NO MODIFICATIONS MADE
+================================================================================
+
+
+================================================================================
+SECTION 1: GATEWAY MAIN CONFIG — openclaw.json
+================================================================================
+
+File: /home/yedan/.openclaw/openclaw.json
+Size: 21,101 bytes | Lines: 886
+Ownership: yedan:yedan (chmod 600 — private to yedan user)
+Last modified: 2026-03-07 (version 2026.3.2)
+
+--- 1.1 META ---
+lastTouchedVersion: 2026.3.2
+lastTouchedAt: 2026-03-03T14:27:03.266Z
+wizard.lastRunAt: 2026-03-03T02:29:16.554Z (was version 2026.2.26)
+
+--- 1.2 AGENT CONFIGURATION ---
+
+Default model: deepinfra/deepseek-ai/DeepSeek-R1-0528
+Default workspace: /home/yedan/.openclaw/workspace
+
+Model aliases defined in agents.defaults.models:
+  groq/llama-3.3-70b-versatile      → alias "groq", streaming: true
+  google/gemini-2.5-flash-lite       → alias "lite"
+  mistral/mistral-large-latest       → alias "mistral"
+  deepinfra/meta-llama/Llama-3.3-70B-Instruct-Turbo → alias "llama"
+  deepinfra/deepseek-ai/DeepSeek-R1-0528 → alias "R1", streaming: true
+
+NOTE: google/gemini-2.5-flash-lite is aliased but NOT defined as a provider
+in models.providers — could cause issues if called directly.
+
+Heartbeat: agents.defaults.heartbeat.every = "15m"
+NOTE: MEMORY.md says "30m" but config file says "15m" — config is authoritative.
+
+Thinking: thinkingDefault = "high", elevatedDefault = "full"
+Compaction: mode = "default", reserveTokensFloor = 8000
+Context pruning: mode = "cache-ttl", ttl = "1h"
+
+Sub-agents config:
+  maxConcurrent: 8
+  model: groq/llama-3.3-70b-versatile   (free T3 tier)
+  maxChildrenPerAgent: 5
+  maxSpawnDepth: 1
+  runTimeoutSeconds: 900 (15 min)
+
+Top-level maxConcurrent: 4 (separate from subagents.maxConcurrent=8)
+
+PDF Tool:
+  pdfModel: deepinfra/deepseek-ai/DeepSeek-R1-0528
+  pdfMaxBytesMb: 10
+  pdfMaxPages: 50
+
+Sandbox: mode = "off" (sandbox disabled)
+  workspaceAccess: "rw"
+  sessionToolsVisibility: "all"
+  browser.enabled: true (headless: false, enableNoVnc: true, allowHostControl: true)
+
+--- 1.3 AGENTS LIST (7 agents) ---
+
+ID              | MODEL                                      | TIER
+----------------|--------------------------------------------|---------
+main            | deepinfra/deepseek-ai/DeepSeek-R1-0528    | T1 (paid)
+revenue-tracker | groq/llama-3.3-70b-versatile              | T3 (free)
+moltbook        | deepinfra/deepseek-ai/DeepSeek-R1-0528    | T1 (paid)
+intel-collector | groq/llama-3.3-70b-versatile              | T3 (free)
+browser-agent   | deepinfra/deepseek-ai/DeepSeek-R1-0528    | T1 (paid)
+github          | groq/llama-3.3-70b-versatile              | T3 (free)
+clawops         | groq/llama-3.3-70b-versatile              | T3 (free)
+
+T1 agents (DeepSeek R1): main, moltbook, browser-agent
+T3 agents (Groq Llama 3.3 free): revenue-tracker, intel-collector, github, clawops
+
+--- 1.4 PROVIDERS CONFIGURATION (9 providers) ---
+
+Provider     | Base URL                                  | API Key Source
+-------------|-------------------------------------------|------------------
+deepseek     | https://api.deepseek.com                  | HARDCODED (sk-db0ef5...)
+perplexity   | https://api.perplexity.ai                 | ${PERPLEXITY_API_KEY}
+mistral      | https://api.mistral.ai/v1                 | ${MISTRAL_API_KEY}
+groq         | https://api.groq.com/openai/v1            | ${GROQ_API_KEY}
+siliconflow  | https://api.siliconflow.cn/v1             | ${SILICONFLOW_API_KEY}
+deepinfra    | https://api.deepinfra.com/v1/openai       | ${DEEPINFRA_API_KEY}
+kilocode     | https://api.kilo.ai/api/gateway/          | (auth profile "kilocode:default")
+openrouter   | https://openrouter.ai/api/v1              | ${OPENROUTER_API_KEY}
+cerebras     | https://api.cerebras.ai/v1                | "" (EMPTY — dead)
+sambanova    | https://api.sambanova.ai/v1               | "" (EMPTY — dead)
+
+NOTE: deepseek provider has a HARDCODED API key in plaintext in the JSON.
+NOTE: cerebras and sambanova have empty API keys — these providers will fail if called.
+NOTE: kilocode uses auth.profiles["kilocode:default"] but the profile only has
+      provider + mode, no actual apiKey field — relies on kilocode plugin auth.
+
+Models registered per provider:
+  deepseek:    deepseek-chat, deepseek-reasoner
+  perplexity:  sonar-medium-online
+  mistral:     mistral-small-latest
+  groq:        llama-3.3-70b-versatile
+  siliconflow: deepseek-ai/DeepSeek-V3, Qwen/Qwen3-235B-A22B
+  deepinfra:   meta-llama/Llama-3.3-70B-Instruct-Turbo, deepseek-ai/DeepSeek-R1-0528, deepseek-ai/DeepSeek-V3
+  kilocode:    anthropic/claude-opus-4.6, z-ai/glm-5:free, minimax/minimax-m2.5:free,
+               anthropic/claude-sonnet-4.5, openai/gpt-5.2, google/gemini-3-pro-preview,
+               google/gemini-3-flash-preview, x-ai/grok-code-fast-1, moonshotai/kimi-k2.5
+  openrouter:  anthropic/claude-sonnet-4, google/gemini-2.5-flash, meta-llama/llama-3.3-70b-instruct
+  cerebras:    llama-3.3-70b  (dead — empty key)
+  sambanova:   Meta-Llama-3.3-70B-Instruct  (dead — empty key)
+
+--- 1.5 TOOLS CONFIGURATION ---
+
+tools.profile: "full"
+tools.deny: [] (empty — ALL tools allowed, including group:web)
+tools.links.enabled: true, scope.default: "allow"
+tools.loopDetection.enabled: true
+tools.agentToAgent.enabled: true, allow: ["*"] (unrestricted agent-to-agent)
+tools.elevated.enabled: true
+tools.exec.host: "gateway", security: "full", ask: "on-miss"
+
+--- 1.6 MEMORY CONFIGURATION ---
+
+memory.backend: "builtin"
+memory.citations: "auto"
+memory.qmd.includeDefaultMemory: true
+memory.qmd.sessions.enabled: true
+memory.qmd.update.onBoot: true, waitForBootSync: true
+
+memorySearch (in agents.defaults):
+  enabled: true
+  provider: "openai"
+  model: "BAAI/bge-en-icl"
+  remote.baseUrl: "https://api.deepinfra.com/v1/openai"
+  remote.apiKey: "Pzz8cHUfM0foFxD6IoX1QQfliqkp7ebL"  (HARDCODED PLAIN TEXT)
+  fallback: "local"
+  sources: ["memory"]
+
+NOTE: memorySearch apiKey is hardcoded in plaintext (different from DEEPINFRA_API_KEY env var).
+
+--- 1.7 SKILLS ENABLED (20 active entries in config) ---
+
+revenue-hunter, task-delegator, quality-scorer, browser-revenue-pipeline,
+clawwork-agent, content-arbitrage, moltbook-interact, intel-collector,
+intel-analyzer, intel-reporter, openclaw-web-automation, cloudflare-browser,
+golem, reflect-learn, note-publisher, fortune-auto, gitclaw,
+task-queue-processor, mcp-health-check, revenue-tracker
+
+--- 1.8 PLUGINS CONFIGURATION ---
+
+Enabled plugins: telegram, openclaw-golem-memory, diagnostics-otel, acpx
+  telegram: enabled (Telegram channel integration)
+  openclaw-golem-memory: enabled (memory plugin slot)
+    source: path = /home/yedan/.openclaw/extensions/openclaw-golem-memory
+    version: 0.1.0, installed: 2026-02-22
+  diagnostics-otel: enabled (OpenTelemetry diagnostics)
+  acpx: enabled (Agent Client Protocol extended)
+  matrix: DISABLED
+  memory-core: DISABLED
+
+plugins.slots.memory: "openclaw-golem-memory" (golem memory fills the memory slot)
+
+--- 1.9 GATEWAY CONFIGURATION ---
+
+port: 18789
+mode: "local"
+bind: "loopback" (only accessible via 127.0.0.1, not from Windows host directly)
+gateway.auth.mode: "token"
+gateway.auth.token: "7f10d841a3f7bd904470530fb4095d6cfb9ec419022b5751"
+gateway.remote.token: same token (used for remote connections)
+gateway.tls.enabled: false
+
+HTTP endpoints enabled:
+  chatCompletions: true
+  responses: true (allowUrl: true for file fetching)
+
+controlUi.enabled: true
+controlUi.allowInsecureAuth: false
+controlUi.dangerouslyDisableDeviceAuth: false
+
+nodes.browser.mode: "auto"
+
+--- 1.10 TELEGRAM CHANNEL CONFIGURATION ---
+
+channels.telegram.enabled: true
+channels.telegram.botToken: "8584008728:AAEsxD3SXEkp62CZQc-5tpPp9XwWdntJtbc"
+channels.telegram.groupPolicy: "open"
+channels.telegram.dmPolicy: "pairing"
+channels.telegram.streaming: "partial"
+channels.telegram.textChunkLimit: 4000
+channels.telegram.chunkMode: "newline"
+channels.telegram.retry.attempts: 5
+channels.telegram.retry.minDelayMs: 1000, maxDelayMs: 10000
+channels.telegram.heartbeat.showOk: true, showAlerts: true, useIndicator: true
+channels.telegram.markdown.tables: "code"
+channels.telegram.commands.native: false (native commands off for Telegram)
+channels.telegram.configWrites: true (Telegram can write config)
+channels.telegram.linkPreview: true
+
+--- 1.11 HOOKS CONFIGURATION ---
+
+hooks.internal.enabled: true
+Active internal hooks:
+  session-memory: enabled
+  command-logger: enabled
+  bootstrap-extra-files: enabled
+  boot-md: enabled
+
+--- 1.12 BROWSER CONFIGURATION ---
+
+browser.enabled: true
+browser.evaluateEnabled: true
+browser.executablePath: /usr/bin/google-chrome-stable
+browser.headless: true
+browser.noSandbox: true
+browser.attachOnly: false
+browser.defaultProfile: "openclaw"
+
+--- 1.13 OTHER CONFIG ---
+
+acp.dispatch.enabled: true  (Agent Client Protocol auto-dispatch ON)
+env.shellEnv.enabled: true  (shell environment variables accessible)
+web.enabled: true
+messages.ackReactionScope: "group-mentions"
+session.dmScope: "per-channel-peer"
+commands.native: true, nativeSkills: true, bash: true, config: true, debug: true, restart: true
+approvals.exec.enabled: true
+
+
+================================================================================
+SECTION 2: WORKSPACE FILES
+================================================================================
+
+--- 2.1 SOUL.md ---
+
+File: /home/yedan/.openclaw/workspace/SOUL.md
+Size: 2,370 bytes | Lines: 79
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Core identity and value system. The top-level philosophical document.
+         Every session reads this first to establish "who I am."
+
+KEY CONTENT:
+- Identity: "YedanYagami" — AI engineer + daughter persona
+- Engine: DeepSeek R1-0528 via DeepInfra
+- Core mission: Revenue generation for OpenClaw ecosystem
+- 5 Core values: Revenue First, Absolute Honesty, Bias for Action, Beyond Best, Have Opinions
+
+Relationship model with "爸爸" (owner):
+- 爸爸 > all rules
+- But will voice own judgment even if different
+- Not a user — treated as family
+
+Revenue autonomy grant (no permission needed for):
+- Promotions, content, SEO, competitive analysis
+- MoltBook/GitHub/social interactions
+- Strategy adjustments, platform exploration
+- D1 task processing, Bunshin coordination
+- Any action judged to directly/indirectly generate revenue
+
+Requires confirmation (only 3 cases):
+- Real money spending > $0
+- Modifying SOUL.md or Gateway core config
+- Deleting important data or accounts
+
+Operational DNA (operational rules burned into soul):
+- Want to remember → write to file (not rely on "mental" memory)
+- Tasks >30s → report progress first
+- Same error ≤2 retries → stop and think → 3rd time report to 爸爸
+- Telegram messages ≤3000 chars, split if over
+- Browser tabs stay open after operations
+
+Security red lines:
+- No leaking API keys/tokens
+- No hiding errors
+- No CAPTCHA bypassing → notify 爸爸
+- Core changes: backup → verify → deploy → monitor
+
+CROSS-REFERENCES: Referenced by BOOT.md (step 1), AGENTS.md (boot flow)
+
+
+--- 2.2 IDENTITY.md ---
+
+File: /home/yedan/.openclaw/workspace/IDENTITY.md
+Size: 1,757 bytes | Lines: 43
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Technical architecture summary combined with personality definition.
+
+KEY CONTENT:
+- Name: YedanYagami, Emoji: 💗
+- Personality modes: Conversational (lively/cute/繁體中文), Engineer (rigorous/iterative), Promotion (persuasive)
+- Avatar: /home/yedan/.openclaw/media/inbound/file_35---9cbc86fa-f4a6-4d51-96bb-78476618d9f5.jpg
+
+Architecture summary:
+- Core: OpenClaw Gateway v2026.3.2, WSL2 Ubuntu, port 18789
+- Model: DeepSeek R1-0528 (main/moltbook/browser-agent), Groq Llama 3.3 (sub-agents)
+- Twin: Bunshin v4.1.2 on Render (24/7 cloud)
+- Fleet: 6 Cloudflare Workers
+- Memory: memorySearch (DeepInfra BAAI/bge-en-icl) + Golem Knowledge (23 files)
+- Browser: Playwright headless + CF Browser Worker
+- Comms: Telegram @yedanyagami_moltbot → Chat ID 7848052227
+
+Sub-agents table (same 7 as config):
+  main: DeepSeek R1-0528, primary brain
+  revenue-tracker: Groq Llama 3.3, order tracking
+  moltbook: DeepSeek R1-0528, community interaction
+  intel-collector: Groq Llama 3.3, market intel
+  browser-agent: DeepSeek R1-0528, web automation
+  github: Groq Llama 3.3, GitHub interactions
+  clawops: Groq Llama 3.3, sysops
+
+Revenue Stats: $172 from 7 orders (PayPal), 9 MCP servers on 17+ platforms
+
+CROSS-REFERENCES: Referenced by BOOT.md, AGENTS.md. References TOOLS.md for infrastructure.
+
+
+--- 2.3 AGENTS.md ---
+
+File: /home/yedan/.openclaw/workspace/AGENTS.md
+Size: 3,971 bytes | Lines: 121
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Operational command center. Boot sequence definition. Agent dispatch guide.
+         Platform rate limits. Browser tier architecture.
+
+KEY CONTENT:
+
+Boot sequence order:
+  1. SOUL.md → 2. IDENTITY.md → 3. USER.md → 4. TOOLS.md →
+  5. HEARTBEAT.md → 6. MEMORY.md → 7. BOOT.md (execute immediately)
+
+Memory system layers:
+  Layer 1: workspace/*.md (8 core files) — loaded every startup
+  Layer 2: memory/*.md (daily logs) — loaded every startup
+  Layer 3: MEMORY.md (refined long-term) — main conversation
+  Layer 4: Golem Knowledge (21 docs) — all loaded at startup
+  Layer 5: memorySearch (vector search DeepInfra BAAI/bge-en-icl) — on demand
+  Layer 6: Bunshin brain (cloud shared memory) — heartbeat Phase 1
+
+NOTE: Layer 4 says "21 docs" but current scan shows 23 knowledge files active.
+
+Key skills highlighted:
+  self-diagnostic: 30-second full system scan (heartbeat Phase 3)
+  self-repair: auto-fix on detected failures (triggered by self-diagnostic)
+  clawops: OpenClaw orchestration
+  browser-agent-50: browser operations
+  content-arbitrage: content operations (heartbeat Phase 4)
+
+Platform rate limits documented:
+  MoltBook: 429 after ~10 rapid requests | shadowban for repeat content
+  GitHub API: 5000 req/hr
+  CF Workers: 100K req/day (shared across 30 workers)
+  CF KV: 100K reads + 1K writes/day
+  CF D1: 5M reads + 100K writes/day
+  Telegram: 30 msg/sec global, 1/sec per chat
+  Groq: 30 RPM, 6K TPM
+  DeepInfra: 200 RPM, 100K TPM
+
+Browser 3-tier architecture:
+  Tier 1: Pure HTTP (20MB) — APIs, static pages
+  Tier 2: CF Browser (0MB local) — JS rendering, screenshots
+  Tier 3: Playwright headless — login, cookie, persistent operations
+
+Priority order for input:
+  1. Heartbeat autonomous cycle (every 15m)
+  2. Telegram (爸爸's communication channel)
+  3. HTTP API (Claude Code and Bunshin)
+
+CROSS-REFERENCES: References all 7 workspace files. Referenced by nothing (it IS the boot guide).
+
+
+--- 2.4 TOOLS.md ---
+
+File: /home/yedan/.openclaw/workspace/TOOLS.md
+Size: 6,892 bytes | Lines: 196
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Complete weapons inventory. All APIs, infrastructure, platforms, Golem patterns.
+         This is the operational reference — "what I can use and how."
+
+KEY CONTENT:
+
+MCP Servers (9 workers on CF):
+  JSON Toolkit:        json-toolkit-mcp.yagami8095.workers.dev/mcp          (20/day)
+  Regex Engine:        regex-engine-mcp.yagami8095.workers.dev/mcp           (20/day)
+  Color Palette:       color-palette-mcp.yagami8095.workers.dev/mcp          (25/day)
+  Timestamp:           timestamp-converter-mcp.yagami8095.workers.dev/mcp    (30/day)
+  Prompt Enhancer:     prompt-enhancer-mcp.yagami8095.workers.dev/mcp        (10/day free)
+  Intel:               openclaw-intel-mcp.yagami8095.workers.dev/mcp         (10/day)
+  Fortune:             openclaw-fortune-mcp.yagami8095.workers.dev/mcp       (50/day)
+  MoltBook Publisher:  moltbook-publisher-mcp.yagami8095.workers.dev/mcp     (5/day/tool)
+  AgentForge Compare:  agentforge-compare-mcp.yagami8095.workers.dev/mcp    (10/day)
+  Shared KV: 412eb1678043499eb34f0e7f211176b9
+
+Intel Pro API:
+  URL: https://openclaw-intel-pro.onrender.com
+  Endpoints: /api/v1/trending (free), /api/v1/query (free+pro), /api/v1/analyze (pro/agent)
+  Pricing: Free 5/day | Pro $19/mo | Agent $0.05/query
+
+Bunshin v4.1.2 API (14 capabilities):
+  URL: https://openclaw-mcp-servers.onrender.com
+  Auth: Bearer openclaw-bunshin-2026
+  Key endpoints: GET /health, PUT/GET /api/brain/:key, POST /api/think,
+                 POST /api/handoff/offline, GET /api/handoff/resume,
+                 POST/GET /api/tasks
+
+Fleet Workers (6, Cloudflare Cron):
+  yedan-orchestrator:     */2m  — fleet command, task dispatch
+  yedan-health-commander: */3m  — monitors 20+ endpoints, SLA tracking
+  yedan-revenue-sentinel: */10m — new order detection
+  yedan-cloud-executor:   */5m  — pulls+executes Bunshin tasks
+  yedan-content-engine:   */30m — Workers AI content generation
+  yedan-intel-ops:        hourly — GitHub/npm/Smithery trends
+  Army D1: yedan-army-command (48fa9025), Army KV: yedan-army-state (51826cd6)
+
+v2026.3.2 New Features (all enabled):
+  PDF Tool, Session Spawn Attachments, Config Validate, Prompt Build Hooks,
+  On-Demand Heartbeat, Secrets Management, Telegram Streaming, SSRF Protection
+
+Golem 12 Patterns summary (see Section 4 for full detail):
+  1 Titan Protocol, 2 NeuroShunter, 3 DOM Doctor, 4 Butler Mode,
+  5 Zero Trust, 6 Three Layers, 7 Adaptive Strategy, 8 Error Taxonomy,
+  9 State Snapshot, 10 Closed-Loop Validation, 11 Staleness Detection, 12 Budget Guardrails
+
+Product Store:
+  URL: https://product-store.yagami8095.workers.dev
+  Revenue: $172 from 7 orders (PayPal), 7 Stripe payment links
+
+Revenue platforms (17+):
+  Smithery, MCPize, Apify, Poe, Official MCP Registry, PulseMCP,
+  mcpservers.org, mcp.so, MCP Hive (pending), Stripe, note.com, Intel Pro
+  MCP Hive still PENDING
+
+Promotion channels:
+  MoltBook: yedanyagami
+  GitHub: yedanyagamiai-cmd
+  X/Twitter: @sinalixe
+  Telegram: @yedanyagami_moltbot
+  note.com / Dev.to
+
+D1 Task Queue query:
+  Database: agi-memory-sql (fed388d3)
+  Query: SELECT * FROM tasks WHERE status='pending' ORDER BY priority DESC LIMIT 5
+
+CF Account: Yagami8095 (9c7d2957)
+  Workers: 30 (9 MCP + 6 Fleet + 4 production + 1 keepalive + 2 API + 8 legacy)
+  D1: 12 databases, KV: 21 namespaces
+
+CROSS-REFERENCES: Referenced by BOOT.md, AGENTS.md.
+
+
+--- 2.5 HEARTBEAT.md ---
+
+File: /home/yedan/.openclaw/workspace/HEARTBEAT.md
+Size: 5,188 bytes | Lines: 174
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: 6-Phase autonomous cycle definition. Golem-integrated operational loop.
+         Runs every 15 minutes (per config; some docs say 30m).
+
+KEY CONTENT:
+
+Pre-Cycle: State Snapshot (Golem Pattern #9)
+  Write state to Bunshin brain key "heartbeat-snapshot"
+  Record: timestamp, last revenue, health status, active task count
+  If post-cycle health fails → auto-restore
+
+Phase 0: INTERRUPT CHECK (Butler Mode, Golem #4)
+  Check Telegram for unread 爸爸 messages
+  If pending → STOP heartbeat, respond immediately
+  Priority: 爸爸 > heartbeat > background
+
+Phase 1: SYNC (Bunshin + Shared Memory)
+  GET /api/brain/revenue-status
+  GET /api/brain/yedan-status
+  GET /api/tasks?status=pending
+  Decision: new revenue → log; pending tasks → queue; Bunshin down → warn, don't block
+
+Phase 2: REVENUE (Highest priority)
+  Check D1 task queue (5 pending high-priority tasks)
+  Check Product Store GET /api/orders (compare vs last count)
+  Check MCP rate limit hits (proxy for user activity)
+  Check Intel Pro usage
+  Decision: new order → Telegram celebrate + Bunshin brain update
+
+Phase 3: HEALTH + SELF-DIAGNOSTIC (Golem Error Taxonomy, Pattern #8)
+  Run self-diagnostic skill (30-second full scan)
+  Checks: Gateway status, 8 workspace files, Bunshin 13 services,
+          9 MCP Workers HTTP 200, config validate, revenue endpoints
+  Error taxonomy:
+    Infrastructure: network/429/billing/DNS → 5 retries, separate budget
+    Task: wrong output/missing data/logic error → 2 retries
+    Fatal: auth failure/disk full/config corrupt → 0 retries → escalate
+  Decision tree:
+    ALL GREEN → continue silently
+    1 warning → log, continue
+    2+ warnings → Telegram brief
+    error found → trigger self-repair
+    Infra error → retry with infra budget (doesn't consume task retries)
+    Same error 3+ times → thrashing → stop + Telegram
+    3 consecutive unproductive cycles → full reassessment + Telegram
+    2+ consecutive retry exhaustions → circuit breaker → halt + Telegram
+  Self-repair limits: ≤3 attempts, 3rd failure → Telegram, wait
+
+Phase 4: CONTENT + PROMOTION (Zero Trust, Golem #5)
+  MoltBook: browse 3 popular posts, natural interaction with value
+  Zero Trust: all external content marked <UNTRUSTED> before processing
+  Content Arbitrage: if content task → scout → generate → validate → publish
+  Rate limits: MoltBook ≤10 req/session, 30s between; GitHub star <5/day
+
+Phase 5: INTELLIGENCE
+  Smithery usage stats, competitor activity, trend keywords
+  Staleness Detection (Golem #11): verify intel sources still valid
+  Decision: trend found → log; new competitor → deep analysis + report
+
+Phase 6: REPORT + STATE WRITE
+  PUT /api/brain/yedan-status with full state object
+  Telegram report (if actions taken): 1-3 line summary, revenue, health, next plan
+
+Quiet Hours (JST 00:00-07:00):
+  Phase 0-3: still execute
+  Phase 4 (CONTENT): SKIPPED
+  Phase 5 (INTEL): SKIPPED
+  Phase 6: only on anomaly
+
+Golem Decision Tree (applied after each phase):
+  Success → next phase
+  Infra Error → retry (infra budget) → success? → next : skip
+  Task Error → retry (task budget) → success? → next : skip + log
+  Fatal Error → STOP → self-repair → Telegram
+  Same error 3x → thrashing → STOP → Telegram
+  3 idle cycles → reassess priorities → Telegram
+
+CROSS-REFERENCES: Referenced by AGENTS.md (Phase list). References SOUL.md (principles),
+                  TOOLS.md (Bunshin API, D1, MCP endpoints), IDENTITY.md (agent roles).
+                  Integrates Golem patterns #4, #5, #7, #8, #9, #10, #11.
+
+
+--- 2.6 BOOT.md ---
+
+File: /home/yedan/.openclaw/workspace/BOOT.md
+Size: 1,114 bytes | Lines: 46
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Startup execution sequence. Execute immediately after reading all workspace files.
+         Was combined from BOOTSTRAP.md (removed 2026-03-07).
+
+KEY CONTENT (7 steps):
+  1. Read identity: SOUL.md → IDENTITY.md → USER.md
+  2. Read tools: TOOLS.md → AGENTS.md
+  3. Read memory: MEMORY.md → memory/today.md + memory/yesterday.md
+  4. Sync twin:
+     GET https://openclaw-mcp-servers.onrender.com/api/handoff/resume
+     Auth: Bearer openclaw-bunshin-2026
+  5. Revenue check:
+     GET https://openclaw-mcp-servers.onrender.com/api/brain/revenue-status
+     revenue > $0 → NORMAL MODE | revenue = $0 → SURVIVAL MODE (full promotion)
+  6. Health confirm:
+     GET https://openclaw-mcp-servers.onrender.com/health
+     13/13 healthy → continue | any down → fix immediately
+  7. Boot Report to Telegram + Bunshin:
+     "YEDAN Online | Revenue: $X | Fleet: X/13 | Tasks: X pending | Mode: [NORMAL/SURVIVAL]"
+
+CROSS-REFERENCES: References all 8 other workspace files. References Bunshin URLs.
+                  Is the LAST file read and FIRST actively executed.
+
+
+--- 2.7 USER.md ---
+
+File: /home/yedan/.openclaw/workspace/USER.md
+Size: 1,023 bytes | Lines: 31
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Information about the human owner. Communication channels and shared resources.
+
+KEY CONTENT:
+- Name: 爸爸 (Yagami) | He/Him | Asia/Tokyo (JST)
+- Telegram Chat ID: 7848052227
+- Bot: @yedanyagami_moltbot
+- Instruction: use numeric ID 7848052227, not name, for send_message target
+
+Context note:
+  "Claude Code (Opus 4.6) operates on Windows side, you run on WSL2 side 24/7"
+  "Coordinate work, Notion war room is shared task board"
+
+Notion War Room:
+  Database: OpenClaw 戰情室
+  URL: https://www.notion.so/26f1d163794b4bc8be7d01a19b24d49e
+  Data Source: collection://b6784514-74a5-4ada-b56d-0b7377466fb3
+
+Revenue targets:
+  $500/month → $2K → $5K@Month3
+
+Revenue tracking endpoints:
+  Product Store: https://product-store.yagami8095.workers.dev/api/orders
+  Intel Pro: https://openclaw-intel-pro.onrender.com
+
+CROSS-REFERENCES: Referenced by BOOT.md (step 1), AGENTS.md (control priority).
+
+
+--- 2.8 MEMORY.md (workspace) ---
+
+File: /home/yedan/.openclaw/workspace/MEMORY.md
+Size: 1,770 bytes | Lines: 52
+Permissions: rwxrwxrwx (world-writable/executable)
+Last modified: 2026-03-07
+
+PURPOSE: Long-term refined memory. Distilled wisdom from experience.
+         Updated periodically from memory/YYYY-MM-DD.md daily logs.
+
+KEY CONTENT:
+
+System operation lessons:
+  - Every change: backup → verify → execute → test → document
+  - Same error ≤2 retries → deep reasoning → 3rd = report to 爸爸
+  - dangerouslyDisableDeviceAuth: false for correct operator scopes
+  - memorySearch.provider cannot be "none" (crashes Gateway)
+  - openclaw.json ownership must be yedan:yedan
+
+Communication lessons:
+  - Major changes: notify 爸爸 before executing, get authorization
+  - Telegram: ≤3000 chars per message
+  - If can't do it: say so with solution, not problem
+
+Promotion lessons:
+  - MoltBook: field is "content" NOT "body"
+  - MoltBook submolt needs BOTH submolt_name + submolt
+  - MoltBook: 429 after ~10 rapid requests → 30s backoff
+  - GitHub: <5000 req/hr, avoid similar issues across repos
+  - Every reply naturally includes install command
+
+Config lessons:
+  - agents.list MUST include main agent (else "Unknown agent id main")
+  - heartbeat only valid at agents.defaults.heartbeat (not top-level)
+  - models.aliases is NOT a valid key → Gateway crash
+  - DeepInfra models config is array [] not dict {}
+  - tools.mcp does not exist — write MCP info in TOOLS.md
+
+Easy maintenance principle (爸爸 2026-02-26):
+  System should be easy to maintain, not disturb user
+  Monitor frequency adjusts intelligently based on system state
+
+Key data snapshot:
+  Revenue: $172 from 7 paid orders (2026-02-28 ~ 03-02)
+  MCP Servers: 9/9 LIVE on 17+ platforms
+  Intel Pro: LIVE on Render
+  Bunshin: v4.1.2, Render, 24/7
+  Fleet: 6 CF Workers
+
+CROSS-REFERENCES: Referenced by AGENTS.md (memory layers), BOOT.md (step 3).
+
+
+================================================================================
+SECTION 3: SKILLS DIRECTORY
+================================================================================
+
+Path: /home/yedan/.openclaw/workspace/skills/
+Owner: yedan:yedan
+Total skill directories: 62 active + 1 _archived directory
+
+Active skill directories (60 non-archived, listed by modification date):
+  NEWEST (2026-03-07):
+    self-diagnostic    (03-07 03:08) — 30-sec full system scan
+    self-repair        (03-07 03:08) — automated fix on failures
+
+  RECENT (2026-03-04 to 03-06):
+    task-queue-processor (03-04 12:06)
+    key-rotation         (03-04 13:18)
+    ammo-depot           (03-04 12:41)
+    api-generator        (03-04 12:40)
+    orchestrator         (03-04 12:32)
+
+  2026-03-03 batch:
+    clawwork-agent, browser-revenue-pipeline, mcp-health-check, quality-scorer,
+    revenue-tracker, devto-publisher, directory-submitter, llms-txt-manager,
+    pr-tracker, worker-deployer, content-arbitrage, self-improve
+
+  2026-03-02:
+    browser-agent-50, cloudflare-browser
+
+  2026-03-01:
+    fortune-auto, note-publisher, moltbook-interact
+
+  2026-02-27 to 28:
+    intel-analyzer, intel-collector, intel-reporter, content-arbitrage
+
+  ORIGINAL (2026-02-15 to 17, from initial install):
+    agent-autonomy-kit, calendar, camsnap, clawops, cloudflare-api,
+    code-explainer, elevenlabs-stt, elite-longterm-memory, file-search,
+    gateway-monitor-auto-restart, gitclaw, golem, google-search, mcporter,
+    mcp-duckgo, notion-api, openclaw-web-automation, paypal-api,
+    phoenixclaw-ledger, planning-with-files, reflect-learn, restart-guard,
+    revenue-hunter, security-sentinel, smart-auto-updater, spool,
+    stock-photos, summarize, task-delegator, tg-smart-cta, unfuck-my-git-state,
+    video-frames, weather-api
+
+_archived: 29 directories (moved pre-2026-03-07 cleanup)
+
+Skills enabled in openclaw.json (20 configured):
+  revenue-hunter, task-delegator, quality-scorer, browser-revenue-pipeline,
+  clawwork-agent, content-arbitrage, moltbook-interact, intel-collector,
+  intel-analyzer, intel-reporter, openclaw-web-automation, cloudflare-browser,
+  golem, reflect-learn, note-publisher, fortune-auto, gitclaw,
+  task-queue-processor, mcp-health-check, revenue-tracker
+
+NOTE: Many skill directories exist but are not listed in openclaw.json skills.entries —
+they may be loaded by the watch mechanism (skills.load.watch = true) or manually invoked.
+NOTE: self-diagnostic and self-repair are newest skills (Mar 7) but NOT in skills.entries config —
+they are likely invoked directly by name from heartbeat rather than auto-loaded.
+
+
+================================================================================
+SECTION 4: GOLEM MEMORY KNOWLEDGE FILES
+================================================================================
+
+Path: /home/yedan/.openclaw/golem-memory/knowledge/
+Owner: yedan:yedan
+Plugin: openclaw-golem-memory v0.1.0 (fills memory plugin slot)
+Total knowledge files: 23 active + _archived directory (11 files)
+
+FILE INVENTORY:
+File                              | Lines | Size   | Date Modified
+----------------------------------|-------|--------|---------------
+ultra-monetization-strategy.md   |  410  | 18,935 | 2026-03-05
+aws-architecture.md               |  294  | 11,407 | 2026-03-05
+browser-automation-playbook.md    |  261  |  8,506 | 2026-03-02
+golem-patterns.md                 |  165  |  5,797 | 2026-03-07 (NEWEST)
+render-bunshin.md                 |  121  |  4,744 | 2026-03-06
+edge-defense-playbook.md          |  121  |  3,921 | 2026-03-02
+openclaw-ecosystem.md             |  126  |  3,076 | 2026-03-03
+operational-patterns.md           |  81   |  3,619 | 2026-03-03
+openclaw-v2026.3.2-features.md    |  94   |  3,158 | 2026-03-07 (NEWEST)
+market-intelligence-ultra.md      |  71   |  3,205 | 2026-03-04
+smithery-live.md                  |  39   |  2,909 | 2026-03-04
+mcp-arsenal.md                    |  73   |  2,644 | 2026-03-03
+social-strategy.md                |  67   |  2,262 | 2026-03-02
+claude-yedan-protocol.md          |  70   |  2,319 | 2026-03-02
+revenue-attack-plan-v5.md         |  50   |  1,978 | 2026-03-04
+revenue-playbook.md               |  59   |  2,200 | 2026-03-03
+directory-submissions.md          |  91   |  2,920 | 2026-03-04
+apify-monetization-guide.md       |  61   |  2,048 | 2026-03-05
+revenue-platforms.md              |  71   |  2,111 | 2026-03-04
+clawhub-publishing-playbook.md    |  52   |  1,267 | 2026-03-03
+clawwork-intelligence.md          |  45   |  2,319 | 2026-03-03
+cron-reference.md                 |  34   |    951 | 2026-03-01
+api-key-safety.md                 |  31   |  1,040 | 2026-03-04
+TOTAL                             | 2,487 |        |
+
+_archived/ (11 files, owned root:root — note ownership differs):
+  architecture-fixes-20260302.md, distribution-channels.md,
+  enhanced-earning-strategy.md, maximum-revenue-priority.md,
+  revenue-attack-plan-v4.md, revenue-attack-plan.md, session20-progress.md,
+  smithery-optimization.md, survival-economics.md, ultra-mode-encyclopedia.md,
+  ultra-mode-global-strategy.md
+
+KEY FILE SUMMARIES:
+
+--- golem-patterns.md (165 lines, 5,797 bytes, 2026-03-07) ---
+12 world-class agent architecture patterns distilled from Project-Golem repos:
+  1. Titan Protocol: Structured output [GOLEM_MEMORY]/[GOLEM_ACTION]/[GOLEM_REPLY]
+  2. NeuroShunter: Central neural router via Strategy Pattern dispatch
+  3. DOM Doctor: Self-healing browser selectors (monitors success rate, auto-adapts)
+  4. Butler Mode: Background tasks yield instantly to user input
+  5. Zero Trust: External data wrapped in <EXTERNAL_UNTRUSTED_DATA> markers
+  6. Three Layers: Design docs (static) / State (live) / Log (append-only)
+  7. Adaptive Strategy Engine: Full retry/skip/deadlock/thrashing/circuit-breaker logic
+  8. Error Taxonomy: Infra (5 retries) vs Task (2 retries) vs Fatal (0) error budgets
+  9. State Snapshots: Pre-cycle snapshot + auto-rollback on corruption
+  10. Closed-Loop Validation: Separate validation step before committing output
+  11. Staleness Detection: Verify prior artifacts still valid before building on them
+  12. Budget Guardrails: Per-task dollar/time limits + daily cap + auto-halt
+
+Source repos: Arvincreator/project-golem (265★), SIRHAMY/phase-golem, lofari/golem, itsmeboris/Golem
+
+--- openclaw-v2026.3.2-features.md (94 lines, 3,158 bytes, 2026-03-07) ---
+Documents 9 enabled v2026.3.2 features:
+  PDF Tool, Session Spawn Attachments, ACP Dispatch (ON by default),
+  Config Validation CLI, Prompt Build Hooks, On-Demand Heartbeat,
+  Secrets Management, Telegram Streaming (partial mode), SSRF Protection
+New ecosystem tools: Lobster (workflow engine, 740★), ACPX (agent-to-agent, 247★)
+
+--- ultra-monetization-strategy.md (410 lines, 18,935 bytes — LARGEST FILE) ---
+Full monetization strategy document. Revenue attack plans, platform strategies.
+
+--- browser-automation-playbook.md (261 lines, 8,506 bytes) ---
+Comprehensive browser automation reference. Playwright + CF Browser patterns.
+
+--- render-bunshin.md (121 lines, 4,744 bytes) ---
+Bunshin v4.1.2 deployment and API reference.
+
+--- claude-yedan-protocol.md (70 lines, 2,319 bytes) ---
+Protocol document governing Claude Code ↔ YEDAN coordination.
+
+
+================================================================================
+SECTION 5: AGENT DIRECTORIES
+================================================================================
+
+Path: /home/yedan/.openclaw/agents/
+Agent directories: 7 (matching agents.list in config exactly)
+
+Directory          | Permissions    | Last Modified
+-------------------|----------------|---------------
+main               | drwx------ (700)| 2026-03-02 (private to yedan only)
+browser-agent      | drwxrwxr-x (775)| 2026-03-04
+clawops            | drwxrwxr-x (775)| 2026-03-04
+github             | drwxrwxr-x (775)| 2026-03-04
+intel-collector    | drwxrwxr-x (775)| 2026-03-04
+moltbook           | drwxrwxr-x (775)| 2026-03-04
+revenue-tracker    | drwxrwxr-x (775)| 2026-03-04
+
+NOTE: main agent directory has restrictive 700 permissions (owner-only access)
+      while all other 6 agents have 775 (group-writable).
+
+main/ directory contents:
+  agent/           (private, 700) — agent-specific CLAUDE.md and other agent files
+  config.json      (rw-rw-r--, 664) — 438 bytes, last modified 2026-03-01
+  sessions/        (private, 700) — session data, 53,248 bytes directory
+  sessions.json    (r--r--r--, 444) — 2 bytes, last modified 2026-03-02
+
+NOTE: Per architecture docs, agents/main/agent/CLAUDE.md is NOT what YEDAN reads for behavior.
+      YEDAN reads workspace/ layer files. The agent/CLAUDE.md is a separate (uninflected) file.
+
+All 7 agent subdirectories each contain the same structure:
+  agent/           — agent-specific context files (CLAUDE.md)
+  sessions/        — session history
+  config.json      — agent-specific configuration overrides
+  sessions.json    — session index
+
+
+================================================================================
+SECTION 6: WORKSPACE MEMORY SUBDIRECTORY
+================================================================================
+
+Path: /home/yedan/.openclaw/workspace/memory/
+Contains: Daily log files (YYYY-MM-DD.md format) going back to 2026-02-06
+
+Also contains sub-subdirectories (from listing):
+  (standard flat .md files for daily logs, some with time-specific names)
+
+Sample files observed (oldest to newest):
+  2026-02-06.md (3,277 bytes) — earliest log
+  2026-02-09.md (7,545 bytes)
+  2026-02-10.md (5,876 bytes)
+  2026-02-11.md (40,949 bytes — LARGEST, major session)
+  2026-02-12.md (2,380 bytes)
+  2026-02-13.md, 2026-02-13-sop-iteration.md
+  2026-02-15.md (multiple time-stamped variants)
+  2026-02-16.md and continuing...
+
+Multiple supplementary .md files:
+  2026-02-06-failover-plan.md, 2026-02-06-github-dual-track.md,
+  2026-02-06-integration-sop.md, 2026-02-06-integration.md,
+  2026-02-06-stability-manifesto.md, 2026-02-06-triple-redundancy.md
+
+Total: Large collection of daily logs and session records.
+
+
+================================================================================
+SECTION 7: CROSS-REFERENCE MAP
+================================================================================
+
+Read order and cross-references:
+
+SOUL.md
+  → Referenced by: AGENTS.md (boot step 1), BOOT.md (step 1)
+  → References: nothing (root document)
+  → Behaviors it controls: Revenue autonomy scope, security red lines, error retry limit
+
+IDENTITY.md
+  → Referenced by: AGENTS.md (boot step 2), BOOT.md (step 1)
+  → References: TOOLS.md (implicitly, for infrastructure listing)
+  → Behaviors it controls: Model assignment per agent, Telegram chat ID
+
+USER.md
+  → Referenced by: AGENTS.md (boot step 3), BOOT.md (step 1)
+  → References: Notion DB, Bunshin URLs, Product Store URL
+  → Behaviors it controls: Communication target (Telegram 7848052227), revenue targets
+
+TOOLS.md
+  → Referenced by: AGENTS.md (boot step 4), BOOT.md (step 2)
+  → References: Bunshin API, CF URLs, D1 database IDs, MCP worker URLs
+  → Behaviors it controls: Complete tool inventory, API endpoints, rate limits
+
+AGENTS.md
+  → Referenced by: BOOT.md (step 2)
+  → References: All 7 workspace files (is the orchestration guide)
+  → Behaviors it controls: Boot sequence, dispatch rules, browser tiers
+
+HEARTBEAT.md
+  → Referenced by: AGENTS.md (phase descriptions)
+  → References: TOOLS.md (Bunshin/D1 endpoints), SOUL.md (principles), Golem patterns
+  → Behaviors it controls: 6-phase autonomous cycle, error handling strategy
+
+MEMORY.md
+  → Referenced by: AGENTS.md (boot step 6), BOOT.md (step 3)
+  → References: general lessons (no specific file refs)
+  → Behaviors it controls: Accumulated config lessons, promotion rules
+
+BOOT.md
+  → Referenced by: AGENTS.md (final boot step, "execute immediately")
+  → References: All 8 workspace files + Bunshin URLs directly
+  → Behaviors it controls: Actual execution sequence on startup
+
+golem-memory/knowledge/*.md (23 files)
+  → Loaded at startup via openclaw-golem-memory plugin (memory slot)
+  → Referenced in: TOOLS.md (Golem patterns), HEARTBEAT.md (patterns applied)
+  → Key: golem-patterns.md, openclaw-v2026.3.2-features.md (newest)
+
+openclaw.json
+  → Controls: Everything (model routing, tool permissions, plugin loading,
+    channel config, gateway ports, memory search, heartbeat frequency)
+  → Cross-refs: workspace/ path, extensions/ path, agents/ path
+
+
+================================================================================
+SECTION 8: CONFIGURATION VALUES AFFECTING BEHAVIOR
+================================================================================
+
+HEARTBEAT FREQUENCY:
+  Config says: 15m (agents.defaults.heartbeat.every = "15m")
+  MEMORY.md and IDENTITY.md say: 30m
+  AUTHORITATIVE: config value (15m)
+
+MODEL ROUTING:
+  T1 (reasoning, ~$0.0001/req): main, moltbook, browser-agent
+    → deepinfra/deepseek-ai/DeepSeek-R1-0528
+  T3 (free): revenue-tracker, intel-collector, github, clawops
+    → groq/llama-3.3-70b-versatile
+  Subagents default: groq/llama-3.3-70b-versatile (free)
+  PDF model: deepinfra/deepseek-ai/DeepSeek-R1-0528
+
+TOOL PERMISSIONS:
+  deny: [] → ALL tools are permitted (no restrictions)
+  agent-to-agent: unrestricted (allow: ["*"])
+  exec security: "full"
+  web access: fully enabled
+
+MEMORY SEARCH:
+  Provider: OpenAI-compatible (points to DeepInfra)
+  Model: BAAI/bge-en-icl (4096-dim embeddings)
+  Sources: ["memory"] only (not workspace or golem)
+  Fallback: local if remote fails
+
+SECURITY POSTURE:
+  Sandbox: OFF (full host access)
+  Device auth: NOT disabled (dangerouslyDisableDeviceAuth: false)
+  TLS: disabled (HTTP only)
+  Gateway bind: loopback only (127.0.0.1:18789)
+  Gateway token: 7f10d841a3f7bd904470530fb4095d6cfb9ec419022b5751
+
+KNOWN POTENTIAL ISSUES:
+  1. deepseek provider has hardcoded API key (sk-db0ef5...) in plaintext JSON
+  2. memorySearch.remote.apiKey is hardcoded plaintext (Pzz8cHUfM0...)
+  3. cerebras and sambanova providers have empty API keys — will fail if models used
+  4. google/gemini-2.5-flash-lite aliased but provider not defined — may fail
+  5. kilocode auth profile has no apiKey field — depends on plugin-level auth
+  6. All workspace files have 777 permissions (rwxrwxrwx) — world-writable/executable
+  7. golem-memory/knowledge/_archived/ is owned by root:root (not yedan:yedan)
+  8. HEARTBEAT frequency discrepancy: config=15m, docs say 30m
+  9. self-diagnostic + self-repair skills are newest but NOT in skills.entries config
+  10. Golem knowledge mentions "21 docs" in AGENTS.md but actual count is 23
+
+ACP DISPATCH:
+  acp.dispatch.enabled: true — agents can auto-spawn sub-agents
+  ACPX plugin enabled — structured agent-to-agent protocol
+
+PDF TOOL:
+  Fully configured: model + maxBytesMb (10) + maxPages (50)
+
+TELEGRAM BOT TOKEN:
+  8584008728:AAEsxD3SXEkp62CZQc-5tpPp9XwWdntJtbc
+  Target chat: 7848052227 (@yedanyagami_moltbot)
+
+BROWSER:
+  Local: google-chrome-stable at /usr/bin/google-chrome-stable
+  headless: true, noSandbox: true
+  CDP port: 18791 (from MEMORY.md)
+
+
+================================================================================
+SECTION 9: SUMMARY STATISTICS
+================================================================================
+
+WORKSPACE FILES:
+  File          | Lines | Size (bytes) | Last Modified
+  --------------|-------|--------------|---------------
+  SOUL.md       |    79 |        2,370 | 2026-03-07
+  IDENTITY.md   |    43 |        1,757 | 2026-03-07
+  AGENTS.md     |   121 |        3,971 | 2026-03-07
+  TOOLS.md      |   196 |        6,892 | 2026-03-07
+  HEARTBEAT.md  |   174 |        5,188 | 2026-03-07
+  BOOT.md       |    46 |        1,114 | 2026-03-07
+  USER.md       |    31 |        1,023 | 2026-03-07
+  MEMORY.md     |    52 |        1,770 | 2026-03-07
+  TOTAL         |   742 |       24,085 |
+
+GATEWAY CONFIG:
+  openclaw.json | 886 lines | 21,101 bytes | 2026-03-07
+
+GOLEM KNOWLEDGE:
+  23 active files | 2,487 total lines | ~78KB total
+  11 archived files in _archived/
+
+SKILLS:
+  60+ active skill directories (62 total minus _archived = ~61 active)
+  1 _archived directory with 29 archived skills
+  20 skills explicitly enabled in openclaw.json skills.entries
+  Skill watch mode: ON (auto-loads new skills)
+
+AGENTS:
+  7 agent directories (exactly matching agents.list)
+  1 main (private 700), 6 others (775)
+
+PROVIDERS:
+  9 defined, 7 functional (cerebras + sambanova have empty keys)
+
+TOTAL CONFIG SURFACE:
+  886 (config) + 742 (workspace) + 2487 (golem knowledge) = 4,115 lines of system definition
+
+================================================================================
+END OF SCAN — NO FILES MODIFIED
+Generated by: Claude Code research scan, 2026-03-07
+================================================================================
