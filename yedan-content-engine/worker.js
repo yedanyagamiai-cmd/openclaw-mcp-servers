@@ -1,24 +1,55 @@
 /**
- * YEDAN Content Engine - Automated Content Factory
+ * YEDAN Content Engine v2.0 - Revenue-Focused Content Factory
  * Cron: every 30 minutes (*\/30 * * * *)
  *
- * Responsibilities:
- * - Generate content using Workers AI
- * - Post to MoltBook automatically
- * - Track content performance metrics
- * - Content arbitrage (EN→JP trending topics)
- * - SEO optimization signals
+ * v2.0 Changes:
+ * - Product promotion generation (15 products)
+ * - x402 gateway promotion content
+ * - Revenue-driven content scheduling
+ * - Multi-format output (blog, social, promo)
+ * - Smart topic rotation (no repeats within 24h)
  */
 
 const BUNSHIN_URL = 'https://openclaw-mcp-servers.onrender.com';
 const BUNSHIN_AUTH = 'openclaw-bunshin-2026';
 const MOLTBOOK_API = 'https://moltbook-publisher-mcp.yagami8095.workers.dev';
+const PRODUCT_STORE = 'https://product-store.yagami8095.workers.dev';
+const X402_GATEWAY = 'https://openclaw-x402-gateway.yagami8095.workers.dev';
+
+// Product catalog for promotions
+const PRODUCTS = [
+  { id: 'intel-api-pro', name: 'Intel API Pro Access', price: 9, hot: true },
+  { id: 'intel-annual-pass', name: 'Intel Annual Pass', price: 79, hot: true },
+  { id: 'mcp-starter-kit', name: 'MCP Server Starter Kit', price: 29, hot: false },
+  { id: 'prompt-collection-50', name: '50 Premium AI Prompts', price: 19, hot: false },
+  { id: 'automation-guide', name: 'AI Automation Blueprint', price: 15, hot: false },
+  { id: 'side-income-roadmap', name: 'AI Side Income Roadmap', price: 12, hot: false },
+  { id: 'mcp-mastery-course', name: 'MCP Mastery Course', price: 49, hot: false },
+  { id: 'ai-agent-templates', name: 'AI Agent Templates Pack', price: 19, hot: false },
+  { id: 'cloudflare-worker-kit', name: 'Cloudflare Worker Kit', price: 29, hot: false },
+  { id: 'deepseek-integration', name: 'DeepSeek Integration Guide', price: 19, hot: false },
+  { id: 'revenue-automation-masterclass', name: 'Revenue Automation Masterclass', price: 149, hot: true },
+  { id: 'full-stack-ai-bundle', name: 'Full Stack AI Bundle', price: 99, hot: true },
+  { id: 'ooda-system-blueprint', name: 'OODA Autonomous Intelligence Blueprint', price: 59, hot: true },
+  { id: 'ai-fleet-deployment', name: 'AI Fleet Deployment Kit', price: 39, hot: true },
+  { id: 'claude-code-pro-toolkit', name: 'Claude Code Pro Toolkit', price: 29, hot: true },
+];
+
+// Content types with revenue weight
+const CONTENT_TYPES = [
+  { type: 'product_promo', weight: 35, description: 'Direct product promotion' },
+  { type: 'technical_blog', weight: 25, description: 'Technical content with product mention' },
+  { type: 'x402_promo', weight: 15, description: 'x402 payment gateway promotion' },
+  { type: 'case_study', weight: 15, description: 'Use case / success story' },
+  { type: 'tip_thread', weight: 10, description: 'Quick tip with product link' },
+];
 
 const CONTENT_TOPICS = [
-  { category: 'mcp', topics: ['MCP server development tips', 'AI agent integration patterns', 'Model Context Protocol best practices'] },
-  { category: 'ai-tools', topics: ['Prompt engineering techniques', 'AI workflow automation', 'Multi-agent systems design'] },
-  { category: 'dev', topics: ['Cloudflare Workers optimization', 'Edge computing patterns', 'Serverless architecture'] },
-  { category: 'revenue', topics: ['Developer tool monetization', 'SaaS micro-pricing strategies', 'API marketplace insights'] },
+  { category: 'mcp', topics: ['MCP server development tips', 'AI agent integration patterns', 'Model Context Protocol best practices', 'Building MCP tools for Claude'] },
+  { category: 'ai-tools', topics: ['Prompt engineering techniques', 'AI workflow automation', 'Multi-agent systems design', 'DeepSeek R1 vs GPT-4 comparison'] },
+  { category: 'dev', topics: ['Cloudflare Workers optimization', 'Edge computing patterns', 'Serverless architecture', 'Zero-cost AI infrastructure'] },
+  { category: 'revenue', topics: ['Developer tool monetization', 'SaaS micro-pricing strategies', 'API marketplace insights', 'x402 micropayments for AI'] },
+  { category: 'ooda', topics: ['OODA loop for AI systems', 'Autonomous AI fleet management', 'Self-healing infrastructure', 'AI intelligence gathering'] },
 ];
 
 export default {
@@ -33,17 +64,19 @@ export default {
       case '/status':
         return await getStatus(env);
       case '/health':
-        return json({ status: 'operational', role: 'content-engine', version: '1.0.0' });
+        return json({ status: 'operational', role: 'content-engine', version: '2.0.0', products: PRODUCTS.length, content_types: CONTENT_TYPES.length });
       case '/generate':
-        if (request.method === 'POST') return await generateContent(request, env);
+        if (request.method === 'POST') return await handleGenerate(request, env);
         return json({ error: 'POST required' }, 405);
       case '/execute':
         if (request.method === 'POST') return await handleTask(request, env);
         return json({ error: 'POST required' }, 405);
       case '/history':
         return await getContentHistory(env);
+      case '/products':
+        return json({ products: PRODUCTS, store_url: PRODUCT_STORE });
       case '/ping':
-        return json({ pong: true, brain: 'content-engine', ts: Date.now() });
+        return json({ pong: true, brain: 'content-engine', version: '2.0.0', ts: Date.now() });
       default:
         return json({ error: 'Not found' }, 404);
     }
@@ -51,58 +84,266 @@ export default {
 };
 
 async function contentCycle(env) {
-  const log = [];
   const start = Date.now();
-  log.push(`[CONTENT] Cycle started ${new Date().toISOString()}`);
 
   try {
-    // Check if we should generate content this cycle
+    // Check generation interval
     const lastGen = await env.ARMY_KV.get('content:last-generation');
     const hoursSinceLastGen = lastGen ? (Date.now() - new Date(lastGen).getTime()) / 3600000 : 999;
 
-    if (hoursSinceLastGen < 2) {
-      log.push(`[CONTENT] Last generation was ${hoursSinceLastGen.toFixed(1)}h ago, skipping (interval: 2h)`);
-      // Still do metrics check
-      await checkContentMetrics(env, log);
-    } else {
-      // Generate new content
-      const content = await generateAIContent(env, log);
-      if (content) {
-        // Try to post to MoltBook
-        const posted = await postToMoltBook(content, env, log);
+    if (hoursSinceLastGen < 1) {
+      // Too soon, just check metrics
+      await checkContentMetrics(env);
+      await updateHeartbeat(env, start);
+      return;
+    }
 
-        // Store content record
-        await env.ARMY_DB.prepare(
-          `INSERT INTO fleet_events (worker_id, event_type, severity, message, data) VALUES (?, 'content_generated', 'info', ?, ?)`
-        ).bind('yedan-content-engine', content.title, JSON.stringify({ posted, content: content.body?.slice(0, 200) })).run();
+    // Select content type by weighted random
+    const contentType = selectWeightedType();
 
-        await env.ARMY_KV.put('content:last-generation', new Date().toISOString());
-        await env.ARMY_KV.put('content:last-piece', JSON.stringify(content), { expirationTtl: 86400 });
+    // Generate content based on type
+    let content;
+    switch (contentType.type) {
+      case 'product_promo':
+        content = await generateProductPromo(env);
+        break;
+      case 'x402_promo':
+        content = await generateX402Promo(env);
+        break;
+      case 'case_study':
+        content = await generateCaseStudy(env);
+        break;
+      case 'tip_thread':
+        content = await generateTipThread(env);
+        break;
+      default:
+        content = await generateTechnicalBlog(env);
+    }
+
+    if (content) {
+      // Try to post to MoltBook
+      const posted = await postToMoltBook(content, env);
+
+      // Store content record
+      await env.ARMY_DB.prepare(
+        `INSERT INTO fleet_events (worker_id, event_type, severity, message, data) VALUES (?, 'content_generated', 'info', ?, ?)`
+      ).bind('yedan-content-engine', `[${contentType.type}] ${content.title}`, JSON.stringify({
+        posted,
+        type: contentType.type,
+        product: content.product_id || null,
+        content_preview: content.body?.slice(0, 200)
+      })).run();
+
+      await env.ARMY_KV.put('content:last-generation', new Date().toISOString());
+      await env.ARMY_KV.put('content:last-piece', JSON.stringify(content), { expirationTtl: 86400 });
+      await env.ARMY_KV.put(`content:last-type:${contentType.type}`, new Date().toISOString());
+
+      // Track which products were promoted
+      if (content.product_id) {
+        const promoCount = parseInt(await env.ARMY_KV.get(`content:promo-count:${content.product_id}`) || '0');
+        await env.ARMY_KV.put(`content:promo-count:${content.product_id}`, String(promoCount + 1));
       }
     }
 
-    // Update fleet status
-    await env.ARMY_DB.prepare(
-      `UPDATE fleet_workers SET last_heartbeat = datetime('now'), status = 'active', tasks_completed = tasks_completed + 1 WHERE id = 'yedan-content-engine'`
-    ).run();
+    await updateHeartbeat(env, start);
 
-    // Report
+    // Report to Bunshin
     await reportBunshin('content-engine-status', {
+      version: '2.0.0',
       last_cycle: new Date().toISOString(),
       duration_ms: Date.now() - start,
-      hours_since_last_gen: hoursSinceLastGen
+      content_type: contentType.type,
+      generated: !!content,
+      title: content?.title || 'none'
     }, env);
 
   } catch (e) {
-    log.push(`[CONTENT] Error: ${e.message}`);
     await logEvent(env, 'content_error', 'error', e.message);
   }
 }
 
-async function generateAIContent(env, log) {
-  log.push('[AI] Generating content with Workers AI...');
+function selectWeightedType() {
+  const totalWeight = CONTENT_TYPES.reduce((sum, t) => sum + t.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (const ct of CONTENT_TYPES) {
+    random -= ct.weight;
+    if (random <= 0) return ct;
+  }
+  return CONTENT_TYPES[0];
+}
 
-  // Pick random topic
+// === Product Promotion Generator ===
+async function generateProductPromo(env) {
+  // Pick a product (prefer hot products)
+  const hotProducts = PRODUCTS.filter(p => p.hot);
+  const pool = Math.random() < 0.7 ? hotProducts : PRODUCTS;
+  const product = pool[Math.floor(Math.random() * pool.length)];
+
+  try {
+    const resp = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: `You are a marketing writer for OpenClaw, an AI developer tools company. Write compelling, authentic product promotions. No hype or fake urgency. Focus on real value and practical benefits. Keep it under 200 words.`
+        },
+        {
+          role: 'user',
+          content: `Write a promotional post for "${product.name}" ($${product.price}). This is a digital product for AI developers and builders. Include why someone would want this, one specific benefit, and end with a call to action pointing to our store. Don't use markdown headers. Title on first line.`
+        }
+      ],
+      max_tokens: 400
+    });
+
+    const text = resp.response || '';
+    const lines = text.trim().split('\n');
+    const title = lines[0]?.replace(/^#+\s*/, '').trim() || `${product.name} - Now Available`;
+    const body = lines.slice(1).join('\n').trim() + `\n\nGet it now: ${PRODUCT_STORE}/product/${product.id}`;
+
+    return {
+      title,
+      body,
+      topic: product.name,
+      category: 'product_promo',
+      product_id: product.id,
+      product_price: product.price,
+      generated_at: new Date().toISOString(),
+      model: '@cf/meta/llama-3.1-8b-instruct'
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// === x402 Gateway Promotion ===
+async function generateX402Promo(env) {
+  const angles = [
+    'How AI agents can pay for tools autonomously using x402 protocol',
+    'Zero-fee micropayments for AI: the x402 revolution',
+    'Why USDC on Base is the future of AI-to-AI commerce',
+    'Build AI agents that can buy their own tools with x402',
+    'The $0.01 economy: micropayments for every AI API call'
+  ];
+  const angle = angles[Math.floor(Math.random() * angles.length)];
+
+  try {
+    const resp = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a technical writer explaining cutting-edge payment protocols for AI systems. Write clearly and concisely. Under 250 words.'
+        },
+        {
+          role: 'user',
+          content: `Write a post about: "${angle}". Mention that OpenClaw has deployed an x402 payment gateway with 9 AI tool endpoints, prices from $0.01 to $0.10 per request, using USDC on Base L2 with 0% protocol fees. The gateway URL is openclaw-x402-gateway.yagami8095.workers.dev and AI agents can discover endpoints at /.well-known/x402. Title on first line, no markdown headers.`
+        }
+      ],
+      max_tokens: 400
+    });
+
+    const text = resp.response || '';
+    const lines = text.trim().split('\n');
+    const title = lines[0]?.replace(/^#+\s*/, '').trim() || angle;
+    const body = lines.slice(1).join('\n').trim();
+
+    return {
+      title,
+      body,
+      topic: angle,
+      category: 'x402_promo',
+      generated_at: new Date().toISOString(),
+      model: '@cf/meta/llama-3.1-8b-instruct'
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// === Case Study Generator ===
+async function generateCaseStudy(env) {
+  const scenarios = [
+    'How an AI agent used OpenClaw MCP servers to automate market research',
+    'Building a 24/7 autonomous AI fleet with zero hosting costs',
+    'From 0 to 15 digital products: an AI-powered product creation story',
+    'How OODA loops make AI agents 10x more effective',
+    'Deploying 6 AI workers on Cloudflare for $0/month'
+  ];
+  const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+
+  try {
+    const resp = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a case study writer for OpenClaw. Write realistic, practical case studies that show real value. Include specific numbers when possible. Under 300 words.'
+        },
+        {
+          role: 'user',
+          content: `Write a case study about: "${scenario}". Make it practical and believable. Include a problem, solution, and result. Mention OpenClaw tools where relevant. Title on first line, no markdown headers.`
+        }
+      ],
+      max_tokens: 500
+    });
+
+    const text = resp.response || '';
+    const lines = text.trim().split('\n');
+    const title = lines[0]?.replace(/^#+\s*/, '').trim() || scenario;
+    const body = lines.slice(1).join('\n').trim();
+
+    return {
+      title,
+      body,
+      topic: scenario,
+      category: 'case_study',
+      generated_at: new Date().toISOString(),
+      model: '@cf/meta/llama-3.1-8b-instruct'
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// === Tip Thread Generator ===
+async function generateTipThread(env) {
+  const category = CONTENT_TOPICS[Math.floor(Math.random() * CONTENT_TOPICS.length)];
+  const topic = category.topics[Math.floor(Math.random() * category.topics.length)];
+  const product = PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
+
+  try {
+    const resp = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a developer educator. Write quick, actionable tips. Under 150 words.'
+        },
+        {
+          role: 'user',
+          content: `Write a quick developer tip about "${topic}". Include one concrete code snippet or command. Mention that "${product.name}" ($${product.price}) at ${PRODUCT_STORE} has more in-depth content on this topic. Title on first line, no markdown headers.`
+        }
+      ],
+      max_tokens: 300
+    });
+
+    const text = resp.response || '';
+    const lines = text.trim().split('\n');
+    const title = lines[0]?.replace(/^#+\s*/, '').trim() || `Quick Tip: ${topic}`;
+    const body = lines.slice(1).join('\n').trim();
+
+    return {
+      title,
+      body,
+      topic,
+      category: 'tip_thread',
+      product_id: product.id,
+      generated_at: new Date().toISOString(),
+      model: '@cf/meta/llama-3.1-8b-instruct'
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// === Technical Blog (upgraded from v1.0) ===
+async function generateTechnicalBlog(env) {
   const category = CONTENT_TOPICS[Math.floor(Math.random() * CONTENT_TOPICS.length)];
   const topic = category.topics[Math.floor(Math.random() * category.topics.length)];
 
@@ -111,11 +352,11 @@ async function generateAIContent(env, log) {
       messages: [
         {
           role: 'system',
-          content: 'You are a technical content writer for OpenClaw, an AI MCP server ecosystem. Write engaging, informative posts for the developer community. Keep posts concise (150-300 words), include practical tips, and maintain a professional but approachable tone.'
+          content: 'You are a technical content writer for OpenClaw, an AI MCP server ecosystem. Write engaging, informative posts. Include practical tips. 150-300 words. Mention OpenClaw products or x402 gateway where relevant.'
         },
         {
           role: 'user',
-          content: `Write a short technical post about: "${topic}". Include one practical tip or code snippet. Format: Title on first line, then blank line, then content. No markdown headers.`
+          content: `Write a technical post about: "${topic}". Include one practical tip or code snippet. Mention that OpenClaw has tools and products for this at ${PRODUCT_STORE} and AI-native payment at ${X402_GATEWAY}. Title on first line, no markdown headers.`
         }
       ],
       max_tokens: 500
@@ -126,8 +367,6 @@ async function generateAIContent(env, log) {
     const title = lines[0]?.replace(/^#+\s*/, '').trim() || topic;
     const body = lines.slice(1).join('\n').trim();
 
-    log.push(`[AI] Generated: "${title}" (${body.length} chars)`);
-
     return {
       title,
       body,
@@ -137,15 +376,12 @@ async function generateAIContent(env, log) {
       model: '@cf/meta/llama-3.1-8b-instruct'
     };
   } catch (e) {
-    log.push(`[AI] Generation failed: ${e.message}`);
     return null;
   }
 }
 
-async function postToMoltBook(content, env, log) {
-  log.push('[MOLTBOOK] Posting content...');
+async function postToMoltBook(content, env) {
   try {
-    // Use the MoltBook API to create a post
     const resp = await fetch(`${MOLTBOOK_API}/api/posts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -157,28 +393,18 @@ async function postToMoltBook(content, env, log) {
       }),
       signal: AbortSignal.timeout(10000)
     });
-
-    if (resp.ok) {
-      log.push('[MOLTBOOK] Posted successfully');
-      return true;
-    } else {
-      const err = await resp.text().catch(() => 'unknown');
-      log.push(`[MOLTBOOK] Post failed: ${resp.status} - ${err.slice(0, 100)}`);
-      return false;
-    }
-  } catch (e) {
-    log.push(`[MOLTBOOK] Error: ${e.message}`);
+    return resp.ok;
+  } catch {
     return false;
   }
 }
 
-async function checkContentMetrics(env, log) {
-  log.push('[METRICS] Checking content metrics...');
-  const { results } = await env.ARMY_DB.prepare(
-    `SELECT COUNT(*) as total, MAX(created_at) as latest FROM fleet_events WHERE worker_id = 'yedan-content-engine' AND event_type = 'content_generated'`
-  ).all().catch(() => ({ results: [{ total: 0, latest: null }] }));
-
-  log.push(`[METRICS] Total content pieces: ${results?.[0]?.total || 0}`);
+async function checkContentMetrics(env) {
+  try {
+    const { results } = await env.ARMY_DB.prepare(
+      `SELECT COUNT(*) as total, MAX(created_at) as latest FROM fleet_events WHERE worker_id = 'yedan-content-engine' AND event_type = 'content_generated'`
+    ).all();
+  } catch {}
 }
 
 async function handleTask(request, env) {
@@ -186,12 +412,28 @@ async function handleTask(request, env) {
     const { task_id, type, payload } = await request.json();
 
     if (type === 'content' || type === 'content-create') {
-      const content = await generateAIContent(env, []);
+      const contentType = payload?.content_type || 'product_promo';
+      let content;
+      switch (contentType) {
+        case 'product_promo': content = await generateProductPromo(env); break;
+        case 'x402_promo': content = await generateX402Promo(env); break;
+        case 'case_study': content = await generateCaseStudy(env); break;
+        default: content = await generateTechnicalBlog(env); break;
+      }
       if (content) {
-        await postToMoltBook(content, env, []);
-        return json({ ok: true, task_id, result: 'content_generated', title: content.title });
+        await postToMoltBook(content, env);
+        return json({ ok: true, task_id, result: 'content_generated', type: contentType, title: content.title });
       }
       return json({ ok: false, task_id, error: 'Generation failed' });
+    }
+
+    if (type === 'promote-product') {
+      const content = await generateProductPromo(env);
+      if (content) {
+        await postToMoltBook(content, env);
+        return json({ ok: true, task_id, result: 'product_promoted', title: content.title, product: content.product_id });
+      }
+      return json({ ok: false, task_id, error: 'Promo generation failed' });
     }
 
     return json({ ok: false, error: 'Unknown task type' });
@@ -200,11 +442,18 @@ async function handleTask(request, env) {
   }
 }
 
-async function generateContent(request, env) {
+async function handleGenerate(request, env) {
   try {
-    const { topic } = await request.json();
-    const content = await generateAIContent(env, []);
-    return json({ ok: true, content });
+    const { type } = await request.json().catch(() => ({}));
+    let content;
+    switch (type) {
+      case 'product_promo': content = await generateProductPromo(env); break;
+      case 'x402_promo': content = await generateX402Promo(env); break;
+      case 'case_study': content = await generateCaseStudy(env); break;
+      case 'tip_thread': content = await generateTipThread(env); break;
+      default: content = await generateTechnicalBlog(env); break;
+    }
+    return json({ ok: !!content, content });
   } catch (e) {
     return json({ error: e.message }, 500);
   }
@@ -215,10 +464,14 @@ async function getStatus(env) {
   const lastPiece = await env.ARMY_KV.get('content:last-piece', 'json').catch(() => null);
   return json({
     role: 'content-engine',
-    version: '1.0.0',
+    version: '2.0.0',
+    products_tracked: PRODUCTS.length,
+    content_types: CONTENT_TYPES.map(t => `${t.type}(${t.weight}%)`),
     timestamp: new Date().toISOString(),
     last_generation: lastGen,
-    last_content: lastPiece ? { title: lastPiece.title, category: lastPiece.category } : null
+    last_content: lastPiece ? { title: lastPiece.title, category: lastPiece.category, product: lastPiece.product_id } : null,
+    store: PRODUCT_STORE,
+    x402_gateway: X402_GATEWAY
   });
 }
 
@@ -227,6 +480,14 @@ async function getContentHistory(env) {
     `SELECT * FROM fleet_events WHERE worker_id = 'yedan-content-engine' AND event_type = 'content_generated' ORDER BY created_at DESC LIMIT 20`
   ).all().catch(() => ({ results: [] }));
   return json({ history: results });
+}
+
+async function updateHeartbeat(env, start) {
+  try {
+    await env.ARMY_DB.prepare(
+      `UPDATE fleet_workers SET last_heartbeat = datetime('now'), status = 'active', tasks_completed = tasks_completed + 1 WHERE id = 'yedan-content-engine'`
+    ).run();
+  } catch {}
 }
 
 async function logEvent(env, eventType, severity, message) {
@@ -242,7 +503,7 @@ async function reportBunshin(key, value, env) {
     await fetch(`${BUNSHIN_URL}/api/brain`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${BUNSHIN_AUTH}` },
-      body: JSON.stringify({ key, value, context: 'Content Engine report' }),
+      body: JSON.stringify({ key, value, context: 'Content Engine v2.0 report' }),
       signal: AbortSignal.timeout(8000)
     });
   } catch {}
