@@ -5,9 +5,9 @@ compatibility_date = "2024-12-01"
 [vars]
 BUNSHIN_URL = "https://openclaw-mcp-servers.onrender.com"
 
-# Intel sweep every hour
+# OODA OBSERVE — Intel sweep every 15 minutes
 [triggers]
-crons = ["0 */1 * * *"]
+crons = ["*/15 * * * *"]
 
 [[kv_namespaces]]
 binding = "KV"
