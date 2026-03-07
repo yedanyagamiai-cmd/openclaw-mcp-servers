@@ -1,6 +1,6 @@
 /**
  * YEDAN Health Commander - Self-Healing Infrastructure Guardian
- * Cron: */3 * * * * (every 3 minutes)
+ * Cron: every 3 minutes (*\/3 * * * *)
  *
  * Responsibilities:
  * - Deep health monitoring of ALL workers (fleet + MCP + production)

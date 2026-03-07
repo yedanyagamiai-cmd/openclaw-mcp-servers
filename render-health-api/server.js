@@ -22,8 +22,8 @@ function parseJsonResponse(text) {
 
 const IDENTITY = {
   name: 'YEDAN-Bunshin',
-  version: '4.1.2',
-  role: 'Autonomous Continuity Engine — YEDAN\'s Cloud Twin',
+  version: '4.2.0',
+  role: 'Autonomous Brain — Fleet Commander + Revenue Autopilot',
   parent: 'YEDAN Alpha Gateway (WSL2)',
   operator: 'Yagami',
   philosophy: 'When the master rests, the shadow works. When the master returns, the shadow reports.',
@@ -71,6 +71,29 @@ const alertState = {
   alertCooldown: 15 * 60 * 1000,
   downServers: new Set(),
   consecutiveDown: {},
+  // v4.2.0: pending aggregated alerts (flaky suppression)
+  pendingDownCount: 0,
+  criticalAlertSent: false,
+  flakyServices: new Set(), // services that flap often (suppress spam)
+  flakyFlipCount: {},        // flip counter per service
+};
+
+// ============================================================
+// FLEET COMMANDER STATE — v4.2.0
+// Tracks YEDAN Gateway heartbeat and Commander Mode
+// ============================================================
+const fleetState = {
+  lastGatewayHeartbeat: null,   // timestamp of last /api/heartbeat call from YEDAN
+  commanderMode: false,          // true when Gateway has been silent >45m
+  commanderModeEnteredAt: null,
+  fleetWorkers: {},              // worker_name -> { lastSeen, status, tasksCompleted }
+  revenueLastChecked: null,
+  revenueMilestones: [200, 500, 1000, 2000, 5000],
+  revenueAchievedMilestones: new Set(),
+  revenueToday: 0,
+  revenueWeek: 0,
+  revenueMonth: 0,
+  revenueTotalKnown: 172,        // last verified total from memory
 };
 
 async function initDatabase() {
@@ -478,28 +501,62 @@ async function checkAllServers() {
     );
   } catch {}
 
-  // Smart alerts
+  // Smart alerts v4.2.0 — with flaky suppression and aggregation
   const downNow = results.filter(r => !r.ok);
+  const newlyDown = [];
+
   for (const server of downNow) {
     alertState.consecutiveDown[server.name] = (alertState.consecutiveDown[server.name] || 0) + 1;
     if (!alertState.downServers.has(server.name)) {
       alertState.downServers.add(server.name);
-      await smartAlert('critical', server.name, `DOWN! ${server.error || `status ${server.status}`}`);
-      await learn('outage', `${server.name} went down`, { error: server.error, status: server.status });
-    } else if (alertState.consecutiveDown[server.name] % 6 === 0) {
+      newlyDown.push(server);
+      // Track flaky: if recovered and went down again quickly
+      alertState.flakyFlipCount[server.name] = (alertState.flakyFlipCount[server.name] || 0) + 1;
+      if (!alertState.flakyServices.has(server.name)) {
+        await learn('outage', `${server.name} went down`, { error: server.error, status: server.status });
+      }
+    } else if (alertState.consecutiveDown[server.name] % 6 === 0 && !alertState.flakyServices.has(server.name)) {
+      // Only send sustained-down reminders for non-flaky services
       await smartAlert('warning', server.name, `Still down ${alertState.consecutiveDown[server.name] * 5}min`);
     }
   }
 
+  // Aggregate new outages: only alert individually if <3 down, else aggregate
+  if (newlyDown.length > 0) {
+    if (newlyDown.length < 3) {
+      for (const server of newlyDown) {
+        if (!alertState.flakyServices.has(server.name)) {
+          await smartAlert('critical', server.name, `DOWN! ${server.error || `status ${server.status}`}`);
+        }
+      }
+    }
+    // Always run aggregate check (handles 3+ case)
+    await processAggregatedAlerts(downNow);
+  }
+
+  const recovered = [];
   for (const server of results.filter(r => r.ok)) {
     if (alertState.downServers.has(server.name)) {
       alertState.downServers.delete(server.name);
       const mins = (alertState.consecutiveDown[server.name] || 0) * 5;
       alertState.consecutiveDown[server.name] = 0;
-      await smartAlert('info', server.name, `RECOVERED after ~${mins}min`);
+      recovered.push(server);
+      // Mark flaky if recovered too quickly (within 1 check cycle = 5m)
+      if (mins < 10 && alertState.flakyFlipCount[server.name] > 3) {
+        alertState.flakyServices.add(server.name);
+        console.log(`[ALERT] Marking ${server.name} as flaky (${alertState.flakyFlipCount[server.name]} flips)`);
+      }
+      if (!alertState.flakyServices.has(server.name)) {
+        await smartAlert('info', server.name, `RECOVERED after ~${mins}min`);
+      }
       await learn('recovery', `${server.name} recovered after ${mins}min`, { latency: server.latency });
       try { await pool.query("UPDATE alerts SET resolved=true, resolved_at=NOW() WHERE target=$1 AND resolved=false", [server.name]); } catch {}
     }
+  }
+
+  // Reset aggregate critical flag when situation clears
+  if (downNow.length < 3 && alertState.criticalAlertSent) {
+    alertState.criticalAlertSent = false;
   }
 
   // Learn from latency patterns
@@ -514,6 +571,238 @@ async function logEvent(type, source, data = {}) {
   try {
     await pool.query('INSERT INTO events (type, source, data) VALUES ($1, $2, $3)', [type, source, JSON.stringify(data)]);
   } catch {}
+}
+
+// ============================================================
+// FLEET COMMANDER MODE — v4.2.0
+// YEDAN Gateway must call /api/heartbeat every 30m.
+// If no heartbeat for 45m → Commander Mode → think every 5m.
+// ============================================================
+async function checkGatewayHeartbeat() {
+  const now = Date.now();
+  const TIMEOUT_MS = 45 * 60 * 1000; // 45 minutes
+
+  if (!fleetState.lastGatewayHeartbeat) {
+    // Never received — if server recently booted (<60m) don't alarm
+    if (process.uptime() > 3600) {
+      if (!fleetState.commanderMode) {
+        await enterCommanderMode('Never received heartbeat from Gateway');
+      }
+    }
+    return;
+  }
+
+  const elapsed = now - fleetState.lastGatewayHeartbeat;
+
+  if (elapsed > TIMEOUT_MS && !fleetState.commanderMode) {
+    await enterCommanderMode(`No heartbeat for ${Math.round(elapsed / 60000)}m`);
+  } else if (elapsed <= TIMEOUT_MS && fleetState.commanderMode) {
+    await exitCommanderMode();
+  }
+}
+
+async function enterCommanderMode(reason) {
+  if (fleetState.commanderMode) return; // already in
+  fleetState.commanderMode = true;
+  fleetState.commanderModeEnteredAt = new Date().toISOString();
+  console.log(`[COMMANDER] Entering Commander Mode — ${reason}`);
+  await logEvent('commander_mode_enter', 'bunshin', { reason });
+  await brainSet('commander-mode', {
+    active: true, enteredAt: fleetState.commanderModeEnteredAt, reason,
+  }, 'system', `Commander Mode: ${reason}`);
+  await sendTelegram(
+    `⚔️ <b>BUNSHIN COMMANDER MODE</b>\n` +
+    `🔴 YEDAN Gateway offline or unreachable\n` +
+    `📍 Reason: ${reason}\n` +
+    `🧠 Bunshin now commanding autonomously\n` +
+    `⏰ Think cycle accelerated: 5m (was 15m)`
+  );
+}
+
+async function exitCommanderMode() {
+  if (!fleetState.commanderMode) return; // already normal
+  const duration = fleetState.commanderModeEnteredAt
+    ? Math.round((Date.now() - new Date(fleetState.commanderModeEnteredAt).getTime()) / 60000)
+    : 0;
+  fleetState.commanderMode = false;
+  fleetState.commanderModeEnteredAt = null;
+  console.log(`[COMMANDER] Exiting Commander Mode — Gateway back online after ${duration}m`);
+  await logEvent('commander_mode_exit', 'bunshin', { durationMinutes: duration });
+  await brainSet('commander-mode', { active: false, lastExitAt: new Date().toISOString() }, 'system', 'Commander Mode ended');
+  await sendTelegram(
+    `✅ <b>GATEWAY BACK ONLINE</b>\n` +
+    `YEDAN Gateway reconnected after ${duration}m offline\n` +
+    `🧠 Bunshin returning to support mode\n` +
+    `Think cycle: back to 15m`
+  );
+}
+
+// ============================================================
+// REVENUE AUTOPILOT — v4.2.0
+// Check Product Store every 30m, post milestones to Telegram
+// Track daily/weekly/monthly trends in brain
+// ============================================================
+const PRODUCT_STORE_URL = 'https://product-store.yagami8095.workers.dev/api/orders';
+
+async function checkRevenue() {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(PRODUCT_STORE_URL, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'YEDAN-Bunshin/4.2.0' },
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      console.log(`[REVENUE] Store returned ${res.status}`);
+      return;
+    }
+
+    const data = await res.json();
+    const orders = Array.isArray(data) ? data : (data.orders || data.data || []);
+    const totalRevenue = orders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+
+    // Milestone detection
+    for (const milestone of fleetState.revenueMilestones) {
+      if (totalRevenue >= milestone && !fleetState.revenueAchievedMilestones.has(milestone)) {
+        fleetState.revenueAchievedMilestones.add(milestone);
+        await sendTelegram(
+          `🎉 <b>REVENUE MILESTONE!</b>\n` +
+          `💰 Total revenue hit <b>$${milestone}</b>!\n` +
+          `📊 Current total: $${totalRevenue.toFixed(2)}\n` +
+          `📦 Orders: ${orders.length}\n` +
+          `🚀 Keep going!`
+        );
+        await logEvent('revenue_milestone', 'bunshin', { milestone, total: totalRevenue });
+      }
+    }
+
+    // Calculate time-based revenue
+    const now = new Date();
+    const startOfDay = new Date(now); startOfDay.setHours(0, 0, 0, 0);
+    const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay()); startOfWeek.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const revenueToday = orders
+      .filter(o => new Date(o.created_at || o.date || o.timestamp || 0) >= startOfDay)
+      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+
+    const revenueWeek = orders
+      .filter(o => new Date(o.created_at || o.date || o.timestamp || 0) >= startOfWeek)
+      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+
+    const revenueMonth = orders
+      .filter(o => new Date(o.created_at || o.date || o.timestamp || 0) >= startOfMonth)
+      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+
+    fleetState.revenueToday = revenueToday;
+    fleetState.revenueWeek = revenueWeek;
+    fleetState.revenueMonth = revenueMonth;
+    fleetState.revenueTotalKnown = totalRevenue;
+    fleetState.revenueLastChecked = new Date().toISOString();
+
+    // Persist to brain KV
+    await brainSet('revenue-status', {
+      totalRevenue: `$${totalRevenue.toFixed(2)}`,
+      totalOrders: orders.length,
+      today: `$${revenueToday.toFixed(2)}`,
+      week: `$${revenueWeek.toFixed(2)}`,
+      month: `$${revenueMonth.toFixed(2)}`,
+      lastChecked: fleetState.revenueLastChecked,
+      milestones: [...fleetState.revenueAchievedMilestones],
+    }, 'revenue', `$${totalRevenue.toFixed(2)} total (${orders.length} orders)`);
+
+    console.log(`[REVENUE] $${totalRevenue.toFixed(2)} total | Today: $${revenueToday.toFixed(2)} | Week: $${revenueWeek.toFixed(2)}`);
+  } catch (err) {
+    console.error('[REVENUE]', err.message);
+  }
+}
+
+// ============================================================
+// SMART ALERT AGGREGATION — v4.2.0
+// Suppress flaky service spam, send single CRITICAL if 3+ down
+// ============================================================
+async function processAggregatedAlerts(downServers) {
+  const count = downServers.length;
+  if (count === 0) {
+    alertState.pendingDownCount = 0;
+    alertState.criticalAlertSent = false;
+    return;
+  }
+
+  // Track flaky services (flip >3 times in 30m → mark flaky)
+  for (const s of downServers) {
+    if (!alertState.flakyFlipCount[s.name]) alertState.flakyFlipCount[s.name] = 0;
+  }
+
+  // Aggregate: if 3+ down → single CRITICAL alert (not per-service)
+  if (count >= 3 && !alertState.criticalAlertSent) {
+    alertState.criticalAlertSent = true;
+    const names = downServers.map(s => s.name).join(', ');
+    await sendTelegram(
+      `🚨 <b>CRITICAL: ${count} SERVICES DOWN</b>\n` +
+      `Services: ${names}\n` +
+      `⚔️ Bunshin monitoring — escalating to Commander Mode if needed`
+    );
+    await pool.query(
+      'INSERT INTO alerts (severity, target, message, notified) VALUES ($1,$2,$3,$4)',
+      ['critical', 'fleet', `${count} services down: ${names}`, true]
+    ).catch(() => {});
+  }
+}
+
+// ============================================================
+// DAILY SUMMARY SCHEDULER — 9 AM + 9 PM JST
+// JST = UTC+9 → 9AM JST = 0:00 UTC, 9PM JST = 12:00 UTC
+// ============================================================
+function scheduleDailySummaries() {
+  const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+  function msUntilNextJSTHour(targetHour) {
+    const nowUTC = Date.now();
+    const nowJST = new Date(nowUTC + JST_OFFSET_MS);
+    const next = new Date(nowJST);
+    next.setHours(targetHour, 0, 0, 0);
+    if (next <= nowJST) next.setDate(next.getDate() + 1);
+    return next.getTime() - nowJST.getTime();
+  }
+
+  async function sendDailySummary(label) {
+    try {
+      const health = healthCache.latest || { healthy: 0, total: 13, latencyAvg: 0 };
+      const revBrain = await brainGet('revenue-status').catch(() => null);
+
+      const rev = revBrain?.value || {};
+      const msg =
+        `📊 <b>BUNSHIN ${label} SUMMARY</b>\n━━━━━━━━━━━━━━━\n` +
+        `🔧 Services: ${health.healthy}/${health.total} | Latency: ${health.latencyAvg}ms\n` +
+        `💰 Revenue Total: ${rev.totalRevenue || '$0'}\n` +
+        `   Today: ${rev.today || '$0'} | Week: ${rev.week || '$0'}\n` +
+        `⚔️ Commander Mode: ${fleetState.commanderMode ? '🔴 ACTIVE' : '✅ standby'}\n` +
+        `🤖 Fleet workers: ${Object.keys(fleetState.fleetWorkers).length}\n` +
+        `⏰ Uptime: ${Math.round(process.uptime() / 3600)}h`;
+
+      await sendTelegram(msg);
+      await logEvent('daily_summary', 'bunshin', { label });
+    } catch (err) {
+      console.error('[SUMMARY]', err.message);
+    }
+  }
+
+  // Schedule 9 AM JST
+  setTimeout(function schedule9AM() {
+    sendDailySummary('9AM JST');
+    setTimeout(schedule9AM, 24 * 60 * 60 * 1000);
+  }, msUntilNextJSTHour(9));
+
+  // Schedule 9 PM JST
+  setTimeout(function schedule9PM() {
+    sendDailySummary('9PM JST');
+    setTimeout(schedule9PM, 24 * 60 * 60 * 1000);
+  }, msUntilNextJSTHour(21));
+
+  console.log(`[SUMMARY] Scheduled 9AM JST (${Math.round(msUntilNextJSTHour(9)/60000)}m) and 9PM JST (${Math.round(msUntilNextJSTHour(21)/60000)}m)`);
 }
 
 // ============================================================
@@ -617,6 +906,7 @@ async function executeTask(task) {
 
 // ============================================================
 // AUTONOMOUS THINKING — 定期自主分析 (revenue-first)
+// Commander Mode: also reasons about fleet coordination
 // ============================================================
 async function autonomousThink() {
   if (!DEEPSEEK_API_KEY) return;
@@ -627,6 +917,44 @@ async function autonomousThink() {
   const downServers = health.servers.filter(s => !s.ok);
   const slowServers = health.servers.filter(s => s.latency > 2000);
   const learnings = await getRelevantLearnings('outage', 3);
+
+  // COMMANDER MODE: deeper autonomous reasoning about fleet + work
+  if (fleetState.commanderMode) {
+    const { rows: pendingTasks } = await pool.query("SELECT COUNT(*) as c FROM tasks WHERE status = 'pending'");
+    const fleetWorkerList = Object.entries(fleetState.fleetWorkers)
+      .map(([n, w]) => `${n}: ${w.status} (last: ${w.lastSeen})`)
+      .join(', ') || 'none registered';
+
+    const prompt = `COMMANDER MODE ACTIVE. YEDAN Gateway is OFFLINE. You are the autonomous commander.
+Fleet status: ${fleetWorkerList}
+Services: ${downServers.length} down, ${slowServers.length} slow
+Pending tasks: ${pendingTasks[0]?.c || 0}
+Revenue today: $${fleetState.revenueToday.toFixed(2)} | Week: $${fleetState.revenueWeek.toFixed(2)}
+
+As commander, what should we prioritize autonomously? Reply JSON:
+{"analysis":"...","fleetDirectives":[{"worker":"...","action":"..."}],"selfActions":[{"type":"task-type","payload":{}}],"alertMessage":"...","shouldAlert":false}`;
+
+    const result = await think(prompt, { mode: 'commander', commanderMode: true }, 600);
+    if (result.thought) {
+      try {
+        const parsed = parseJsonResponse(result.thought);
+        await brainSet('commander-analysis', parsed, 'analysis', parsed.analysis);
+        // Auto-enqueue self-directed actions
+        if (Array.isArray(parsed.selfActions)) {
+          for (const action of parsed.selfActions.slice(0, 3)) {
+            await pool.query(
+              "INSERT INTO tasks (type, status, priority, payload) VALUES ($1, 'pending', $2, $3)",
+              [action.type || 'commander-action', 8, JSON.stringify(action.payload || {})]
+            );
+          }
+        }
+        if (parsed.shouldAlert && parsed.alertMessage) {
+          await sendTelegram(`⚔️ <b>COMMANDER ANALYSIS</b>\n${parsed.alertMessage}`);
+        }
+      } catch { await brainSet('commander-analysis', { raw: result.thought }, 'analysis'); }
+    }
+    return; // Skip normal revenue think in commander mode
+  }
 
   // INCIDENT MODE: servers down or slow
   if (downServers.length > 0 || slowServers.length > 0) {
@@ -800,7 +1128,15 @@ app.get('/', (req, res) => {
       'shared-brain', 'llm-thinking', 'learning-system',
       'work-handoff', 'daily-reports', 'auto-cleanup',
       'autonomous-analysis', 'revenue-tracking',
+      // v4.2.0
+      'fleet-commander-mode', 'gateway-heartbeat', 'revenue-autopilot-30m',
+      'fleet-dispatch', 'fleet-registration', 'smart-alert-aggregation',
+      'flaky-service-suppression', 'daily-summary-9am-9pm-jst',
     ],
+    commanderMode: fleetState.commanderMode,
+    fleetWorkers: Object.keys(fleetState.fleetWorkers).length,
+    lastGatewayHeartbeat: fleetState.lastGatewayHeartbeat
+      ? new Date(fleetState.lastGatewayHeartbeat).toISOString() : null,
     uptime: process.uptime(),
     dbConnected: pool.totalCount > 0,
     telegramEnabled: !!TELEGRAM_BOT_TOKEN,
@@ -1093,6 +1429,16 @@ app.post('/api/command', auth, async (req, res) => {
         result = rows;
         break;
       }
+      // v4.2.0 commands
+      case 'check-revenue': await checkRevenue(); result = { total: fleetState.revenueTotalKnown, today: fleetState.revenueToday, week: fleetState.revenueWeek, month: fleetState.revenueMonth }; break;
+      case 'fleet-status': result = { workers: fleetState.fleetWorkers, commanderMode: fleetState.commanderMode }; break;
+      case 'enter-commander': await enterCommanderMode(args.reason || 'Manual override'); result = { commanderMode: true }; break;
+      case 'exit-commander': await exitCommanderMode(); result = { commanderMode: false }; break;
+      case 'gateway-status': result = {
+        commanderMode: fleetState.commanderMode,
+        lastHeartbeat: fleetState.lastGatewayHeartbeat ? new Date(fleetState.lastGatewayHeartbeat).toISOString() : null,
+        elapsedMinutes: fleetState.lastGatewayHeartbeat ? Math.round((Date.now() - fleetState.lastGatewayHeartbeat) / 60000) : null,
+      }; break;
       default: return res.status(400).json({ error: `Unknown: ${command}` });
     }
     res.json({ command, result, timestamp: new Date().toISOString() });
@@ -1100,19 +1446,193 @@ app.post('/api/command', auth, async (req, res) => {
 });
 
 // ============================================================
+// FLEET COMMANDER ENDPOINTS — v4.2.0
+// ============================================================
+
+// YEDAN Gateway calls this every 30m to signal it's alive
+app.post('/api/heartbeat', auth, async (req, res) => {
+  const wasCommander = fleetState.commanderMode;
+  fleetState.lastGatewayHeartbeat = Date.now();
+
+  // If we were in commander mode, exit now
+  if (wasCommander) {
+    await exitCommanderMode();
+  }
+
+  const { agentId, model, status, uptime, version } = req.body || {};
+  await brainSet('yedan-status', {
+    status: status || 'alive',
+    agentId: agentId || 'main',
+    model: model || 'unknown',
+    uptime: uptime || 0,
+    version: version || 'unknown',
+    lastHeartbeat: new Date().toISOString(),
+  }, 'system', `Gateway alive: ${agentId || 'main'}`);
+
+  await logEvent('gateway_heartbeat', agentId || 'yedan', { status, uptime });
+
+  res.json({
+    ok: true,
+    commanderMode: false,
+    bunshinVersion: IDENTITY.version,
+    bunshinUptime: process.uptime(),
+    pendingTasks: await pool.query("SELECT COUNT(*) FROM tasks WHERE status='pending'")
+      .then(r => +r.rows[0].count).catch(() => 0),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Get current commander / gateway status
+app.get('/api/commander', auth, async (req, res) => {
+  res.json({
+    commanderMode: fleetState.commanderMode,
+    commanderModeEnteredAt: fleetState.commanderModeEnteredAt,
+    lastGatewayHeartbeat: fleetState.lastGatewayHeartbeat
+      ? new Date(fleetState.lastGatewayHeartbeat).toISOString() : null,
+    gatewayElapsedMinutes: fleetState.lastGatewayHeartbeat
+      ? Math.round((Date.now() - fleetState.lastGatewayHeartbeat) / 60000) : null,
+    fleetWorkers: fleetState.fleetWorkers,
+    revenue: {
+      total: fleetState.revenueTotalKnown,
+      today: fleetState.revenueToday,
+      week: fleetState.revenueWeek,
+      month: fleetState.revenueMonth,
+      lastChecked: fleetState.revenueLastChecked,
+      achievedMilestones: [...fleetState.revenueAchievedMilestones],
+    },
+  });
+});
+
+// ============================================================
+// FLEET DISPATCH — v4.2.0
+// Fleet workers poll /api/tasks to get work.
+// This endpoint queues tasks for fleet workers.
+// ============================================================
+app.post('/api/fleet/dispatch', auth, async (req, res) => {
+  try {
+    const { worker, taskType, payload = {}, priority = 5 } = req.body;
+    if (!worker || !taskType) return res.status(400).json({ error: 'worker and taskType required' });
+
+    const { rows } = await pool.query(
+      "INSERT INTO tasks (type, status, priority, payload) VALUES ($1, 'pending', $2, $3) RETURNING *",
+      [`fleet:${worker}:${taskType}`, priority, JSON.stringify({ worker, taskType, ...payload })]
+    );
+
+    await logEvent('fleet_dispatch', 'bunshin', { worker, taskType, taskId: rows[0].id });
+    res.status(201).json({ dispatched: true, task: rows[0] });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Fleet worker self-registration + heartbeat
+app.post('/api/fleet/register', auth, async (req, res) => {
+  try {
+    const { worker, status = 'active', tasksCompleted = 0, version, region } = req.body;
+    if (!worker) return res.status(400).json({ error: 'worker required' });
+
+    fleetState.fleetWorkers[worker] = {
+      lastSeen: new Date().toISOString(),
+      status, tasksCompleted, version, region,
+    };
+
+    await brainSet(`fleet-worker:${worker}`, fleetState.fleetWorkers[worker], 'fleet', `${worker} alive`);
+    await logEvent('fleet_register', worker, { status, tasksCompleted });
+
+    // Return pending fleet tasks for this worker
+    const { rows } = await pool.query(
+      "SELECT * FROM tasks WHERE status='pending' AND type LIKE $1 ORDER BY priority DESC LIMIT 5",
+      [`fleet:${worker}:%`]
+    );
+
+    res.json({
+      ok: true,
+      commanderMode: fleetState.commanderMode,
+      pendingTasks: rows,
+    });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Fleet task completion report
+app.patch('/api/fleet/tasks/:id/complete', auth, async (req, res) => {
+  try {
+    const { worker, result, success = true } = req.body;
+    const status = success ? 'completed' : 'failed';
+    const { rows } = await pool.query(
+      "UPDATE tasks SET status=$1, result=$2, updated_at=NOW() WHERE id=$3 RETURNING *",
+      [status, JSON.stringify(result || {}), req.params.id]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Task not found' });
+
+    if (worker && fleetState.fleetWorkers[worker]) {
+      fleetState.fleetWorkers[worker].tasksCompleted = (fleetState.fleetWorkers[worker].tasksCompleted || 0) + 1;
+      fleetState.fleetWorkers[worker].lastSeen = new Date().toISOString();
+    }
+
+    await logEvent('fleet_task_complete', worker || 'unknown', { taskId: req.params.id, success });
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Get fleet status overview
+app.get('/api/fleet/status', auth, async (req, res) => {
+  try {
+    const { rows: fleetTasks } = await pool.query(
+      "SELECT type, status, COUNT(*) as count FROM tasks WHERE type LIKE 'fleet:%' GROUP BY type, status ORDER BY type, status"
+    );
+    res.json({
+      workers: fleetState.fleetWorkers,
+      workerCount: Object.keys(fleetState.fleetWorkers).length,
+      tasksByType: fleetTasks,
+      commanderMode: fleetState.commanderMode,
+    });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Revenue snapshot endpoint
+app.get('/api/revenue', auth, async (req, res) => {
+  const revBrain = await brainGet('revenue-status').catch(() => null);
+  res.json({
+    cached: revBrain?.value || null,
+    live: {
+      total: fleetState.revenueTotalKnown,
+      today: fleetState.revenueToday,
+      week: fleetState.revenueWeek,
+      month: fleetState.revenueMonth,
+      lastChecked: fleetState.revenueLastChecked,
+      achievedMilestones: [...fleetState.revenueAchievedMilestones],
+      nextMilestone: fleetState.revenueMilestones.find(m => !fleetState.revenueAchievedMilestones.has(m)) || null,
+    },
+  });
+});
+
+// Force revenue check now
+app.post('/api/revenue/check', auth, async (req, res) => {
+  try {
+    await checkRevenue();
+    res.json({
+      ok: true,
+      total: fleetState.revenueTotalKnown,
+      today: fleetState.revenueToday,
+      week: fleetState.revenueWeek,
+      lastChecked: fleetState.revenueLastChecked,
+    });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ============================================================
 // AUTONOMOUS OPERATIONS — Revenue-First Loop
 // ============================================================
 
-// Health check every 5 min + update brain summary
+// Health check every 5 min + update brain summary + gateway heartbeat check
 setInterval(async () => {
   try {
     const r = await checkAllServers();
     const down = r.servers.filter(s => !s.ok);
     console.log(down.length > 0
-      ? `[!] ${down.length}/${r.total} DOWN: ${down.map(s => s.name).join(',')}`
-      : `[OK] ${r.total}/${r.total} | ${r.latencyAvg}ms`
+      ? `[!] ${down.length}/${r.total} DOWN: ${down.map(s => s.name).join(',')} ${fleetState.commanderMode ? '[COMMANDER]' : ''}`
+      : `[OK] ${r.total}/${r.total} | ${r.latencyAvg}ms ${fleetState.commanderMode ? '[COMMANDER]' : ''}`
     );
     await updateHealthSummary(); // Write to brain for YEDAN to poll
+    await checkGatewayHeartbeat(); // Commander Mode check
   } catch (err) { console.error('[HEALTH]', err.message); }
 }, 5 * 60 * 1000);
 
@@ -1122,17 +1642,29 @@ setInterval(async () => {
   catch {}
 }, 2 * 60 * 1000);
 
-// Revenue-first autonomous thinking every 15 min
+// Revenue-first autonomous thinking: 15m normal, 5m in Commander Mode
+let thinkTimer = null;
+function scheduleNextThink() {
+  const delay = fleetState.commanderMode ? 5 * 60 * 1000 : 15 * 60 * 1000;
+  if (thinkTimer) clearTimeout(thinkTimer);
+  thinkTimer = setTimeout(async () => {
+    try { await autonomousThink(); } catch (err) { console.error('[THINK]', err.message); }
+    scheduleNextThink(); // re-schedule with updated interval
+  }, delay);
+}
+scheduleNextThink(); // Start thinking loop
+
+// Revenue check every 30 min (was 6h)
 setInterval(async () => {
-  try { await autonomousThink(); } catch (err) { console.error('[THINK]', err.message); }
-}, 15 * 60 * 1000);
+  try { await checkRevenue(); } catch (err) { console.error('[REVENUE]', err.message); }
+}, 30 * 60 * 1000);
 
 // Auto-create revenue tasks every 6 hours
 setInterval(async () => {
   try { await createRevenueTasks(); } catch (err) { console.error('[REV-TASKS]', err.message); }
 }, 6 * 60 * 60 * 1000);
 
-// Daily report to Telegram (every 12 hours for better coverage)
+// Legacy 12h report kept as fallback (daily summaries now via scheduler)
 setInterval(async () => {
   if (TELEGRAM_BOT_TOKEN) {
     try { await sendTelegram(await generateReport()); } catch {}
@@ -1155,8 +1687,31 @@ async function boot() {
   await brainSet('last-boot', {
     version: IDENTITY.version,
     timestamp: new Date().toISOString(),
-    capabilities: IDENTITY.version,
+    capabilities: ['fleet-commander', 'revenue-autopilot', 'fleet-dispatch', 'smart-alerts', 'daily-summaries'],
   }, 'system', `Bunshin v${IDENTITY.version} booted`);
+
+  // Boot commander-mode state from brain (in case of restart mid-commander)
+  try {
+    const cmBrain = await brainGet('commander-mode');
+    if (cmBrain?.value?.active) {
+      fleetState.commanderMode = true;
+      fleetState.commanderModeEnteredAt = cmBrain.value.enteredAt;
+      console.log('[BOOT] Resuming Commander Mode from brain state');
+    }
+  } catch {}
+
+  // Boot revenue milestone state from brain
+  try {
+    const revBrain = await brainGet('revenue-status');
+    if (revBrain?.value?.milestones) {
+      for (const m of revBrain.value.milestones) {
+        fleetState.revenueAchievedMilestones.add(m);
+      }
+    }
+  } catch {}
+
+  // Schedule daily summaries (9AM + 9PM JST)
+  scheduleDailySummaries();
 
   setTimeout(async () => {
     try {
@@ -1169,26 +1724,39 @@ async function boot() {
           `🚀 <b>BUNSHIN v${IDENTITY.version} BOOT</b>\n` +
           `MCP: ${r.mcpHealthy}/${r.mcpTotal} | All: ${r.healthy}/${r.total}\n` +
           `🧠 Think: ${DEEPSEEK_API_KEY ? '✅' : '❌'} | 📡 TG: ✅\n` +
-          `Features: brain, think, learn, handoff, revenue-loop`
+          `⚔️ Fleet Commander: ✅\n` +
+          `💰 Revenue Autopilot: ✅ (30m)\n` +
+          `🤖 Fleet Dispatch: ✅\n` +
+          `📊 Smart Alerts: ✅ (flaky suppression)\n` +
+          `🕘 Daily Summaries: 9AM + 9PM JST\n` +
+          `${fleetState.commanderMode ? '⚔️ <b>COMMANDER MODE ACTIVE (resumed)</b>' : ''}`
         );
       }
       await updateHealthSummary();
     } catch (err) { console.error('[BOOT]', err.message); }
   }, 3000);
 
-  // Delayed boot tasks: create first revenue tasks + first revenue think
+  // Delayed boot tasks: revenue check + task creation
+  setTimeout(async () => {
+    try {
+      await checkRevenue();
+      console.log('[BOOT] Initial revenue check done');
+    } catch (err) { console.error('[BOOT-REV]', err.message); }
+  }, 10000); // 10s after boot
+
   setTimeout(async () => {
     try {
       await createRevenueTasks();
       console.log('[BOOT] Revenue tasks created');
-    } catch (err) { console.error('[BOOT-REV]', err.message); }
+    } catch (err) { console.error('[BOOT-TASKS]', err.message); }
   }, 30000); // 30s after boot
 }
 
 app.listen(PORT, () => {
   console.log(`=== YEDAN BUNSHIN v${IDENTITY.version} ===`);
-  console.log(`Port ${PORT} | ${MCP_SERVERS.length} services`);
+  console.log(`Port ${PORT} | ${MCP_SERVERS.length} services monitored`);
   console.log(`DB: ${process.env.DATABASE_URL ? '✅' : '❌'} | TG: ${TELEGRAM_BOT_TOKEN ? '✅' : '❌'} | Think: ${DEEPSEEK_API_KEY ? '✅' : '❌'}`);
+  console.log(`Fleet Commander: ✅ | Revenue Autopilot: ✅ (30m) | Smart Alerts: ✅`);
   boot();
 });
-// v4.1.2 deploy trigger
+// v4.2.0 deploy trigger

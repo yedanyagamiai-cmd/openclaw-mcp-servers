@@ -1,6 +1,6 @@
 /**
  * YEDAN Intel Operations - Competitive Intelligence Gatherer
- * Cron: 0 */1 * * * (every hour)
+ * Cron: every hour (0 *\/1 * * *)
  *
  * Responsibilities:
  * - Monitor MCP ecosystem trends

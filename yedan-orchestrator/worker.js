@@ -1,7 +1,7 @@
 /**
  * YEDAN Fleet Orchestrator - Master Brain
  * The supreme coordinator of the entire cloud army
- * Cron: */2 * * * * (every 2 minutes)
+ * Cron: every 2 minutes (*\/2 * * * *)
  *
  * Responsibilities:
  * - Coordinate all fleet workers

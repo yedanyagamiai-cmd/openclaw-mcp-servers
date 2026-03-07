@@ -1,6 +1,6 @@
 /**
  * YEDAN Revenue Sentinel - Money Never Sleeps
- * Cron: */10 * * * * (every 10 minutes)
+ * Cron: every 10 minutes (*\/10 * * * *)
  *
  * Monitors ALL revenue sources:
  * - Product Store orders (direct API)

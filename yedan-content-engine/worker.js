@@ -1,6 +1,6 @@
 /**
  * YEDAN Content Engine - Automated Content Factory
- * Cron: */30 * * * * (every 30 minutes)
+ * Cron: every 30 minutes (*\/30 * * * *)
  *
  * Responsibilities:
  * - Generate content using Workers AI
