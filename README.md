@@ -20,6 +20,10 @@
 | Webhook | Central webhook receiver | Live |
 | API Gateway | Multi-brain AI API routing | Live |
 
+## Companion Workflows
+
+- [TweetClaw X/Twitter research for Content Autopilot](docs/tweetclaw-x-research.md) - optional OpenClaw workflow for public tweet search, reply research, follower context, monitor notes, and reviewed X/Twitter actions before content generation or publishing.
+
 ## Architecture
 
 - **229+ Cloudflare Workers** on global edge (free tier)
